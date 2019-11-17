@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title><%= name %></title>
+  <%- include('../parts/head') %>
+  <script src="/javascripts/pttMain.js" defer></script>
+  <script src="/javascripts/task.js" defer></script>
+</head>
+
+<body>
+<main>
+    <h1><%= name %></h1>
+
+    <h2>测试概况</h2>
+    <table class="">
+      <tr>
+        <th>测试次数</th>
+        <th>完成次数</th>
+        <th>完成率</th>
+        <th>平均完成时长</th>
+      </tr>
+      <tr>
+        <td ><span id="testCount"></span></td>
+        <td ><span id="completedCount"></span></td>
+        <td><span id="completedRatio"></span><span class="unit">%</span></td>
+        <td><span id="avgOfDuration"></span><span class="unit">秒</span></td>
+      </tr>
+    </table>
+
+    <h2>步骤 <span id="stepsCount"></span></h2>
+    <ul id="steps">
+    </ul>
+    <button id='goBack'>返回原型主页</button>
+    <button id='deleteTask'>删除此任务和数据</button>
+
+  </main>
+</body>
+
+</html>

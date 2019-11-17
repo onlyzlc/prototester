@@ -1,0 +1,31 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.card {
+  display: inline-block;
+  padding: 20px;
+  border: 1px #d6d6d6 solid;
+  margin-right: 20px;
+  background: white;
+  min-width: 320px;
+  border-radius: 3px;
+}
+
+.titleLink {
+  font-size: 1.5em;
+  text-decoration: none;
+}
+
+.count {
+  font-weight: bold;
+}
+
+.linkButton {
+  float: right;
+}
