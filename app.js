@@ -10,7 +10,7 @@ var fileWatcher = require('./fileWatcher');
 fileWatcher.startWatch();
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test' ,{useNewUrlParser: true});
+mongoose.connect('mongodb://localhost/prototester' ,{useNewUrlParser: true});
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
