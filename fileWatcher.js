@@ -78,7 +78,7 @@ function htmlInit() {
             name: folder,
         }, function (err) {
             // 如果是重复的文件夹
-            if (err.code!=  undefined  &&  err.code== 11000) console.error(err);
+            if (err && err.code!=  undefined  &&  err.code== 11000) console.error(err);
             else if(err) throw err;
         })
     }
