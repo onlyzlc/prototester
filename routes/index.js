@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
   
   console.log('到首页');
-  
+  res.render('index');
 });
 
 module.exports = router;
