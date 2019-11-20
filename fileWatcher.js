@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Ptt = require('./models/model_ptt');
 
-const rootDir = path.join(__dirname, '/public/prototypes');
+const rootDir = path.join(__dirname, '/public/protos');
 var timer;
 var watcher;
 

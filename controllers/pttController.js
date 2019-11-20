@@ -44,7 +44,7 @@ exports.getNewTaskPage = function (req, res) {
         htmlList: [],
         title: req.ptt.name + '的新任务'
     };
-    let folderPath = path.join(__dirname, `../public/prototypes/${req.ptt.name}`);
+    let folderPath = path.join(__dirname, `../public/protos/${req.ptt.name}`);
     fs.readdir(folderPath, function (err, result) {
         const reg = /index\.html|start_c_1\.html|start_g_0\.html|start\.html/;
         let htmls = result.filter(function (fileName) {

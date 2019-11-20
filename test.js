@@ -19,7 +19,7 @@ module.exports = function () {
                     }
                 },
                 {
-                    "url": "/prototypes/p1/ptts.html",
+                    "url": "/protos/p1/ptts.html",
                     "pageTitle": "ptts",
                     "eventType": "click",
                     "target": {
