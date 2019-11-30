@@ -1,11 +1,12 @@
 $(document).ready(function () {
-    const Url = location.pathname;
-    const PageTitle = document.title;
-    const Ptt = Url.split('/')[2];
-    var task;
-    var testId;
-    let timeout = 3000;
-
+    const HOST = location.host;
+    const PATHNAME = location.pathname;
+    const PAGETITLE = document.title;
+    const PTTURL = HOST+PATHNAME.substring(0,PATHNAME.lastIndexOf('/'));
+    const PAGEURL = HOST+PATHNAME;
+    var task,testId;
+    let cycleOfSave = 3000;
+    
     // url参数
     let query = window.location.search.substring(1);
     let ps = query.split('&');
@@ -14,13 +15,13 @@ $(document).ready(function () {
         if (i.split('=')[0] == 'setting') 
             settingMode = i.split('=')[1];
     }
-
+    
     if (settingMode) {
         // 设置模式即时保存记录
-        timeout = 0;
-        // 设置模式下直接开启监听
+        cycleOfSave = 0;
+        // 设置模式下直接开启监听，数据保存到本地，然后由父页面-newTask页提交。
         monitor();
-    } else if ($.cookie('task')) {
+    }else if ($.cookie('task')) {
         // 检查任务是否存在
         task = JSON.parse($.cookie('task'))
         testId = $.cookie('testId')
@@ -37,16 +38,15 @@ $(document).ready(function () {
             // 询问是否开始任务
             if (window.confirm(`您已完成第${task.index}个任务.\n 下一个任务:${task.name}`)) {
                 // 发送请求, 创建测试实例
-                $.post(`/userTests?ptt=${Ptt}`, function (data, textStatus, jqXHR) {
+                $.post(`/userTests?ptt=${PTTURL}`, function (data, textStatus, jqXHR) {
                     // 返回后, 隐藏对话框,启用监控程序
                     monitor();
                     console.log('开始测试:'+$.cookie('testId'));
                 })
             }
         }
-    }
-    // 任务不存在, 询问用户是否接受测试, 若接受则向服务器发送测试请求.
-    else if (window.confirm('您是否愿意为我们的原型进行一项简短的测试?')) {
+    }else {
+        // 任务不存在, 询问用户是否接受测试, 若接受则向服务器发送测试请求.
         // 服务器在Cookie中设置测试任务
         // 客户端接收到返回消息后, 跳转到第一个测试任务页
         getNextTask();
@@ -80,8 +80,8 @@ $(document).ready(function () {
 
     var timer;
     var Logs = [{
-        url: Url,
-        pageTitle: PageTitle,
+        url: PAGEURL,
+        pageTitle: PAGETITLE,
         // screen: {
         //     width: $(window).width(),
         //     height: $(window).height()
@@ -102,8 +102,8 @@ $(document).ready(function () {
                 domId: "",
                 nodeName: "",
             },
-            url: Url,
-            pageTitle: PageTitle,
+            url: PAGEURL,
+            pageTitle: PAGETITLE,
             time : Date.now(),
         }
         
@@ -115,7 +115,7 @@ $(document).ready(function () {
                     log.target.domId = e.target.id;
                     log.target.innerText = e.target.innerHTML.trim();
                 }
-                Logs.push(log)
+                Logs.push(log);
                 break;
             }
             case "focus":
@@ -147,18 +147,20 @@ $(document).ready(function () {
             // 请求下一个任务
             getNextTask();
         } else {
-            timer = setTimeout(saveLog, timeout);
+            timer = setTimeout(saveLog, cycleOfSave);
         }
     };
 
     function saveLog(async = true,isCompleted = false) {
         if (settingMode) {
-            // 设置模式下点击保存时再保存数据,保存在任务设置页面中(父页面)
+            // 设置模式下点击保存时暂存数据, 由父页面-任务设置页提交存储器中的数据。
             localStorage.setItem('Logs', JSON.stringify(Logs));
         } else {
+            // 测试模式下，触发事件后直接提交数据
+            // 同步模式用于页面关闭事件，以放置页面关闭数据丢失
             $.ajax({
                 type: "patch",
-                url: `/userTests?ptt=${Ptt}`,
+                url: `/userTests?ptt=${PTTURL}`,
                 data: {
                     log: Logs,
                     isCompleted: isCompleted
@@ -176,15 +178,21 @@ $(document).ready(function () {
 
     function getNextTask() {
         // url参数表示用户是否完成当前测试任务全部步骤;
-        $.get(`/userTests?ptt=${Ptt}`,
+        $.get(`/userTests?ptt=${PTTURL}`,
             function (data, textStatus, jqXHR) {
                 if (data == 'finished') {
                     // 如果服务器返回任务全部完成的信号,则跳转到感谢页
-                    window.location.pathname = `/thanks`;
+                    window.location = `/thanks`;
+                }else if(data == 'init'){
+                    if(window.confirm('该原型尚未设置测试任务，是否现在前往设置')){
+                        window.location = `../../ptts?ptt=${PTTURL}`
+                        // window.location = `http://proto.zhoulongchun.com/ptts?ptt=${PTTURL}`
+                    }
                 } else {
                     // 否则跳转到下一个任务页;
+                    // 服务器将设置一个任务对象到Cookie中
                     task = JSON.parse($.cookie('task'));
-                    window.location.pathname = task.url;
+                    window.location = task.url;
                 }
             },
         );

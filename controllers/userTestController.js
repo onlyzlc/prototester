@@ -27,7 +27,8 @@ exports.getNextTask = function (req, res) {
 
     Ptt.findOne().byName(ptt).exec(function (err, result) {
         if (err) throw err;
-        if (result.tasks.length) {
+        if (result && result.tasks.length) {
+            // 如果原型及其任务存在
             // 如果Cookie中有任务, 则选择查找并选择下一个任务
             // 如果任务已经完全完成,则清空Cookie
             if (req.cookies.task) {
@@ -74,7 +75,7 @@ exports.getNextTask = function (req, res) {
            
         } else {
             console.log('该原型还未添加任务.');
-            res.send(200);
+            res.send('init');
         }
     })
 
@@ -100,9 +101,6 @@ exports.post = function (req, res) {
         ++doc.userTestCount;
         doc.save();
     })
-    
-
-    
 }
 
 exports.patch = function (req, res) {

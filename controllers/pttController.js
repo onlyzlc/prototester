@@ -5,16 +5,34 @@ var path = require('path');
 
 // 获取所有原型
 exports.getAllPtt = function (req, res) {
-    Ptt.find({}, function (err, docs) {
-        if (err) throw err;
-        // 渲染原型列表
-        let viewData = {
-            title: '我的原型',
-            ptts: docs,
-            url: ''
-        }
-        res.render('ptts', viewData)
-    })
+    if(req.query.ptt){
+        // 如果/ptts 链接后跟了一个查询条件，则意味着该原型不存在，需要创建
+        Ptt.create({
+            name: req.query.ptt,
+            pttId: Math.trunc(Math.random() * 100000);
+        },function(err){
+            // 如果是重复的文件夹
+            if (err && err.code!=  undefined  &&  err.code== 11000) console.error(err);
+            else if(err) throw err;
+        })
+    }else{
+        Ptt.find({}, function (err, docs) {
+            if (err) throw err;
+            if (docs.length){
+                // 渲染原型列表
+                let viewData = {
+                    title: '我的原型',
+                    ptts: docs,
+                    url: ''
+                }
+                res.render('ptts', viewData)
+            }else{
+                // 显示上传原型文件夹的方法，或添加插件的方法
+                
+            
+            }
+        })
+    }
 }
 
 // 获取当前原型(只要是/:ptt/的路径都可获取到)
