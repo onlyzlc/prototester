@@ -25,7 +25,8 @@ ax.interceptors.response.use(function (response) {
   if (error.response.status === 511) {
     sessionStorage.clear('user')
     sessionStorage.setItem('urlReq', error.config.url)
-    router.push('/login')
+    Store.clear()
+    router.push({ name: 'Login' })
   }
   return Promise.reject(error)
 })

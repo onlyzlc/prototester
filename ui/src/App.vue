@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <div id="nav" v-if='Store.state.isVerified'>
+    <div
+      v-if="Store.state.isVerified"
+      id="nav"
+    >
       <div class="links">
         <router-link to="/tasks">
           测试任务
@@ -11,9 +14,10 @@
       </div>
       <div class="right">
         <div>
-          {{ userEmail }} |
+          {{ Store.state.email }} |
           <button
-            @click="visibility.logoutConfirm = true">
+            @click="visibility.logoutConfirm = true"
+          >
             退出
           </button>
         </div>
@@ -21,11 +25,11 @@
     </div>
     <router-view />
     <ln-dialog
-      title = "确定注销吗"
-      :vis = 'visibility.logoutConfirm'
-      @click_primary = 'logout'
-      @click_secondary = 'visibility.logoutConfirm = false'
-      ></ln-dialog>
+      title="确定注销吗"
+      :vis="visibility.logoutConfirm"
+      @click_primary="logout"
+      @click_secondary="visibility.logoutConfirm = false"
+    />
   </div>
 </template>
 
@@ -37,11 +41,12 @@ export default {
   },
   data () {
     return {
-      userEmail: this.Store.state.email,
       visibility: {
         logoutConfirm: false
       }
     }
+  },
+  computed: {
   },
   methods: {
     // 注销

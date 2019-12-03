@@ -16,7 +16,7 @@ exports.regist = function (req, res) {
     user.save(function (err, result) {
         if (err) {
             if (err.code === 11000) {
-                res.status(403).end("EmailRepeat");
+                res.status(200).json({ret_code: 1, ret_msg: "邮箱已存在"})
                 return;
             } else {
                 throw err;
@@ -26,10 +26,10 @@ exports.regist = function (req, res) {
             req.session.regenerate(function (err) {
                 if (err) {
                     // todo 登录失败提示；
-                    return res.json({ret_code: 2, ret_msg: "登录失败" })
+                    return res.json({ret_code: 2, ret_msg: "注册成功,登录失败" })
                 }
                 req.session.loginUser = result.id;
-                res.status(200).json({ret_code: 0, ret_msg: "注册成功"});
+                res.status(201).json({ret_code: 0, ret_msg: "注册成功"});
                 // res.redirect(302, '/tasks');
             })
         }
@@ -48,17 +48,17 @@ exports.login = function (req, res) {
                 req.session.regenerate(function (err) {
                     if (err) {
                         // todo 登录失败提示；
-                        return res.json({ret_code: 2, ret_msg: "登录失败" })
+                        return res.json({ret_code: 3, ret_msg: "登录失败,服务器错误" })
                     }
                     req.session.loginUser = user.id;
-                    res.status(200).json({ret_code: 0, ret_msg: "登录成功"});
+                    res.status(201).json({ret_code: 0, ret_msg: "登录成功"});
                     // res.redirect(302, '/tasks');
                 })
             } else {
-                res.json({ ret_code: 1, ret_msg: "用户名或密码错误" })
+                res.status(200).json({ ret_code: 1, ret_msg: "用户名或密码错误" })
             }
         } else {
-            res.send("用户不存在");
+            res.status(200).json({ret_code: 2, ret_msg: "用户不存在" });
         }
     })
 }

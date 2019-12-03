@@ -23,6 +23,9 @@
           required
         >
       </div>
+      <div v-if="errorTip" class="errorTip">
+        {{ errorTip }}
+      </div>
       <button type="submit">
         登录
       </button>
@@ -48,7 +51,8 @@ export default {
         email: '',
         password: '',
         isVerified: false
-      }
+      },
+      errorTip: ''
     }
   },
   methods: {
@@ -57,14 +61,28 @@ export default {
         .then(res => this.loginSecuess(res))
     },
     loginSecuess: function (res) {
-      if (res.data.ret_code === 0) {
-        // sessionStorage.setItem('user', this.user.email)
-        // 返回登录前的状态
-        // const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
-        // 更新登录状态
-        this.user.isVerified = true
-        this.Store.updateUser(this.user)
-        this.$router.push({ name: this.to })
+      switch (res.data.ret_code) {
+        // 登录成功
+        case 0: {
+          this.user.isVerified = true
+          this.Store.updateUser(this.user)
+          this.$router.push({ name: this.to })
+          break
+        }
+        // 登录失败: 用户名或密码错误
+        case 1: {
+          this.errorTip = '用户名或密码错误'
+          break
+        }
+        // 登录失败: 用户不存在
+        case 2: {
+          this.errorTip = '用户不存在'
+          break
+        }
+        default: {
+          this.errorTip = '系统错误, 请稍后再试'
+          break
+        }
       }
     }
   }

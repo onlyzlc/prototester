@@ -20,10 +20,16 @@
         </div>
         <div class="right">
           <slot name="foot_right">
-            <button class="primary" @click="$emit('click_primary')">
+            <button
+              class="primary"
+              @click="$emit('click_primary')"
+            >
               {{ btnPrimary }}
             </button>
-            <button class="secondary" @click="$emit('click_secondary')">
+            <button
+              class="secondary"
+              @click="$emit('click_secondary')"
+            >
               {{ btnSecondary }}
             </button>
           </slot>

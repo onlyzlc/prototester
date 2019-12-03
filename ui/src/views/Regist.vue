@@ -1,13 +1,14 @@
 <template>
   <main>
-    <form @submit.prevent="submit">
+    <form
+      @submit.prevent="submit"
+    >
       <div>
         <label for="email">邮箱</label>
         <input
           id="email"
           v-model="user.email"
           type="email"
-          autocomplete="username"
           name="email"
           required
         >
@@ -30,7 +31,9 @@
           required
         >
       </div>
-      <div v-if='errorTip'>{{ errorTip }}</div>
+      <div v-if="errorTip" class="errorTip">
+        {{ errorTip }}
+      </div>
       <button type="submit">
         注册
       </button>
@@ -43,6 +46,7 @@
 </template>
 
 <script>
+// const emails = new Set()
 export default {
   props: {
     to: {
@@ -57,26 +61,49 @@ export default {
         password: '',
         passwordConfirm: '',
         isVerified: false
-      }
+      },
+      existingEmail: []
     }
   },
   computed: {
     errorTip: function () {
-      if (this.password !== this.passwordConfirm) return '两次输入密码不一致'
-      else return ''
+      if (this.existingEmail.includes(this.user.email)) return '此用户已存在'
+      else if (this.user.password !== '' &&
+        this.user.passwordConfirm !== '' &&
+        this.user.password !== this.user.passwordConfirm
+      ) return '两次输入密码不一致'
+      else return false
     }
   },
   methods: {
-    submit: function () {
+    submit () {
+      if (this.errorTip) return false
       this.$http.post('/regist', this.user)
-        .then(res => this.registSecuess(res))
+        .then(res => this.handle(res))
+        .catch(res => this.registFailed(res))
     },
-    registSecuess: function (res) {
-      if (res.data.ret_code === 0) {
-        this.user.isVerified = true
-        this.Store.updateUser(this.user)
-        this.$router.push({ name: this.to })
+    handle (res) {
+      switch (res.data.ret_code) {
+        // 注册成功,跳转到原页面
+        case 0: {
+          this.user.isVerified = true
+          this.Store.updateUser(this.user)
+          this.$router.push({ name: this.to })
+          break
+        }
+        // 注册失败: 邮箱名重复
+        case 1: {
+          this.existingEmail.push(this.user.email)
+          break
+        }
+        // 注册成功: 登录失败, 跳转到登录页面
+        case 2: {
+          this.$router.push({ name: 'Login' })
+          break
+        }
       }
+    },
+    registFailed (res) {
     }
   }
 }
