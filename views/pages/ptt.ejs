@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title><%= ptt.name %></title>
     <%- include('../parts/head') %>
     <script src="/javascripts/pttMain.js" defer></script>
   </head>
   <body>
     <main>
-      <h1><%= title %></h1>
-      <button  ><a href="/ptts/<%=ptt.name%>/newtask">新增测试任务</a></button>
+      <h1><%= ptt.name %></h1>
+      <button><a href="<%= ptt.url %>?setting=true">新增测试任务</a></button>
       
       <ul>
-          <% tasks.forEach(function(item){ %>
+          <% ptt.tasks.forEach(function(item){ %>
           <li>
-            <a href="/ptts/<%=ptt.name%>/<%= item.__index+1 %>" > <%= item.name%>  </a>
+            <a href="/ptts/<%=ptt.pttId%>/<%= item.__index+1 %>" > <%= item.name%>  </a>
           </li>
           <%})%>
       </ul>

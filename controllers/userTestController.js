@@ -23,9 +23,9 @@ function setNextTask(task,index,total,res){
 // 查询下一个任务
 exports.getNextTask = function (req, res) {
     console.log('导航到:获取下一个任务');
-    var ptt = req.query.ptt;
+    var ptturl = req.query.ptturl;
 
-    Ptt.findOne().byName(ptt).exec(function (err, result) {
+    Ptt.findOne().byUrl(ptturl).exec(function (err, result) {
         if (err) throw err;
         if (result && result.tasks.length) {
             // 如果原型及其任务存在
@@ -95,8 +95,8 @@ exports.post = function (req, res) {
     })
 
     // 更新原型的测试次数,累加1
-    var ptt = req.query.ptt;
-    Ptt.findOne().byName(ptt).exec(function(err,doc){
+    var ptturl = req.query.ptturl;
+    Ptt.findOne().byUrl(ptturl).exec(function(err,doc){
         if(err) throw err;
         ++doc.userTestCount;
         doc.save();

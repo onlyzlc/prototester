@@ -4,13 +4,14 @@ var pttController = require("../controllers/pttController");
 
 
 router.get('/', pttController.getAllPtt);
-router.all('/:ptt*', pttController.getPtt);
-router.get('/:ptt',pttController.getPttPage);
-router.get('/:ptt/newtask',pttController.getNewTaskPage);
-router.post('/:ptt/newtask',pttController.createTask);
-router.get('/:ptt/:taskIndex',pttController.getTaskPage);
-router.get('/:ptt/:taskIndex/data',pttController.getTaskData);
-router.delete('/:ptt/:taskIndex',pttController.deleteTask);
+router.post('/', pttController.createPtt);
+router.all('/:pttId*', pttController.getPtt);
+router.get('/:pttId',pttController.getPttPage);
+router.get('/:pttId/newtask',pttController.getNewTaskPage);
+router.post('/:pttId/newtask',pttController.createTask);
+router.get('/:pttId/:taskIndex',pttController.getTaskPage);
+router.get('/:pttId/:taskIndex/data',pttController.getTaskData);
+router.delete('/:pttId/:taskIndex',pttController.deleteTask);
 
 
 module.exports = router;

@@ -14,7 +14,7 @@
         <ul>
             <% ptts.forEach(function(ptt){ %>
                 <li class="card">
-                    <a href="/ptts/<%= ptt.name %>" class="titleLink"><%= ptt.name%></a>
+                    <a href="/ptts/<%= ptt.pttId %>" class="titleLink"><%= ptt.name%></a>
                     <p><span class="count" ><%= ptt.userTestCount%></span>人参与测试</p>
                     <a class="linkButton">复制链接</a>
                 </li>

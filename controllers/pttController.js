@@ -5,80 +5,115 @@ var path = require('path');
 
 // 获取所有原型
 exports.getAllPtt = function (req, res) {
-    if(req.query.ptt){
-        // 如果/ptts 链接后跟了一个查询条件，则意味着该原型不存在，需要创建
+    Ptt.find({}, function (err, docs) {
+        if (err) throw err;
+        if (docs.length){
+            // 渲染原型列表
+            let viewData = {
+                title: '我的原型',
+                ptts: docs,
+                url: ''
+            }
+            res.render('ptts', viewData)
+        }else{
+            // 显示上传原型文件夹的方法，或添加插件的方法
+            res.end();
+        }
+    })
+}
+
+exports.createPtt = function (req,res,next) {
+    let postData = req.body;
+    function create() {
         Ptt.create({
-            name: req.query.ptt,
-            pttId: Math.trunc(Math.random() * 100000);
-        },function(err){
-            // 如果是重复的文件夹
-            if (err && err.code!=  undefined  &&  err.code== 11000) console.error(err);
-            else if(err) throw err;
-        })
-    }else{
-        Ptt.find({}, function (err, docs) {
-            if (err) throw err;
-            if (docs.length){
-                // 渲染原型列表
-                let viewData = {
-                    title: '我的原型',
-                    ptts: docs,
-                    url: ''
+            name: postData.ptturl ,
+            url: postData.ptturl,
+            pttId: Math.trunc(Math.random() * 99999)+10000
+        },function(err,newPtt){
+            // 万一是重复ID,则重新创建
+            if (err && err.code!=  undefined  &&  err.code== 11000) {
+                if(err.keyPattern.pttId){
+                    // 如果ID重复则重新创建
+                    create();
+                }else if(err.keyPattern.name || err.keyPattern.url){
+                    // 如果是名称或URL重复
+                    console.log('原型已存在');
+                    // 查询返回该原型的ID给前端
+                    Ptt.findOne({name: postData.ptturl}).exec(function (err, ptt) {
+                        res.status(201).end(ptt.pttId);
+                    })
                 }
-                res.render('ptts', viewData)
+            }else if(err) {
+                // 其他错误
+                res.status(404).end();
             }else{
-                // 显示上传原型文件夹的方法，或添加插件的方法
-                
-            
+                // 创建成功
+                console.log('已创建一条原型记录'+newPtt.pttId);
+                res.status(201).end(newPtt.pttId);
             }
         })
     }
+    create();
 }
 
 // 获取当前原型(只要是/:ptt/的路径都可获取到)
 exports.getPtt = function (req, res, next) {
     console.log('导航到:获取当前原型');
-    if (req.params.ptt == undefined) throw 'urlError';
-    Ptt.findOne().byName(req.params.ptt).exec(function (err, doc) {
+    if (req.params.pttId == undefined) throw 'urlError';
+    Ptt.findOne().byPttId(req.params.pttId).exec(function (err, doc) {
         if (err) throw err;
-        req.ptt = doc;
-        next();
+        if(doc === null) {
+            // 该原型不存在
+            console.log(req.params.pttId + '原型不存在');
+            res.send(404);
+            return;
+        }else{
+            req.ptt = doc;
+            next();
+        }
     })
 }
 
 exports.getPttPage = function (req, res) {
-
     let viewData = {
-        title: req.ptt.name,
         ptt: req.ptt,
-        tasks: req.ptt.tasks,
     };
     res.render('ptt', viewData);
 }
 
+// 废弃
 exports.getNewTaskPage = function (req, res) {
-    // 获取原型的所有页面链接
+    
     let viewData = {
         htmlList: [],
         title: req.ptt.name + '的新任务'
     };
-    let folderPath = path.join(__dirname, `../public/protos/${req.ptt.name}`);
-    fs.readdir(folderPath, function (err, result) {
-        const reg = /index\.html|start_c_1\.html|start_g_0\.html|start\.html/;
-        let htmls = result.filter(function (fileName) {
-            return fileName.endsWith('.html') && !reg.test(fileName);
-        });
 
-        for (const pageName of htmls) {
-            viewData.htmlList.push({
-                name: pageName,
-                url: `/prototypes/${req.ptt.name}/${pageName}?setting=true`
-            })
-        }
-        res.render('newTask', viewData);
-    })
+    if(req.ptt.url.includes("axshare.com")){
+        
 
+    }else{
+        // 在本地原型文件夹中获取原型的所有页面链接
+        // 适用于本地原型网站
+        let folderPath = path.join(__dirname, `../public/protos/${req.ptt.name}`);
+        fs.readdir(folderPath, function (err, result) {
+            const reg = /index\.html|start_c_1\.html|start_g_0\.html|start\.html/;
+            let htmls = result.filter(function (fileName) {
+                return fileName.endsWith('.html') && !reg.test(fileName);
+            });
+
+            for (const pageName of htmls) {
+                viewData.htmlList.push({
+                    name: pageName,
+                    url: `/prototypes/${req.ptt.name}/${pageName}?setting=true`
+                })
+            }
+            res.render('newTask', viewData);
+        })
+    }
 }
+
+
 
 exports.getPttHtmls = function (req, res) {
 

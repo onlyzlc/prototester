@@ -22,7 +22,13 @@ var PttSchema = new Schema({
         unique: true,
         required: true,
     },
-    url: String,
+    url: {
+        type: String,
+        trim: true,
+        index: true,
+        unique: true,
+        required: true,
+    },
     folder: String,
     owner: [String],
     tasks: [TaskSchema],
@@ -35,6 +41,14 @@ var PttSchema = new Schema({
 PttSchema.query.byName = function(name){
     // 不区分大小写的查询
     return this.where({ name: new RegExp(name, 'i') });
+}
+PttSchema.query.byUrl = function(url){
+    // 不区分大小写的查询
+    return this.where({ url: new RegExp(url, 'i') });
+}
+PttSchema.query.byPttId = function(id){
+    // 不区分大小写的查询
+    return this.where({ pttId: id });
 }
 
 PttSchema.query.nextTask = function (currentTaskId) {  
