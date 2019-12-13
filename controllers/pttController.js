@@ -122,20 +122,43 @@ exports.getPttHtmls = function (req, res) {
 exports.createTask = function (req, res) {
 
     // 同名校验
-    let verify = req.ptt.tasks.some(function (element) {
-        return element.name === req.body.name;
-    });
-    if (verify) {
-        res.status(400).send('任务名称重复');
-        return;
-    }
+    // let verify = req.ptt.tasks.some(function (element) {
+    //     return element.name === req.body.name;
+    // });
+    // if (verify) {
+    //     res.status(400).send('任务名称重复');
+    //     return;
+    // }
 
-    req.ptt.tasks.push(req.body);
-    req.ptt.save(function (err, result) {
-        if (err) throw err;
-        console.log('任务保存成功');
-        res.status(201).send();
-    });
+    // req.ptt.tasks.push(req.body);
+    // req.ptt.save(function (err, result) {
+    //     if (err) throw err;
+    //     console.log('任务保存成功');
+    //     res.status(201).send();
+    // });
+    req.ptt.tasks.push({});
+    req.ptt.save(function(err,result){
+        if(err) console.error(err);
+        let taskIndex = result.tasks.length;
+        res.status(201).send(taskIndex.toString());
+    })
+}
+
+exports.updateTask = function (req,res) {
+    // if()
+    // todo
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 exports.deleteTask = function (req, res) {

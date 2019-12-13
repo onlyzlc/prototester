@@ -5,7 +5,14 @@ $(function () {
 
     $('#addTask').click(function (e) { 
         e.preventDefault();
-        location.pathname += (location.pathname.endsWith('/'))? "newtask":'/newtask';
+        // location.pathname += (location.pathname.endsWith('/'))? "newtask":'/newtask';
+        // 创建任务，获取任务序号
+        let pttId = e.target.getAttribute('data-pttId'),
+        pttUrl =  e.target.getAttribute('data-pttUrl');
+        
+        $.post(`/ptts/${pttId}/task`,function (data) {  
+            window.location = `${pttUrl}?setting=true&pttId=${pttId}&taskIndex=${data}`;
+        })
     });
 
     $('#deleteTask').click(function(e){

@@ -8,7 +8,7 @@
   <body>
     <main>
       <h1><%= ptt.name %></h1>
-      <button><a href="<%= ptt.url %>?setting=true">新增测试任务</a></button>
+      <button id='addTask' data-pttId="<%=ptt.pttId%>" data-pttUrl="<%= ptt.url %>">新增测试任务</button>
       
       <ul>
           <% ptt.tasks.forEach(function(item){ %>

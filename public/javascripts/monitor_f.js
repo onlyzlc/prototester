@@ -4,18 +4,46 @@ $(document).ready(function () {
     const PAGETITLE = document.title;
     const PTTURL = location.href.substring(0,location.href.lastIndexOf('/'));
     const PAGEURL = HOST+PATHNAME;
+
+    // 主机地址
+    const RECEIVER = 'http://localhost:8081';
+
     var task,testId;
     var m_status = false;
     let cycleOfSave = 3000;
     
     // url参数
-    let query = window.parent.location.search.substring(1);
-    let ps = query.split('&');
-    let settingMode;
-    for (const i of ps) {
-        if (i.split('=')[0] === 'setting') 
-            settingMode = i.split('=')[1];
+    // let query = window.parent.location.search.substring(1);
+    // let ps = query.split('&');
+    // let settingMode;
+    // for (const i of ps) {
+    //     if (i.split('=')[0] === 'setting') {
+    //         settingMode = i.split('=')[1];
+    //     }
+    // }
+
+    function queryString(getObj,str){
+        var string = (str!== undefined) ? str : window.location.search;
+        var result = string.match(new RegExp("[^\?\&]+=[^\?\&]+","g"));
+        if(result == null){
+            result = '';
+        }else if(getObj){
+            var params = {};
+            for(var i = 0; i < result.length; i++){
+                var res = result[i].split('=');
+                var key = res[0],
+                    value = res[1];
+                params[key] = value;
+            }
+            result = params;
+        }
+        return result;
     }
+
+    let urlParams = queryString(true,window.parent.location.search);
+    let settingMode = urlParams.setting;
+    let pttId = urlParams.pttId;
+    let taskIndex = urlParams.taskIndex;
     
     if (settingMode) {
         console.log('进入设置模式');
@@ -36,8 +64,9 @@ $(document).ready(function () {
                     // saveLog(false,true);
                     console.log("已保存任务");
                 }else{
-                    monitor();
-                    $(e.target).text('停止录制');
+                    
+                    console.log("开始记录任务");
+                    setTimeout(monitor, 0);
                 }
             })
         );
@@ -129,7 +158,7 @@ $(document).ready(function () {
         time: Date.now(),
     }]
 
-    // 事件记录
+    // 事件记录和发送
     function record(e) {
         // e.preventDefault();
         clearTimeout(timer);
@@ -179,54 +208,37 @@ $(document).ready(function () {
             log.target.nodeName == task.end.target.nodeName &&
             log.target.innerText == task.end.target.innerText
         ) {
-            // 停止监听,立即发送日志
+            // 如果是最后一步，则停止监听,立即发送日志
             monitorOff();
             saveLog(false,true);
             console.log("当前任务已完成");
             // 请求下一个任务
             getNextTask();
         } else {
+            // 如果不是最后一步，则继续监听并等待提交数据
             timer = setTimeout(saveLog, cycleOfSave);
         }
     };
 
     function saveLog(async = true,isCompleted = false) {
-        if (settingMode) {
-            console.log('记录任务步骤');
-            $.ajax({
-                type: "patch",
-                url: `/ptt?ptturl=${PTTURL}`,
-                data: {
-                    log: Logs,
-                    isCompleted: isCompleted
-                },
-                async: async,
-                // dataType: "json",
-                success: function (response) {
-                    console.log("结果: " + response);
-                    Logs = [];
-                }
-            });
-            console.log('已发送日志,是否异步:' + async);
-        } else {
-            // 测试模式下，触发事件后直接提交数据
-            // 同步模式用于页面关闭事件，以放置页面关闭数据丢失
-            $.ajax({
-                type: "patch",
-                url: `/userTests?ptturl=${PTTURL}`,
-                data: {
-                    log: Logs,
-                    isCompleted: isCompleted
-                },
-                async: async,
-                // dataType: "json",
-                success: function (response) {
-                    console.log("结果: " + response);
-                    Logs = [];
-                }
-            });
-            console.log('已发送日志,是否异步:' + async);
-        }
+        // 根据模式选择处理接口
+        let location = settingMode?  `/ptts/${pttId}/${taskIndex}` : `/userTests?ptturl=${PTTURL}`;
+        // 同步模式用于页面关闭事件，以放置页面关闭数据丢失
+        $.ajax({
+            type: "patch",
+            url: location,
+            data: {
+                log: Logs,
+                isCompleted: isCompleted
+            },
+            async: async,
+            // dataType: "json",
+            success: function (response) {
+                console.log("结果: " + response);
+                Logs = [];
+            }
+        });
+        console.log('已发送日志,是否异步:' + async);
     }
 
     function getNextTask() {
@@ -243,13 +255,13 @@ $(document).ready(function () {
 
                         // 通过参数先查询原型是否存在，如果不存在，则服务器先创建原型
                         // 然后待服务器返回一个原型设置的页面链接
-                        $.post('http://localhost:8081/ptts', 
+                        $.post(`${RECEIVER}/ptts`, 
                             {
                                 ptturl:`${PTTURL}`
                             },
                             function (data,status) {
                                 console.log('已创建一条原型记录'+data);
-                                window.parent.location = `http://localhost:8081/ptts/${data}`;
+                                window.parent.location = `${RECEIVER}/ptts/${data}`;
                           })
                         // todo 将设置链接指向生产环境
                         // window.location = `http://proto.zhoulongchun.com/ptts?ptturl=${PTTURL}`
