@@ -15,8 +15,8 @@ var insertHead = "\n\t\t<!-- 以下是原型自动测试器插入的引用-->\n"
 insertHead += "\t\t<meta http-equiv='Cache-Control' content='no-cache'/>\n";
 insertHead += "\t\t<meta http-equiv='Pragma' content='no-cache'/>\n";
 insertHead += "\t\t<meta http-equiv='Expires' content='-1'/>\n";
-insertHead += "\t\t<script src='../../javascripts/jquery.cookie.js' ></script>\n";
-insertHead += "\t\t<script src='../../javascripts/monitor_f.js' defer></script>\n";
+insertHead += "\t\t<script src='http://localhost:8081/javascripts/jquery.cookie.js' ></script>\n";
+insertHead += "\t\t<script src='http://localhost:8081/javascripts/monitor_f.js' defer></script>\n";
 insertHead += "\t</head>\n";
 
 // html处理程序

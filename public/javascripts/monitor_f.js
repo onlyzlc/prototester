@@ -3,24 +3,36 @@ $(document).ready(function () {
     const PATHNAME = location.pathname;
     const PAGETITLE = document.title;
     const PTTURL = location.href.substring(0,location.href.lastIndexOf('/'));
-    const PAGEURL = HOST+PATHNAME;
+    const PAGEURL = location.href;
 
+    // 加入控制按钮栏
+    $('body').append($('<aside></aside>').css({
+        'position': 'fixed',
+        'top': '40px',
+        'right': '20px'
+    }))
+    
     // 主机地址
     const RECEIVER = 'http://localhost:8081';
 
+    // 测试模式使用的全局变量
     var task,testId;
-    var m_status = false;
-    let cycleOfSave = 3000;
-    
-    // url参数
-    // let query = window.parent.location.search.substring(1);
-    // let ps = query.split('&');
-    // let settingMode;
-    // for (const i of ps) {
-    //     if (i.split('=')[0] === 'setting') {
-    //         settingMode = i.split('=')[1];
-    //     }
-    // }
+
+    // 定时发送周期
+    let cycleOfSave = 1000;
+
+
+    function getParentUrl() { 
+        var url = null;
+        if (parent !== window) { 
+            try {
+                url = parent.location.href; 
+            }catch (e) { 
+                url = document.referrer; 
+            } 
+        }
+        return url;
+    }    
 
     function queryString(getObj,str){
         var string = (str!== undefined) ? str : window.location.search;
@@ -40,39 +52,162 @@ $(document).ready(function () {
         return result;
     }
 
-    let urlParams = queryString(true,window.parent.location.search);
-    let settingMode = urlParams.setting;
-    let pttId = urlParams.pttId;
-    let taskIndex = urlParams.taskIndex;
-    
-    if (settingMode) {
+
+    // 设置模式使用的全局变量
+    // 需随时存入Cookie
+    let settingMode = $.cookie("settingMode");
+
+    // URL上带有设置信息时，表示开始一个新的任务设置
+    // 将URL参数中的原型、任务号等存入Cookie，然后清除URL参数
+    if(window.parent !== window){
+        let url;
+        try {
+            let urlParams = queryString(true,window.parent.location.search);
+            if(urlParams.setting){
+                // 将模式信息设置到 Cookie
+                $.cookie('settingMode',urlParams.setting);
+                $.cookie('pttId',urlParams.pttId);
+                $.cookie('taskIndex',urlParams.taskIndex);
+                // 清除URL中的模式信息，以避免重复判断
+                window.parent.location.search = '';
+                // 标记当前任务设置状态为初始
+                $.cookie('m_status', 'init');
+                settingMode = true;
+            }
+        } catch (error) {
+            url = document.referrer;
+            console.log(url);
+        }
+    }
+
+    let pttId,taskIndex,m_status;
+    if(settingMode){
+        // 【进入设置模式】
+        pttId = $.cookie('pttId');
+        taskIndex = $.cookie('taskIndex');
+        m_status = $.cookie('m_status');
         console.log('进入设置模式');
 
-        // 开始/结束任务录制按钮，由管理者控制
-        $('body').append(
-            $('<button></button>')
-            .text('开始录制')
-            .css({
-                'position': 'fixed',
-                'top': '40px',
-                'right': '20px'
-            })
-            .click(function(e){
-                if(m_status){
-                    monitorOff();
-                    // 提交数据
-                    // saveLog(false,true);
-                    console.log("已保存任务");
-                }else{
-                    
+        // 页面中插入设置控制按钮，由管理者控制
+        // 载入时根据状态显示控制按钮名称
+        let btnText;
+        switch (m_status) {
+            case 'init':{
+                btnText = '开始录制';
+            }
+            case 'recoding':{
+                btnText = '暂停录制';
+                console.log("开始记录任务");
+                monitor();
+            }
+            case 'pause':{
+                btnText = '继续录制';
+                monitorOff();
+            }
+            case 'init':
+            case 'recoding': 
+            case 'pause':{
+                // 开始/暂停录制按钮
+                let btn_toggle = $('<button></button>')
+                    .click(function (e) {
+                        taskRecToggle(e)
+                    })
+                    .attr('id','btn_toggle')
+                    .text(btnText)
+                let btn_finish = $('<button></button>')
+                                    .attr('id','btn_finish')
+                                    .text('完成录制')
+                                    .click(taskRecOver);
+
+                $('aside').append(btn_toggle,btn_finish );
+                break;
+            }
+            case 'finish':{
+                monitorOff();
+                break;
+            }
+        }
+        // 方法：录制/暂停
+        function taskRecToggle(e) {
+            switch (m_status) {
+                case 'init':
+                case 'pause':
+                    {
+                    // 未开始时点击
+                    m_status = 'recoding';
+                    $.cookie('m_status',m_status);
                     console.log("开始记录任务");
-                    setTimeout(monitor, 0);
+                    setTimeout(monitor, 100);
+                    $(e.target).text('暂停录制');
+                    break;
+                }                        
+                case 'recoding':{
+                    // 录制中时点击
+                    m_status = 'pause';
+                    $.cookie('m_status',m_status);
+                    console.log("暂停记录任务");
+                    monitorOff();
+                    $(e.target).text('继续录制');
+                    break;
                 }
-            })
-        );
+                default:
+                    break;
+            }
+        }
+        // 方法：结束录制
+        function taskRecOver(e){
+            monitorOff();
+
+            m_status = 'finish';
+            $.cookie('m_status',m_status);
+
+            if(window.confirm('是否保存该任务')){
+                // 不删除任务,异步发送任务，isComplate不置位，因为任务还未设置完成。
+                saveLog();
+            }else{
+                // 删除刚刚保存的任务
+                $.ajax({
+                    type: "delete",
+                    url: `/ptts/${pttId}/${taskIndex}`,
+                    async: false,
+                    success: function (response) {
+                        console.log("结果: " + response);
+                        Logs = [];
+                    }
+                });
+            }
+        }
+
+        // 在设置模式的第二阶段——选择步骤，需监听父窗口的消息
+        window.addEventListener("message", receiveMessage, false);
+        function receiveMessage(event){
+            // For Chrome, the origin property is in the event.originalEvent
+            var origin = event.origin
+            // if (origin !== "http://example.org:8080")
+                // return;
+            console.log(event.data);
+            let id = event.data;
+            if(id){
+                window.scroll({
+                    top: $(id).scrollTop()+100,
+                    left : $(id).scrollLeft(),
+                });
+                // 显示标记
+                let p = $("<div></div>").css({
+                    'width':'30px',
+                    'height': '30px',
+                    'position': 'absolute',
+                    'top': '0px',
+                    'left': '0px',
+                    'background-color':'#cd0a0a'
+                });
+                $(id).after(p);
+            }
+        }
 
     }else if ($.cookie('task')) {
-        // 检查任务是否存在
+        // 【非设置模式】 
+        // 检查是否有测试任务
         // 任务存在
         task = JSON.parse($.cookie('task'))
         testId = $.cookie('testId')
@@ -89,7 +224,7 @@ $(document).ready(function () {
             // 询问是否开始任务
             if (window.confirm(`您已完成第${task.index}个任务.\n 下一个任务:${task.name}`)) {
                 // 发送请求, 创建测试实例
-                $.post(`/userTests?ptturl=${PTTURL}`, function (data, textStatus, jqXHR) {
+                $.post(`${RECEIVER}/userTests?ptturl=${PTTURL}`, function (data, textStatus, jqXHR) {
                     // 返回后, 隐藏对话框,启用监控程序
                     monitor();
                     console.log('开始测试:'+$.cookie('testId'));
@@ -113,6 +248,7 @@ $(document).ready(function () {
             })
         );
     }else {
+        // 【非设置模式】 
         // 任务不存在, 获取下一个任务.
         // 服务器在Cookie中设置测试任务
         // 客户端接收到返回消息后, 跳转到第一个测试任务页
@@ -127,10 +263,8 @@ $(document).ready(function () {
         })
         // 所有输入事件
         $("input,textarea").on({
-            "focus": record,
-            "blur": record,
+            "change": record,
         })
-        m_status = true;
     }
     // 关闭跟踪
     function monitorOff() {
@@ -139,10 +273,8 @@ $(document).ready(function () {
             'unload': record,
         })
         $("input,textarea").off({
-            "focus": record,
-            "blur": record,
+            "change": record,
         })
-        m_status = false;
     }
 
 
@@ -156,7 +288,10 @@ $(document).ready(function () {
         // },
         eventType: 'load',
         time: Date.now(),
-    }]
+    }];
+    if(!sessionStorage.getItem('logs')){
+        sessionStorage.setItem('logs', JSON.stringify(Logs));
+    }
 
     // 事件记录和发送
     function record(e) {
@@ -221,21 +356,25 @@ $(document).ready(function () {
     };
 
     function saveLog(async = true,isCompleted = false) {
-        // 根据模式选择处理接口
-        let location = settingMode?  `/ptts/${pttId}/${taskIndex}` : `/userTests?ptturl=${PTTURL}`;
+        // 如果是同步发送，则立即停止定时器，避免最后再次发送一个数据
+        if(!async) clearTimeout(timer);
+        // 测试模式 将log定时发送到服务器
         // 同步模式用于页面关闭事件，以放置页面关闭数据丢失
         $.ajax({
             type: "patch",
-            url: location,
+            url: settingMode?(`${RECEIVER}/ptts/${pttId}/${taskIndex}`):(`${RECEIVER}/userTests?ptturl=${PTTURL}`),
             data: {
-                log: Logs,
+                logs: Logs,
                 isCompleted: isCompleted
             },
             async: async,
-            // dataType: "json",
             success: function (response) {
                 console.log("结果: " + response);
                 Logs = [];
+                if(settingMode && m_status === 'finish'){
+                    // 设置模式下，已完成设置则跳转到接收端的设置页面
+                    window.parent.location.href = `${RECEIVER}/ptts/${pttId}/${taskIndex}/setting`;
+                }
             }
         });
         console.log('已发送日志,是否异步:' + async);
@@ -243,7 +382,7 @@ $(document).ready(function () {
 
     function getNextTask() {
         // url参数表示用户是否完成当前测试任务全部步骤;
-        $.get(`/userTests?ptturl=${PTTURL}`,
+        $.get(`${RECEIVER}/userTests?ptturl=${PTTURL}`,
             function (data, textStatus, jqXHR) {
                 if (data == 'finished') {
                     // 服务器返回任务全部完成的信号,跳转到感谢页
@@ -261,7 +400,7 @@ $(document).ready(function () {
                             },
                             function (data,status) {
                                 console.log('已创建一条原型记录'+data);
-                                window.parent.location = `${RECEIVER}/ptts/${data}`;
+                                window.parent.location.href = `${RECEIVER}/ptts/${data}`;
                           })
                         // todo 将设置链接指向生产环境
                         // window.location = `http://proto.zhoulongchun.com/ptts?ptturl=${PTTURL}`
@@ -270,13 +409,11 @@ $(document).ready(function () {
                     // 否则跳转到下一个任务页;
                     // 服务器将设置一个任务对象到Cookie中
                     task = JSON.parse($.cookie('task'));
-                    window.location = task.url;
+                    window.location.href = task.url;
                 }
             },
         );
     }
-
-    
   
     function clearCookies(e) {
         console.log('清除Cookies');
@@ -285,4 +422,6 @@ $(document).ready(function () {
             url: '/userTests',
         })
     }
+
 });
+

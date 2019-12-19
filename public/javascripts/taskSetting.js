@@ -1,4 +1,15 @@
 $(function () {
+
+    $(".steps li span[data-url]").click(function (e) {  
+        let url = $(e.target).attr('data-url');
+        let id = $(e.target).attr("data-target");
+        if($("iframe").attr("src") !== url){
+            $("iframe").attr("src",url);
+        }
+        document.querySelector('iframe').contentWindow.postMessage(id,url);
+    })
+
+
     localStorage.removeItem('Logs');
     $(window).resize(function(){
         $('.pageSelector,iframe').height(

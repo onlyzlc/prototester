@@ -58,7 +58,7 @@ exports.createPtt = function (req,res,next) {
 
 // 获取当前原型(只要是/:ptt/的路径都可获取到)
 exports.getPtt = function (req, res, next) {
-    console.log('导航到:获取当前原型');
+    console.log('导航到:获取当前原型:');
     if (req.params.pttId == undefined) throw 'urlError';
     Ptt.findOne().byPttId(req.params.pttId).exec(function (err, doc) {
         if (err) throw err;
@@ -69,6 +69,7 @@ exports.getPtt = function (req, res, next) {
             return;
         }else{
             req.ptt = doc;
+            console.log(doc.name);
             next();
         }
     })
@@ -89,28 +90,29 @@ exports.getNewTaskPage = function (req, res) {
         title: req.ptt.name + '的新任务'
     };
 
-    if(req.ptt.url.includes("axshare.com")){
+    res.render('newTask', viewData);
+
+    // if(req.ptt.url.includes("axshare.com")){
         
+    // }else{
+    //     // 在本地原型文件夹中获取原型的所有页面链接
+    //     // 适用于本地原型网站
+    //     let folderPath = path.join(__dirname, `../public/protos/${req.ptt.name}`);
+    //     fs.readdir(folderPath, function (err, result) {
+    //         const reg = /index\.html|start_c_1\.html|start_g_0\.html|start\.html/;
+    //         let htmls = result.filter(function (fileName) {
+    //             return fileName.endsWith('.html') && !reg.test(fileName);
+    //         });
 
-    }else{
-        // 在本地原型文件夹中获取原型的所有页面链接
-        // 适用于本地原型网站
-        let folderPath = path.join(__dirname, `../public/protos/${req.ptt.name}`);
-        fs.readdir(folderPath, function (err, result) {
-            const reg = /index\.html|start_c_1\.html|start_g_0\.html|start\.html/;
-            let htmls = result.filter(function (fileName) {
-                return fileName.endsWith('.html') && !reg.test(fileName);
-            });
-
-            for (const pageName of htmls) {
-                viewData.htmlList.push({
-                    name: pageName,
-                    url: `/prototypes/${req.ptt.name}/${pageName}?setting=true`
-                })
-            }
-            res.render('newTask', viewData);
-        })
-    }
+    //         for (const pageName of htmls) {
+    //             viewData.htmlList.push({
+    //                 name: pageName,
+    //                 url: `/prototypes/${req.ptt.name}/${pageName}?setting=true`
+    //             })
+    //         }
+    //         res.render('newTask', viewData);
+    //     })
+    // }
 }
 
 
@@ -136,7 +138,9 @@ exports.createTask = function (req, res) {
     //     console.log('任务保存成功');
     //     res.status(201).send();
     // });
-    req.ptt.tasks.push({});
+    if(req.body){
+        req.ptt.tasks.push({});
+    }
     req.ptt.save(function(err,result){
         if(err) console.error(err);
         let taskIndex = result.tasks.length;
@@ -145,26 +149,22 @@ exports.createTask = function (req, res) {
 }
 
 exports.updateTask = function (req,res) {
-    // if()
-    // todo
+    let task = req.ptt.tasks[req.params.taskIndex - 1];
+    if(req.body.logs){
+        task.steps = task.steps.concat(req.body.logs);
+        console.log(req.body.logs);
+        req.ptt.save(function (err) {
+            res.status(200).end('任务步骤更新成功');
+        });
+    }else if(req.body.name){
 
-
-
-
-
-
-
-
-
-
-
-
+    }
 }
 
 exports.deleteTask = function (req, res) {
     req.ptt.tasks.splice(req.params.taskIndex - 1, 1);
-    req.ptt.save(function (err) {
-        res.end();
+    req.ptt.save(function (err,result) {
+        res.end('已删除任务'+result.taskIndex);
     });
 }
 
@@ -207,4 +207,16 @@ exports.getTaskData= function(req,res){
         taskData.userTests = [].concat(userTests) ;
         res.send(taskData);
     })
+}
+
+exports.getTaskSettingPage = function(req,res){
+    console.log('导航到：任务设置页面');
+    let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
+    let task = {
+        steps: taskDoc.steps,
+        name: taskDoc.name
+    };
+    
+    res.render('taskSetting',task)
+
 }

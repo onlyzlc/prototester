@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var uesrTestController = require('../controllers/userTestController');
 
-
 // 导航到:新建测试实例
 router.post('/', uesrTestController.post);
 

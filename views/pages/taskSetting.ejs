@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="http://localhost">
+    <%- include('../parts/head') %>
+    <script src="/javascripts/taskSetting.js" defer></script>
+    <title><%= name%></title>
+    <style>
+        html,body{
+            height: 100%;
+        }
+        iframe{
+            width: calc(100% - 300px);
+            height: calc(100% - 60px);
+            border: none;
+            margin:0;
+            /* filter: blur(2px); */
+            transition: filter 500ms;
+        }
+        #sidebar{
+            position: fixed;
+            right: 0px;
+            top: 0px;
+            width: 300px;
+            background-color: azure;
+            height: 100%;
+        }
+        .steps {
+            padding: 0em 1em;
+        }
+        .steps li{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>任务设置</h1>
+    </header>
+    
+    <div id="sidebar">
+        <form id="steps" target="/" mathod='post'>
+            <ol class="steps">
+                <% steps.forEach(function(step){%>
+                <li>
+                    <span data-url="<%= step.url %>" data-target= "<%= step.target.domId %>" >→ </span>
+                    在<%= step.pageTitle %> 中 <%= step.eventType %> <%= (step.target)?step.target.innerText:'' %>
+                    <span> ×</span>
+                </li>
+                <% }) %>
+            </ol>
+            
+        </form>
+    </div>
+    <iframe id='stepRecorder' src='<%= steps[0].url%>'></iframe>
+    
+</body>
+
+
+</html>

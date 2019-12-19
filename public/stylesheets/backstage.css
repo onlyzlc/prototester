@@ -37,7 +37,9 @@ main{
 
 header{
     position: relative;
+    box-sizing: border-box;
     padding: 10px;
+    height: 60px;
 }
 
 header * {
@@ -108,11 +110,7 @@ header .right{
 
 
 iframe{
-    margin:0;
-    width: 100%;
     border:0;
-    filter: blur(2px);
-    transition: filter 500ms;
 }
 
 .inputError input{

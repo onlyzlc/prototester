@@ -23,6 +23,7 @@ function setNextTask(task,index,total,res){
 // 查询下一个任务
 exports.getNextTask = function (req, res) {
     console.log('导航到:获取下一个任务');
+    
     var ptturl = req.query.ptturl;
 
     Ptt.findOne().byUrl(ptturl).exec(function (err, result) {

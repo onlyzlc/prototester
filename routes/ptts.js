@@ -16,7 +16,9 @@ router.post('/:pttId/task',pttController.createTask);
 router.patch('/:pttId/:taskIndex',pttController.updateTask);
 
 router.get('/:pttId/:taskIndex',pttController.getTaskPage);
+router.get('/:pttId/:taskIndex/setting',pttController.getTaskSettingPage);
 router.get('/:pttId/:taskIndex/data',pttController.getTaskData);
+
 router.delete('/:pttId/:taskIndex',pttController.deleteTask);
 
 

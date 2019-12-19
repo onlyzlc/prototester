@@ -2,10 +2,9 @@ const express = require('express');
 var Ptt = require('../models/model_ptt');
 var router = express.Router();
 
-router.get('/', function (req, res, next) {
+router.all('/', function (req, res, next) {
   
-  console.log('到首页');
-  res.render('index');
+  
 });
 
 module.exports = router;
