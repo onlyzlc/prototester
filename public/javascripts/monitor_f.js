@@ -94,38 +94,38 @@ $(document).ready(function () {
         switch (m_status) {
             case 'init':{
                 btnText = '开始录制';
+                break;
             }
             case 'recoding':{
                 btnText = '暂停录制';
                 console.log("开始记录任务");
                 monitor();
+                break;
             }
             case 'pause':{
                 btnText = '继续录制';
                 monitorOff();
-            }
-            case 'init':
-            case 'recoding': 
-            case 'pause':{
-                // 开始/暂停录制按钮
-                let btn_toggle = $('<button></button>')
-                    .click(function (e) {
-                        taskRecToggle(e)
-                    })
-                    .attr('id','btn_toggle')
-                    .text(btnText)
-                let btn_finish = $('<button></button>')
-                                    .attr('id','btn_finish')
-                                    .text('完成录制')
-                                    .click(taskRecOver);
-
-                $('aside').append(btn_toggle,btn_finish );
                 break;
             }
             case 'finish':{
                 monitorOff();
                 break;
             }
+        }
+        // 插入控制按钮
+        if(m_status !== 'finish'){
+            // 开始/暂停录制按钮
+            let btn_toggle = $('<button></button>')
+                .click(function (e) {
+                    taskRecToggle(e)
+                })
+                .attr('id','btn_toggle')
+                .text(btnText)
+            let btn_finish = $('<button></button>')
+                                .attr('id','btn_finish')
+                                .text('完成录制')
+                                .click(taskRecOver);
+            $('aside').append(btn_toggle,btn_finish );
         }
         // 方法：录制/暂停
         function taskRecToggle(e) {
@@ -197,11 +197,11 @@ $(document).ready(function () {
                     'width':'30px',
                     'height': '30px',
                     'position': 'absolute',
-                    'top': '0px',
+                    'top': '-30px',
                     'left': '0px',
-                    'background-color':'#cd0a0a'
-                });
-                $(id).after(p);
+                    'border':'2px soild #cd0a0a'
+                }).text();
+                $("#"+id).after(p);
             }
         }
 
@@ -279,6 +279,7 @@ $(document).ready(function () {
 
 
     var timer;
+
     var Logs = [{
         url: PAGEURL,
         pageTitle: PAGETITLE,
@@ -289,14 +290,21 @@ $(document).ready(function () {
         eventType: 'load',
         time: Date.now(),
     }];
-    if(!sessionStorage.getItem('logs')){
-        sessionStorage.setItem('logs', JSON.stringify(Logs));
-    }
+
+    let logLastTime;
+
 
     // 事件记录和发送
     function record(e) {
         // e.preventDefault();
         clearTimeout(timer);
+        let time = Date.now();
+        if(Logs.length && ( time - Logs[Logs.length-1].time) < 100){
+            console.log('上一事件时间：'+Logs[Logs.length-1].time);
+            console.log('当前时间：'+time);
+            console.log('触发间隔过小，丢弃'+e.type);
+            return;
+        }
 
         var log = {
             eventType: e.type,
@@ -307,15 +315,17 @@ $(document).ready(function () {
             },
             url: PAGEURL,
             pageTitle: PAGETITLE,
-            time : Date.now(),
+            time : time,
         }
+
+        // if( )
         
         switch (e.type) {
             case "click": {
                 // 点击事件需记录目标对象
                 log.target.nodeName = e.target.nodeName.toLowerCase();
                 if (!['body', 'html', 'iframe'].includes(log.target.nodeName)) {
-                    log.target.domId = e.target.id;
+                    log.target.domId = (e.target.id === '')? $(e.target).parents('.ax_default ').attr('id'):e.target.id;
                     log.target.innerText = e.target.innerHTML.trim();
                 }
                 Logs.push(log);
@@ -358,19 +368,23 @@ $(document).ready(function () {
     function saveLog(async = true,isCompleted = false) {
         // 如果是同步发送，则立即停止定时器，避免最后再次发送一个数据
         if(!async) clearTimeout(timer);
+        // 立即清空Log，避免重复记录
+        let logs = Logs;
+        Logs = [];
+
         // 测试模式 将log定时发送到服务器
         // 同步模式用于页面关闭事件，以放置页面关闭数据丢失
+        
         $.ajax({
             type: "patch",
             url: settingMode?(`${RECEIVER}/ptts/${pttId}/${taskIndex}`):(`${RECEIVER}/userTests?ptturl=${PTTURL}`),
             data: {
-                logs: Logs,
+                logs: logs,
                 isCompleted: isCompleted
             },
             async: async,
             success: function (response) {
                 console.log("结果: " + response);
-                Logs = [];
                 if(settingMode && m_status === 'finish'){
                     // 设置模式下，已完成设置则跳转到接收端的设置页面
                     window.parent.location.href = `${RECEIVER}/ptts/${pttId}/${taskIndex}/setting`;

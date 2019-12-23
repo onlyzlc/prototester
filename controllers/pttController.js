@@ -212,11 +212,15 @@ exports.getTaskData= function(req,res){
 exports.getTaskSettingPage = function(req,res){
     console.log('导航到：任务设置页面');
     let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
-    let task = {
+    
+    res.render('taskSetting',{
         steps: taskDoc.steps,
         name: taskDoc.name
-    };
-    
-    res.render('taskSetting',task)
+    })
+}
 
+exports.getTaskSettingSteps = function (req,res) {  
+    console.log('请求未完成设置的步骤数据');
+    let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
+    res.status(200).json(taskDoc.steps);
 }

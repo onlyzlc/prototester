@@ -1,54 +1,13 @@
 $(function () {
 
-    $(".steps li span[data-url]").click(function (e) {  
+    $(".icon.point").click(function (e) {  
         let url = $(e.target).attr('data-url');
-        let id = $(e.target).attr("data-target");
+        let id = $(e.target).attr("data-target-domId");
         if($("iframe").attr("src") !== url){
             $("iframe").attr("src",url);
         }
         document.querySelector('iframe').contentWindow.postMessage(id,url);
     })
-
-
-    localStorage.removeItem('Logs');
-    $(window).resize(function(){
-        $('.pageSelector,iframe').height(
-            $(window).height()-$('header').outerHeight(true)-4
-        )
-    });
-
-    $('.pageSelector li').click(function(e){
-        $('.pageSelector li.selected').removeClass("selected");
-        $(this).addClass("selected");
-        if($('#taskName>input').attr('autoInit')){
-            $('#taskName>input').val($(this).text() + '页面测试任务-1');
-        }
-        $('iframe').attr('src', $(this).attr('data-link')).removeAttr('hidden');
-        $('#page-ok').removeAttr('disabled');
-    })
-
-    $('#taskName>input').one('keypress',function(){
-        $(this).removeAttr('autoInit');
-    })
-    
-    $('#page-ok').click(function(){
-        $('#tip').text('请将任务步骤演示一番');
-        $('.pageSelector').hide();
-        $('iframe').css('filter','blur(0px)');
-        localStorage.removeItem('Logs');
-        $('#page-save').removeAttr('hidden');
-    })
-
-    $('#page-cancel').click(function(){
-        localStorage.removeItem('Logs');
-        history.back();
-    })
-
-    $('iframe#stepRecorder').one('click',function(){
-        $('#page-save').removeAttr('hidden');
-    })
-
-    $('#page-save').click(submit);
 
     function verify(){
         if($('#taskName>input').val() ===''){
