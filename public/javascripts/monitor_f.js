@@ -189,19 +189,25 @@ $(document).ready(function () {
             let id = event.data;
             if(id){
                 window.scroll({
-                    top: $(id).scrollTop()+100,
+                    top: $(id).scrollTop(),
                     left : $(id).scrollLeft(),
                 });
                 // 显示标记
-                let p = $("<div></div>").css({
+                
+                $("#"+id+".ax_default").css({
+                    "border": "2px #039BE5 solid",
+                    "box-shadow": "0 0 3px 0px #039be5"
+                }).append($("<div></div>").css({
                     'width':'30px',
                     'height': '30px',
                     'position': 'absolute',
+                    'z-index':'1000',
                     'top': '-30px',
-                    'left': '0px',
-                    'border':'2px soild #cd0a0a'
-                }).text();
-                $("#"+id).after(p);
+                    "left": "-30px",
+                    "background": "rgb(3, 155, 229)",
+                    "border-radius":" 15px 15px 0px",
+                    "box-shadow": "hsla(0, 0%, 40%, 1) -1px -1px 5px 0px",
+                }).text());
             }
         }
 
@@ -293,18 +299,11 @@ $(document).ready(function () {
 
     let logLastTime;
 
-
     // 事件记录和发送
     function record(e) {
         // e.preventDefault();
         clearTimeout(timer);
         let time = Date.now();
-        if(Logs.length && ( time - Logs[Logs.length-1].time) < 100){
-            console.log('上一事件时间：'+Logs[Logs.length-1].time);
-            console.log('当前时间：'+time);
-            console.log('触发间隔过小，丢弃'+e.type);
-            return;
-        }
 
         var log = {
             eventType: e.type,
@@ -325,13 +324,13 @@ $(document).ready(function () {
                 // 点击事件需记录目标对象
                 log.target.nodeName = e.target.nodeName.toLowerCase();
                 if (!['body', 'html', 'iframe'].includes(log.target.nodeName)) {
-                    log.target.domId = (e.target.id === '')? $(e.target).parents('.ax_default ').attr('id'):e.target.id;
+                    log.target.domId = (e.target.id === '') ? $(e.target).parents('.ax_default ').attr('id') : e.target.id;
                     log.target.innerText = e.target.innerHTML.trim();
                 }
                 Logs.push(log);
                 break;
             }
-            case "focus":
+            case "focus":   
             case "blur": {
                 log.target.domId= e.target.id;
                 log.target.nodeName= e.target.nodeName.toLowerCase();

@@ -149,6 +149,7 @@ exports.createTask = function (req, res) {
 }
 
 exports.updateTask = function (req,res) {
+    console.log("导航到：更新任务数据");
     let task = req.ptt.tasks[req.params.taskIndex - 1];
     if(req.body.logs){
         task.steps = task.steps.concat(req.body.logs);
