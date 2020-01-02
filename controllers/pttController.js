@@ -5,6 +5,7 @@ var path = require('path');
 
 // 获取所有原型
 exports.getAllPtt = function (req, res) {
+    console.log("-> 获取原型列表");
     Ptt.find({}, function (err, docs) {
         if (err) throw err;
         if (docs.length){
@@ -23,6 +24,7 @@ exports.getAllPtt = function (req, res) {
 }
 
 exports.createPtt = function (req,res,next) {
+    console.log("-> 注册原型");
     let postData = req.body;
     function create() {
         Ptt.create({
@@ -58,7 +60,7 @@ exports.createPtt = function (req,res,next) {
 
 // 获取当前原型(只要是/:ptt/的路径都可获取到)
 exports.getPtt = function (req, res, next) {
-    console.log('导航到:获取当前原型:');
+    console.log('-> 获取当前原型:');
     if (req.params.pttId == undefined) throw 'urlError';
     Ptt.findOne().byPttId(req.params.pttId).exec(function (err, doc) {
         if (err) throw err;
@@ -76,6 +78,7 @@ exports.getPtt = function (req, res, next) {
 }
 
 exports.getPttPage = function (req, res) {
+    console.log('-> 获取当前原型页面:');
     let viewData = {
         ptt: req.ptt,
     };
@@ -138,6 +141,7 @@ exports.createTask = function (req, res) {
     //     console.log('任务保存成功');
     //     res.status(201).send();
     // });
+    console.log("-> 创建任务");
     if(req.body){
         req.ptt.tasks.push({});
     }
@@ -149,7 +153,7 @@ exports.createTask = function (req, res) {
 }
 
 exports.updateTask = function (req,res) {
-    console.log("导航到：更新任务数据");
+    console.log("-> 更新任务数据");
     let task = req.ptt.tasks[req.params.taskIndex - 1];
     if(req.body.logs){
         task.steps = task.steps.concat(req.body.logs);
@@ -163,6 +167,7 @@ exports.updateTask = function (req,res) {
 }
 
 exports.deleteTask = function (req, res) {
+    console.log("-> 删除任务");
     req.ptt.tasks.splice(req.params.taskIndex - 1, 1);
     req.ptt.save(function (err,result) {
         res.end('已删除任务'+result.taskIndex);
@@ -211,7 +216,7 @@ exports.getTaskData= function(req,res){
 }
 
 exports.getTaskSettingPage = function(req,res){
-    console.log('导航到：任务设置页面');
+    console.log('-> 任务设置页面');
     let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
     
     res.render('taskSetting',{
@@ -221,7 +226,7 @@ exports.getTaskSettingPage = function(req,res){
 }
 
 exports.getTaskSettingSteps = function (req,res) {  
-    console.log('请求未完成设置的步骤数据');
+    console.log('-> 获取未完成设置的步骤数据');
     let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
     res.status(200).json(taskDoc.steps);
 }
