@@ -14,6 +14,7 @@
           <% ptt.tasks.forEach(function(item){ %>
           <li>
             <a href="/ptts/<%=ptt.pttId%>/<%= item.__index+1 %>" > <%= item.__index+1 %>. <%= item.name%>  </a>
+            <a href="/ptts/<%=ptt.pttId%>/<%= item.__index+1  %>/setting"> 设置步骤 </a>
           </li>
           <%})%>
       </ul>

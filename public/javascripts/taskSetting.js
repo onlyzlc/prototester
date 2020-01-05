@@ -1,13 +1,36 @@
 $(function () {
+    // 获取步骤数据并存储到本地
+    $.getJSON(location+"/steps", 
+        function (data, textStatus, jqXHR) {
+            console.log(data);
+            let i = 0;
+            data.forEach(step => {
+                sessionStorage.setItem(i, JSON.stringify(step))
+                i++;
+            });
 
-    $(".icon.point").click(function (e) {  
-        let url = $(e.target).attr('data-url');
-        let id = $(e.target).attr("data-target-domId");
-        if($("iframe").attr("src") !== url){
-            $("iframe").attr("src",url);
+            let $iframe = $("iframe")
+            let iframe = $iframe .get(0);
+            let currentPage = $iframe.attr("src");
+            // 过滤当前页面中的人工步骤
+            let currentSteps = data.filter( (item) => item.url === currentPage && item.eventType !== "load" && item.eventType !== "unload")
+            frameLoad(iframe, currentSteps, currentPage)
+
+            // 绑定步骤按钮查看事件
+            $("#steps li").mouseenter(function (e) {  
+                let i = $(this).attr('data-num');
+                let step = JSON.parse(sessionStorage.getItem(i));
+                if($iframe.attr("src") == step.url){
+                    iframe.contentWindow.postMessage(step.target.domId ,step.url);
+                }else{
+                    $(this).click(function (e) {  
+                        $iframe.attr("src",step.url);
+                        frameLoad(iframe, i, step.url)
+                    })
+                }   
+            })    
         }
-        document.querySelector('iframe').contentWindow.postMessage(id,url);
-    })
+    )
 
     function verify(){
         if($('#taskName>input').val() ===''){
@@ -57,3 +80,17 @@ $(function () {
     })
 
 });
+
+
+function frameLoad(iframe, postData,url) {  
+    // 等待iframe载入完成，发送数据进去
+    if (iframe.attachEvent){
+        iframe.attachEvent("onload", function(){
+            iframe.contentWindow.postMessage(postData,url);
+        });
+    } else {
+        iframe.onload = function(){
+            iframe.contentWindow.postMessage(postData,url);
+        };
+    }    
+}

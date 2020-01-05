@@ -161,8 +161,8 @@ exports.updateTask = function (req,res) {
         req.ptt.save(function (err) {
             res.status(200).end('任务步骤更新成功');
         });
-    }else if(req.body.name){
-
+    }else{
+        res.status(200).end();
     }
 }
 

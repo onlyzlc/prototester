@@ -5,6 +5,9 @@ $(document).ready(function () {
     const PTTURL = location.href.substring(0,location.href.lastIndexOf('/'));
     const PAGEURL = location.href;
 
+    // 表单元素
+    const formElms = 'input,select,textarea,label';
+
     // 加入控制按钮栏
     $('body').append($('<aside></aside>').css({
         'position': 'fixed',
@@ -21,36 +24,33 @@ $(document).ready(function () {
     // 定时发送周期
     let cycleOfSave = 1000;
 
-
-    function getParentUrl() { 
-        var url = null;
-        if (parent !== window) { 
-            try {
-                url = parent.location.href; 
-            }catch (e) { 
-                url = document.referrer; 
-            } 
-        }
-        return url;
-    }    
-
-    function queryString(getObj,str){
-        var string = (str!== undefined) ? str : window.location.search;
-        var result = string.match(new RegExp("[^\?\&]+=[^\?\&]+","g"));
-        if(result == null){
-            result = '';
-        }else if(getObj){
-            var params = {};
-            for(var i = 0; i < result.length; i++){
-                var res = result[i].split('=');
-                var key = res[0],
-                    value = res[1];
-                params[key] = value;
+    // axure特征
+    // 插入一些样式类
+    $("head").append(`
+        <style>
+            ._mark{
+                border: 1px #F44336 dashed !important;
+                width: calc(100% + 8px);
+                height: calc(100% + 8px);
+                top: -4px;
+                left: -4px;
+                background-color: hsla(0, 0%, 0%, 0.3);
+                transition: background 100ms;
+                position: absolute;
+                z-index:1000;
             }
-            result = params;
-        }
-        return result;
-    }
+            ._markDes{
+                width: 30px;
+                position: absolute;
+                z-index: 1000;
+                top: -30px;
+                left: 0;
+                background: #F44336;
+                padding: 5px;
+            }
+        </style>
+    `)
+    
 
 
     // 设置模式使用的全局变量
@@ -163,7 +163,10 @@ $(document).ready(function () {
 
             if(window.confirm('是否保存该任务')){
                 // 不删除任务,异步发送任务，isComplate不置位，因为任务还未设置完成。
-                saveLog();
+                saveLog(function (res) {  
+                    // 设置模式下，已完成设置则跳转到接收端的设置页面
+                    window.parent.location.href = `${RECEIVER}/ptts/${pttId}/${taskIndex}/setting`;
+                });
             }else{
                 // 删除刚刚保存的任务
                 $.ajax({
@@ -179,36 +182,40 @@ $(document).ready(function () {
         }
 
         // 在设置模式的第二阶段——选择步骤，需监听父窗口的消息
+        // 消息发送自taskSetting.js
         window.addEventListener("message", receiveMessage, false);
         function receiveMessage(event){
-            // For Chrome, the origin property is in the event.originalEvent
             var origin = event.origin
-            // if (origin !== "http://example.org:8080")
-                // return;
-            console.log(event.data);
-            let id = event.data;
-            if(id){
-                window.scroll({
-                    top: $(id).scrollTop(),
-                    left : $(id).scrollLeft(),
-                });
-                // 显示标记
-                
-                $("#"+id+".ax_default").css({
-                    "border": "2px #039BE5 solid",
-                    "box-shadow": "0 0 3px 0px #039be5"
-                }).append($("<div></div>").css({
-                    'width':'30px',
-                    'height': '30px',
-                    'position': 'absolute',
-                    'z-index':'1000',
-                    'top': '-30px',
-                    "left": "-30px",
-                    "background": "rgb(3, 155, 229)",
-                    "border-radius":" 15px 15px 0px",
-                    "box-shadow": "hsla(0, 0%, 40%, 1) -1px -1px 5px 0px",
-                }).text());
+            // 缺少来源判断
+            if(typeof(event.data) === 'object'){
+                let steps = event.data;
+                let i = 0;
+                console.log(steps);
+                steps.forEach(step => {
+                    let id = "#"+step.target.domId;
+                    if($(id).hasClass("ax_default")){
+                        // axure特征
+                        // 显示标记
+                        $(id)
+                            .append($("<div></div>").addClass("_mark"))
+                            .append($("<div></div>").addClass("_markDes").text(i++ +"."+ step.eventType));
+                    }else{
+                        $(id).parent("ax_default")
+                            .append($("<div></div>").addClass("_mark"))
+                            .append($("<div></div>").addClass("_markDes").text(i++ +"."+ step.eventType));
+                    }  
+                })    
+            }else{
+                let id = "#"+event.data;
+                if(id){
+                    window.scroll({
+                        top: $(id).scrollTop(),
+                        left : $(id).scrollLeft(),
+                    });
+                }
             }
+            
+            
         }
 
     }else if ($.cookie('task')) {
@@ -255,34 +262,29 @@ $(document).ready(function () {
         );
     }else {
         // 【非设置模式】 
-        // 任务不存在, 获取下一个任务.
-        // 服务器在Cookie中设置测试任务
-        // 客户端接收到返回消息后, 跳转到第一个测试任务页
+        // 任务不存在, 获取下一个任务.服务器在Cookie中设置测试任务，客户端接收到返回消息后, 跳转到第一个测试任务页
         getNextTask();
     }
 
+    
+
     // 启用跟踪, 绑定事件
     function monitor() {
-        $(window).on({
-            'click': record,
-            'unload': record,
-        })
-        // 所有输入事件
-        $("input,textarea").on({
-            "change": record,
-        })
+        $(formElms).on("change", record);
+        $("[type=submit]").click(record);
+        $("div.ax_default").click(record);
+        $(window).on('unload', record);
+
+        // 排除一些元素,只在ax_default叶子节点上绑定，移除掉其父节点山的
+        $("div.ax_default").has(".ax_default").off("click",record);
+        $("div.ax_default").has("input").off("click",record);
     }
     // 关闭跟踪
     function monitorOff() {
-        $(window).off({
-            'click': record,
-            'unload': record,
-        })
-        $("input,textarea").off({
-            "change": record,
-        })
+        $(window).off('unload', record);
+        $(formElms).off("change", record);
+        $("div.ax_default ").off("click", record);
     }
-
 
     var timer;
 
@@ -297,14 +299,19 @@ $(document).ready(function () {
         time: Date.now(),
     }];
 
-    let logLastTime;
-
     // 事件记录和发送
     function record(e) {
-        // e.preventDefault();
+        // 阻止事件冒泡，对于Axure中的动态面板的多层ax_default有效————只截取最底层的那个元素事件
+        event.stopPropagation();
+
         clearTimeout(timer);
+
+        console.log(this);
+        console.log(e.target);
+        
         let time = Date.now();
 
+        // 重置log
         var log = {
             eventType: e.type,
             target: {
@@ -316,25 +323,26 @@ $(document).ready(function () {
             pageTitle: PAGETITLE,
             time : time,
         }
-
-        // if( )
+        console.log(log);
         
+
         switch (e.type) {
-            case "click": {
-                // 点击事件需记录目标对象
-                log.target.nodeName = e.target.nodeName.toLowerCase();
-                if (!['body', 'html', 'iframe'].includes(log.target.nodeName)) {
-                    log.target.domId = (e.target.id === '') ? $(e.target).parents('.ax_default ').attr('id') : e.target.id;
-                    log.target.innerText = e.target.innerHTML.trim();
-                }
+            case "change": {
+                log.target.domId= e.target.id;
+                log.target.nodeName= e.target.nodeName.toLowerCase();
+                log.target.innerText= $(e.target).val().trim();
                 Logs.push(log);
                 break;
             }
-            case "focus":   
-            case "blur": {
-                log.target.domId= e.target.id;
-                log.target.nodeName= e.target.nodeName.toLowerCase();
-                log.target.innerText= $(this).val().trim();
+            case "click": {
+                // 表单输入类型元素只监听change事件，避免重复记录多个等效操作；
+                // if((formElms+'body, html, iframe').search(e.target.nodeName.toLowerCase()) > 0){
+                //     break;
+                // }
+                // 点击事件需记录目标对象
+                log.target.nodeName = this.nodeName.toLowerCase();
+                log.target.domId = this.id;
+                log.target.innerText = e.target.innerText.trim();
                 Logs.push(log);
                 break;
             }
@@ -364,9 +372,12 @@ $(document).ready(function () {
         }
     };
 
-    function saveLog(async = true,isCompleted = false) {
+    function saveLog(callback) {
+        let args = Array.from(arguments);
+        
         // 如果是同步发送，则立即停止定时器，避免最后再次发送一个数据
-        if(!async) clearTimeout(timer);
+        if(args.includes("sync")) clearTimeout(timer);
+
         // 立即清空Log，避免重复记录
         let logs = Logs;
         Logs = [];
@@ -379,18 +390,17 @@ $(document).ready(function () {
             url: settingMode?(`${RECEIVER}/ptts/${pttId}/${taskIndex}`):(`${RECEIVER}/userTests?ptturl=${PTTURL}`),
             data: {
                 logs: logs,
-                isCompleted: isCompleted
+                isCompleted: args.includes("completed")
             },
-            async: async,
+            async: !args.includes("sync"),
             success: function (response) {
                 console.log("结果: " + response);
-                if(settingMode && m_status === 'finish'){
+                if(typeof(callback) === "function"){
+                    callback(response)
                     // 设置模式下，已完成设置则跳转到接收端的设置页面
-                    window.parent.location.href = `${RECEIVER}/ptts/${pttId}/${taskIndex}/setting`;
                 }
             }
         });
-        console.log('已发送日志,是否异步:' + async);
     }
 
     function getNextTask() {
@@ -428,13 +438,45 @@ $(document).ready(function () {
         );
     }
   
-    function clearCookies(e) {
-        console.log('清除Cookies');
-        $.ajax({
-            type: 'delete',
-            url: '/userTests',
-        })
-    }
+
 
 });
 
+
+// 工具函数
+function getParentUrl() { 
+    var url = null;
+    if (parent !== window) { 
+        try {
+            url = parent.location.href; 
+        }catch (e) { 
+            url = document.referrer; 
+        } 
+    }
+    return url;
+}    
+
+function queryString(getObj,str){
+    var string = (str!== undefined) ? str : window.location.search;
+    var result = string.match(new RegExp("[^\?\&]+=[^\?\&]+","g"));
+    if(result == null){
+        result = '';
+    }else if(getObj){
+        var params = {};
+        for(var i = 0; i < result.length; i++){
+            var res = result[i].split('=');
+            var key = res[0],
+                value = res[1];
+            params[key] = value;
+        }
+        result = params;
+    }
+    return result;
+}
+function clearCookies(e) {
+    console.log('清除Cookies');
+    $.ajax({
+        type: 'delete',
+        url: '/userTests',
+    })
+}

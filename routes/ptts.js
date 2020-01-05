@@ -19,7 +19,6 @@ router.get('/:pttId/:taskIndex',pttController.getTaskPage);
 router.get('/:pttId/:taskIndex/setting',pttController.getTaskSettingPage);
 router.get('/:pttId/:taskIndex/setting/steps',pttController.getTaskSettingSteps);
 router.get('/:pttId/:taskIndex/data',pttController.getTaskData);
-
 router.delete('/:pttId/:taskIndex',pttController.deleteTask);
 
 

@@ -64,9 +64,10 @@
     <div id="sidebar">
         <form id="setting" target="/" mathod='post'>
             <ol id = "steps">
+                <% var i = 0 %>
                 <% steps.forEach(function(step){%>
-                <li>
-                    <span class="icon point" data-url="<%= step.url %>" data-target-domId="<%= step.target.domId %>">→ </span>
+                <li data-num="<%= i++ %>">
+                    <span class="icon point" ><%= i %> </span>
                     在<%= step.pageTitle %> 中 <%= step.eventType %> <%= (step.target)?step.target.innerText:'' %>
                     <span class="icon remove"> ×</span>
                 </li>
