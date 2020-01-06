@@ -16,7 +16,7 @@ $(document).ready(function () {
     }))
     
     // 主机地址
-    const RECEIVER = 'http://localhost:8081';
+    const RECEIVER = 'https://bwh.zhoulongchun.com';
 
     // 测试模式使用的全局变量
     var task,testId;
