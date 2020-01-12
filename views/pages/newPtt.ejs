@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- todo 需要可配置的源列表 -->
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>添加原型</title>
+    <%- include('../parts/head') %>
+    <script src="/javascripts/newPtt.js" defer></script>
+    <script src="/javascripts/pttMain.js" defer></script>
+</head>
+
+<body>
+    <main>
+        <h1>添加原型</h1>
+        <form id='newPtt' action="." method="POST">
+            <input type="text" name="pttUrl" id="pttUrl" required min="1" >
+            <button type="submit" id="submitNewPtt">提交</button>
+        </form>
+        <iframe id="testPttUrl" src="" frameborder="0" hidden></iframe>
+    </main>
+</body>
+
+
+
+</html>

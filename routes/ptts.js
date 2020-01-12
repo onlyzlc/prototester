@@ -3,14 +3,16 @@ var router = express.Router();
 var pttController = require("../controllers/pttController");
 
 router.get('/', pttController.getAllPtt);
+router.get('/new', pttController.getNewPttPage);
 router.post('/', pttController.createPtt);
 
+// 获取当前原型
 router.all('/:pttId*', pttController.getPtt);
 
 router.get('/:pttId',pttController.getPttPage);
 
 // 废弃
-router.get('/:pttId/newtask',pttController.getNewTaskPage);
+router.get('/:pttId/task/new',pttController.getNewTaskPage);
 
 router.post('/:pttId/task',pttController.createTask);
 router.patch('/:pttId/:taskIndex',pttController.updateTask);

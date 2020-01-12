@@ -60,6 +60,12 @@ header .right{
     text-align: right;
 }
 
+input[type='text'] {
+    padding: 0.5em;
+    box-sizing: border-box;
+    min-width: 20em;
+}
+
 #taskName input{
     font-size: 1.5em;
     width: 100%;

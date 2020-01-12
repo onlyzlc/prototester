@@ -22,6 +22,7 @@ $(function () {
                 let step = JSON.parse(sessionStorage.getItem(i));
                 if($iframe.attr("src") == step.url){
                     iframe.contentWindow.postMessage(step.target.domId ,step.url);
+                    // 采用锚点滚动
                 }else{
                     $(this).click(function (e) {  
                         $iframe.attr("src",step.url);

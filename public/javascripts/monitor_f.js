@@ -1,3 +1,11 @@
+// 发送一个信号给顶部窗口,用于创建原型时,验证原型是否可访问
+let topWindow = window.top;
+let targetOrigin = "http://localhost/";
+if(topWindow !== window){
+    // todo url需替换为服务器源.
+    topWindow.contentWindow.postMessage("thisPttUrlIsOk",targetOrigin);
+}
+
 $(document).ready(function () {
     const HOST = location.host;
     const PATHNAME = location.pathname;
@@ -50,8 +58,6 @@ $(document).ready(function () {
             }
         </style>
     `)
-    
-
 
     // 设置模式使用的全局变量
     // 需随时存入Cookie
@@ -182,7 +188,7 @@ $(document).ready(function () {
         }
 
         // 在设置模式的第二阶段——选择步骤，需监听父窗口的消息
-        // 消息发送自taskSetting.js
+        // 消息发送自taskSetting.js / pttMain.js
         window.addEventListener("message", receiveMessage, false);
         function receiveMessage(event){
             var origin = event.origin
@@ -205,17 +211,7 @@ $(document).ready(function () {
                             .append($("<div></div>").addClass("_markDes").text(i++ +"."+ step.eventType));
                     }  
                 })    
-            }else{
-                let id = "#"+event.data;
-                if(id){
-                    window.scroll({
-                        top: $(id).scrollTop(),
-                        left : $(id).scrollLeft(),
-                    });
-                }
-            }
-            
-            
+            }            
         }
 
     }else if ($.cookie('task')) {
@@ -417,22 +413,17 @@ $(document).ready(function () {
 
                         // 通过参数先查询原型是否存在，如果不存在，则服务器先创建原型
                         // 然后待服务器返回一个原型设置的页面链接
-                        $.post(`${RECEIVER}/ptts`, 
-                            {
-                                ptturl:`${PTTURL}`
-                            },
-                            function (data,status) {
-                                console.log('已创建一条原型记录'+data);
-                                window.parent.location.href = `${RECEIVER}/ptts/${data}`;
-                          })
-                        // todo 将设置链接指向生产环境
-                        // window.location = `http://proto.zhoulongchun.com/ptts?ptturl=${PTTURL}`
+                        
                     }
                 } else {
-                    // 否则跳转到下一个任务页;
-                    // 服务器将设置一个任务对象到Cookie中
-                    task = JSON.parse($.cookie('task'));
-                    window.location.href = task.url;
+                    try {
+                        // 否则跳转到下一个任务页;
+                        // 服务器将设置一个任务对象到Cookie中
+                        task = JSON.parse($.cookie('task'));
+                        window.location.href = task.url;
+                    } catch (error) {
+                        console.log('该原型尚未设置测试任务');
+                    }
                 }
             },
         );

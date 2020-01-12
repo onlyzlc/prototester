@@ -23,13 +23,18 @@ exports.getAllPtt = function (req, res) {
     })
 }
 
+exports.getNewPttPage = function (req,res,next) {  
+    console.log('-> 添加原型页面');
+    res.render('newPtt');
+}
+
 exports.createPtt = function (req,res,next) {
-    console.log("-> 注册原型");
+    console.log("-> 创建原型");
     let postData = req.body;
     function create() {
         Ptt.create({
-            name: postData.ptturl ,
-            url: postData.ptturl,
+            url: postData.pttUrl,
+            name: postData.pttUrl,
             pttId: Math.trunc(Math.random() * 99999)+10000
         },function(err,newPtt){
             // 万一是重复ID,则重新创建
@@ -40,18 +45,16 @@ exports.createPtt = function (req,res,next) {
                 }else if(err.keyPattern.name || err.keyPattern.url){
                     // 如果是名称或URL重复
                     console.log('原型已存在');
-                    // 查询返回该原型的ID给前端
-                    Ptt.findOne({name: postData.ptturl}).exec(function (err, ptt) {
-                        res.status(201).end(ptt.pttId);
-                    })
+                    res.status(409).end('原型已存在');
                 }
             }else if(err) {
                 // 其他错误
-                res.status(404).end();
+                console.log('其他错误');
+                res.status(400).end();
             }else{
                 // 创建成功
                 console.log('已创建一条原型记录'+newPtt.pttId);
-                res.status(201).end(newPtt.pttId);
+                res.status(201).send(newPtt.pttId);
             }
         })
     }
@@ -148,7 +151,8 @@ exports.createTask = function (req, res) {
     req.ptt.save(function(err,result){
         if(err) console.error(err);
         let taskIndex = result.tasks.length;
-        res.status(201).send(taskIndex.toString());
+        // res.status(201).send(taskIndex.toString());
+        res.redirect(302,req.ptt.url);
     })
 }
 
