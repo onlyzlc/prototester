@@ -1,9 +1,9 @@
 // 发送一个信号给顶部窗口,用于创建原型时,验证原型是否可访问
 let topWindow = window.top;
-let targetOrigin = "http://localhost/";
+let targetOrigin = "http://localhost:8081";
 if(topWindow !== window){
     // todo url需替换为服务器源.
-    topWindow.contentWindow.postMessage("thisPttUrlIsOk",targetOrigin);
+    topWindow.postMessage("thisPttUrlIsOk",targetOrigin);
 }
 
 $(document).ready(function () {
