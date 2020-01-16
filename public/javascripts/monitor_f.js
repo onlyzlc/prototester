@@ -8,7 +8,7 @@ $(document).ready(function () {
     // 表单元素
     const formElms = 'input,select,textarea,label';
 
-    // 加入控制按钮栏
+    // 加入控制栏
     $('body').append($('<aside></aside>').css({
         'position': 'fixed',
         'top': '40px',
@@ -16,7 +16,8 @@ $(document).ready(function () {
     }))
     
     // 主机地址
-    const RECEIVER = 'https://bwh.zhoulongchun.com';
+    // const RECEIVER = 'https://bwh.zhoulongchun.com';
+    const RECEIVER = 'http://localhost:8081';
 
     // 测试模式使用的全局变量
     var task,testId;
@@ -50,12 +51,10 @@ $(document).ready(function () {
             }
         </style>
     `)
-    
-
 
     // 设置模式使用的全局变量
     // 需随时存入Cookie
-    let settingMode = $.cookie("settingMode");
+    let settingMode = sessionStorage.getItem("settingMode");
 
     // URL上带有设置信息时，表示开始一个新的任务设置
     // 将URL参数中的原型、任务号等存入Cookie，然后清除URL参数
@@ -65,13 +64,13 @@ $(document).ready(function () {
             let urlParams = queryString(true,window.parent.location.search);
             if(urlParams.setting){
                 // 将模式信息设置到 Cookie
-                $.cookie('settingMode',urlParams.setting);
-                $.cookie('pttId',urlParams.pttId);
-                $.cookie('taskIndex',urlParams.taskIndex);
+                sessionStorage.setItem('settingMode',true);
+                sessionStorage.setItem('pttId',urlParams.pttId);
+                sessionStorage.setItem('taskIndex',urlParams.taskIndex);
                 // 清除URL中的模式信息，以避免重复判断
                 window.parent.location.search = '';
                 // 标记当前任务设置状态为初始
-                $.cookie('m_status', 'init');
+                sessionStorage.setItem('m_status', 'init');
                 settingMode = true;
             }
         } catch (error) {
@@ -83,9 +82,9 @@ $(document).ready(function () {
     let pttId,taskIndex,m_status;
     if(settingMode){
         // 【进入设置模式】
-        pttId = $.cookie('pttId');
-        taskIndex = $.cookie('taskIndex');
-        m_status = $.cookie('m_status');
+        pttId = sessionStorage.getItem('pttId');
+        taskIndex = sessionStorage.getItem('taskIndex');
+        m_status = sessionStorage.getItem('m_status');
         console.log('进入设置模式');
 
         // 页面中插入设置控制按钮，由管理者控制

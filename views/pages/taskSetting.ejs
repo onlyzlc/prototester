@@ -36,7 +36,7 @@
             top: 0px;
             width: 300px;
             background-color: azure;
-            height: 100%;
+            max-height: calc(100% - 40px);
             
         }
 
@@ -59,6 +59,7 @@
 <body>
     <header>
         <h1>任务设置</h1>
+        <button id="toggle">暂停录制</button>
     </header>
 
     <div id="sidebar">
@@ -68,11 +69,12 @@
                 <% steps.forEach(function(step){%>
                 <li data-num="<%= i++ %>">
                     <span class="icon point" ><%= i %> </span>
-                    在<%= step.pageTitle %> 中 <%= step.eventType %> <%= (step.target)?step.target.innerText:'' %>
+                    在<%= step.pageTitle %> 中 <%= step.eventType %> <%= step.target.innerText %>
                     <span class="icon remove"> ×</span>
                 </li>
                 <% }) %>
             </ol>
+            <button type="submit">保存</button>
         </form>
 
     </div>

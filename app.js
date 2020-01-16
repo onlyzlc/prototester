@@ -33,8 +33,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.all('/*', function (req,res,next) {
+  res.set("Access-Control-Allow-Origin","https://axshare.com"); 
+  res.set("Access-Control-Allow-Origin","http://zhoulongchun.com"); 
   res.set("Access-Control-Allow-Origin","http://localhost"); 
-  res.set("Access-Control-Allow-Origin","https://*.axshare.com"); 
   res.set("Access-Control-Allow-Methods","*"); 
   next();
 });
