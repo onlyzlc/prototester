@@ -16,6 +16,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var pttRouter = require('./routes/ptts');
 var userTestRouter = require('./routes/userTests');
+var taskRouter = require('./controllers/taskController');
 
 var app = express();
 
@@ -44,6 +45,7 @@ app.all('/*', function (req,res,next) {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/ptts',pttRouter);
+app.use('/tasks',taskRouter)
 app.use('/userTests', userTestRouter);
 app.use('/thanks', (req,res)=>{
   res.render('finish');
