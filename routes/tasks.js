@@ -1,15 +1,35 @@
 var express = require('express');
 var router = express.Router();
-var task = require('../controllers/taskController')
+var taskApi = require('../controllers/taskController')
+var Task = require('../models/model_task');
 
-// 废弃
-router.get('/:pttId/newtask',task.getNewTaskPage);
+router.get('/',function (req,res) { 
+    console.log('-> 进入任务列表');
+    let v = {};
+    Task.find({},function(err,tasks){
+        v.tasks = tasks;
+        res.render('tasks',v);
+    }) 
+})
 
-router.post('/',task.create);
-router.patch('/taskId',task.update);
-router.get('/taskId',task.getDetail);
-router.get('/taskId/setting',task.getSettingPage);
-router.get('/taskId/steps', task.getSteps);
-router.delete('/taskId',task.delete);
+router.get('/newTask', function(req,res){
+    console.log("进入添加任务页");
+    res.render('newTask');
+})
+
+router.post('/',taskApi.create);
+
+router.get('/:taskId',taskApi.getDetail);
+router.delete('/:taskId',taskApi.deleteTask);
+router.get('/:taskId/steps', taskApi.getSteps);
+router.patch('/:taskId/steps',taskApi.updateSteps);
+router.patch('/:taskId/status',taskApi.updateStatus);
+
+router.get('/:taskId/setting',taskApi.getTaskSettingPage);
+
+router.get('/:taskId/testing',taskApi.getTestingPage);
+router.patch('/:taskId/testing',taskApi.updateTesting);
+
+router.get('/:taskId/startstop',taskApi.getStartStop);
 
 module.exports = router;

@@ -3,9 +3,14 @@ var ActionSchema = require('./model_action');
 var Schema = mongoose.Schema;
 
 var TaskSchema = new Schema({
+    owner: {
+        ref: "User",
+        type: Schema.Types.ObjectId,
+    },
     name: {
         type: String,
-        trim: true
+        trim: true,
+        default:"未命名任务"
     },
     taskId:{
         type: String,
@@ -14,45 +19,90 @@ var TaskSchema = new Schema({
         unique: true,
         required: true,
     },
+    status:{
+        type: String,
+        default: "unpublished"
+    },
     steps:[ActionSchema],
-    url: {
+    
+    ptt:{
         type: String,
         trim: true,
-        required: true,
+        default: ""
     },
-    owner: String,
-    prototype:{
-        type: String,
-        trim: true
+    testing: [{
+        ip: String,
+        isCompleted: {
+            type:Boolean,
+            default: false
+        },
+        actions: [ActionSchema]
+    }],
+})
+
+TaskSchema.virtual('url').get(function () {  
+    if(this.steps.length > 0){
+        return this.steps[0].url;
+    }else{
+        return "null"
     }
 })
 
-TaskSchema.virtual('stepsCount').get(function(){
-    return this.steps.length;
-});
-// 完成率
-TaskSchema.virtual('completionRate').get(function(){  
-    
-})
+// 测试情况统计数据
 // 测试次数
-TaskSchema.virtual('testFeq').get(function(){  
-    
+TaskSchema.virtual("testCount").get(function () {  
+    return this.testing.length;
+})
+// 实际完成的测试结果集合
+TaskSchema.virtual("completedTestings").get(function () {  
+    return this.testing.filter(item => item.isCompleted);
+})
+// 测试完成率
+TaskSchema.virtual("completedRatio").get(function () {  
+    if(this.testCount){
+        return Math.round((this.completedTestings.length/this.testCount)*100);
+    }else{
+        return 0;
+    }
+})
+// 平均完成时间：每次完成测试的总时长/完成
+TaskSchema.virtual("avgOfDuration").get(function () {
+    // 获取各次测试的完成时间求平均值
+    let ct = this.completedTestings;
+    if(ct.length){
+        let sumOfDuration = 0;
+        for (const testing of ct ) {
+            sumOfDuration += (testing.actions[testing.actions.length-1].time - testing.actions[0].time);
+        }
+        return (sumOfDuration / ct.length / 1000).toFixed(2) ;
+    }else{
+        return 0;
+    }
+})
+TaskSchema.virtual("maxDuration").get(function () {
+    // 求各次测试中时间最长的
+
 })
 
-Taskchema.query.byName = function(name){
+
+TaskSchema.query.byName = function(name){
     // 不区分大小写的查询
     return this.where({ name: new RegExp(name, 'i') });
 }
-Taskchema.query.byUrl = function(url){
+TaskSchema.query.byUrl = function(url){
     // 不区分大小写的查询
     return this.where({ url: new RegExp(url, 'i') });
 }
-Taskchema.query.byTaskId = function(id){
+TaskSchema.query.byTaskId = function(id){
     // 不区分大小写的查询
     return this.where({ taskId: id });
 }
-Taskchema.query.byPtt = function(ptt){
+TaskSchema.query.byPtt = function(ptt){
     // 不区分大小写的查询
-    return this.where({ prototype: ptt });
+    return this.where({ prototype: ptt }); 
+}
+TaskSchema.query.byOwner = function(user){
+    // 不区分大小写的查询
+    return this.where({ owner: user });
 }
 module.exports = mongoose.model('Task',TaskSchema);

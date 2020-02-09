@@ -1,7 +1,7 @@
 // 监听文件变化，处理文件的初始化
 const fs = require('fs');
 const path = require('path');
-const Ptt = require('./models/model_ptt');
+// const Ptt = require('./models/model_ptt');
 
 const rootDir = path.join(__dirname, '/public/protos');
 var timer;
@@ -72,16 +72,16 @@ function htmlInit() {
 
     console.log('要处理的文件夹:' + folders.toString());
 
-    for (const folder of folders) {
-        // fs.readdirSync()
-        Ptt.create({
-            name: folder,
-        }, function (err) {
-            // 如果是重复的文件夹
-            if (err && err.code!=  undefined  &&  err.code== 11000) console.error(err);
-            else if(err) throw err;
-        })
-    }
+    // for (const folder of folders) {
+    //     // fs.readdirSync()
+    //     Ptt.create({
+    //         name: folder,
+    //     }, function (err) {
+    //         // 如果是重复的文件夹
+    //         if (err && err.code!=  undefined  &&  err.code== 11000) console.error(err);
+    //         else if(err) throw err;
+    //     })
+    // }
 
     let i = htmls.length;
     if (i == 0) {

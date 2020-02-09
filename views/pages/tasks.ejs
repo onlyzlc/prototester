@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>我创建的测试任务</title>
+  <%- include('../parts/head') %>
+  <script src="/javascripts/tasks.js" defer></script>
+</head>
+
+<body>
+  <main>
+    <h1>我创建的测试任务</h1>
+    <a href="/tasks/newTask">新增测试任务</a>
+    <ul>
+      <% tasks.forEach(function(item){ %>
+      <li data-taskId="<%=item.taskId%>" data-status="<%=item.status%>">
+        <a href="/tasks/<%=item.taskId%>"> <%= item.name%> </a> |
+        <span class="status"><%= (item.status=="unpublished")?("未发布"):("已发布") %></span> |
+        <a href="/tasks/<%=item.taskId%>/setting">设置步骤</a> |
+        <a href="/tasks/<%=item.taskId%>/testing">开始测试</a> |
+        <a class="publish"><%= (item.status=="unpublished")?("发布"):("撤下") %></a>
+      </li>
+      <%})%>
+    </ul>
+
+  </main>
+
+</body>
+
+</html>

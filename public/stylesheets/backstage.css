@@ -2,6 +2,11 @@
     --nav-height: 80px;
   }
 
+html,body,input,textarea{
+    font-family: Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC",  "Microsoft YaHei","WenQuanYi Micro Hei";
+    /* font-size: 1em; */
+}
+
 /* 基本元素 */
 button{
     margin: 0;
@@ -24,6 +29,18 @@ button:disabled{
 button a{
     color: inherit;
     text-decoration: none;
+    height: 100%;
+}
+button.icon{
+    margin: 0;
+    padding: 0.5em 0.5em;
+    background-color: rgba(0, 0, 0,0);
+    color: hsla(0, 0%, 30%, 1);;
+    border: none;
+}
+ul{
+    list-style: none;
+    padding-left: 0;
 }
 
 /* 页面 */
@@ -125,5 +142,8 @@ iframe{
     content: '任务名称不能重复';
 }
 
-
+/* 对话框背景阴影 */
+dialog::backdrop {
+    background: rgba(255,0,0,.25);
+  }
 

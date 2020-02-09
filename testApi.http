@@ -1,0 +1,7 @@
+### 用户注册
+POST http://localhost:8081/user/login HTTP/1.1
+content-type: application/json
+
+### 用户登录
+POST http://localhost:8081/user/register HTTP/1.1
+content-type: application/json

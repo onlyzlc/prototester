@@ -1,11 +1,15 @@
 $(function () {
-    // 获取数据包
-    $.getJSON(location.pathname+"/data", 
-        function (data, textStatus, jqXHR) {
-            console.log(data);
-            
+    $("#deleteTask").click(function (e) {
+        if(window.confirm("是否删除此任务")){
+            $.ajax({
+                type: "delete",
+                url: "",
+                success: function (response) {
+                    location.pathname = '/tasks'
+                }
+            });
         }
-    );
+    })
 });
 
 // v.completedTest = userTests.filter(usertest => usertest.isCompleted);

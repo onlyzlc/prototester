@@ -4,147 +4,180 @@ const Task = require('../models/model_task')
 const UserTest = require('../models/model_userTest');
 var path = require('path');
 
-exports.createPtt = function (req,res,next) {
-    console.log("-> 注册原型");
-    let postData = req.body;
-    function create() {
-        Ptt.create({
-            name: postData.ptturl ,
-            url: postData.ptturl,
-            pttId: Math.trunc(Math.random() * 99999)+10000
-        },function(err,newPtt){
-            // 万一是重复ID,则重新创建
-            if (err && err.code!=  undefined  &&  err.code== 11000) {
-                if(err.keyPattern.pttId){
-                    // 如果ID重复则重新创建
-                    create();
-                }else if(err.keyPattern.name || err.keyPattern.url){
-                    // 如果是名称或URL重复
-                    console.log('原型已存在');
-                    // 查询返回该原型的ID给前端
-                    Ptt.findOne({name: postData.ptturl}).exec(function (err, ptt) {
-                        res.status(201).end(ptt.pttId);
-                    })
-                }
-            }else if(err) {
-                // 其他错误
-                res.status(404).end();
-            }else{
-                // 创建成功
-                console.log('已创建一条原型记录'+newPtt.pttId);
-                res.status(201).end(newPtt.pttId);
-            }
-        })
-    }
-    create();
-}
-
-// 获取当前原型(只要是/:ptt/的路径都可获取到)
-exports.getPtt = function (req, res, next) {
-    console.log('-> 获取当前原型:');
-    if (req.params.pttId == undefined) throw 'urlError';
-    Ptt.findOne().byPttId(req.params.pttId).exec(function (err, doc) {
-        if (err) throw err;
-        if(doc === null) {
-            // 该原型不存在
-            console.log(req.params.pttId + '原型不存在');
-            res.send(404);
-            return;
-        }else{
-            req.ptt = doc;
-            console.log(doc.name);
-            next();
-        }
-    })
-}
-
 exports.create = function (req, res) {
-    let newTask = new Task(req.body);
-    newTask.TaskId = Date.now();
-    Task.create(
-        req.body,
-        function (err, doc) {  
+    // 计算每步时长
+    addDur(req.body.actions);
+    // 去除无效步骤
+    removeInvalidSteps(req.body.actions);
+    
+    let newTask = new Task({
+        name: req.body.name,
+        taskId: Date.now().toString(36),
+        steps: req.body.actions,
+    });
+    newTask.save(
+        function (err, doc) {
             console.log('任务创建成功');
-            res.sendStatus(201);
+            res.status(201).end(doc.taskId);
         }
     )
 }
 
-exports.updateTask = function (req,res) {
-    console.log("-> 更新任务数据");
-    let task = req.ptt.tasks[req.params.taskIndex - 1];
-    if(req.body.logs){
-        task.steps = task.steps.concat(req.body.logs);
-        console.log(req.body.logs);
-        req.ptt.save(function (err) {
-            res.status(200).end('任务步骤更新成功');
-        });
-    }else{
-        res.status(200).end();
-    }
+// 更新任务步骤/更新任务状态
+exports.updateSteps = function (req, res) {
+    console.log("-> 更新任务步骤数据");
+    // 计算每步时长
+    addDur(req.body.actions);
+    // 去除无效步骤
+    removeInvalidSteps(req.body.actions);
+    Task.findOneAndUpdate({
+        "taskId": req.params.taskId
+    },{
+        steps: req.body.actions,
+    }, function (err, doc) {
+        if (err) console.error(err);
+        res.status(200).end("任务步骤更新成功");
+    })
+}
+
+exports.updateStatus = function (req, res) {
+    console.log("-> 更新任务状态");
+    Task.findOneAndUpdate({
+        "taskId": req.params.taskId
+    }, {
+        status: req.body.status
+    }, function (err, doc) {
+        if (err) console.error(err);
+        res.status(200).end(req.body.status);
+    })
 }
 
 exports.deleteTask = function (req, res) {
     console.log("-> 删除任务");
-    req.ptt.tasks.splice(req.params.taskIndex - 1, 1);
-    req.ptt.save(function (err,result) {
-        res.end('已删除任务'+result.taskIndex);
-    });
+    Task.findOneAndDelete({
+        "taskId": req.params.taskId
+    }, function (err, doc) {
+        res.status(200).end('任务已删除');
+    })
 }
 
-exports.getTaskPage = function (req, res) {
-    let v = req.ptt.tasks[req.params.taskIndex - 1];
-    // 所有测试的数量
-    v.testCount = 0;
-    // 存放已完成的测试
-    v.completedTest = [];
-    v.completedRatio = 0;
-    v.avgOfDuration = "--";
-    UserTest.find().byTaskId(v.id).exec(function (err, userTests) {
+exports.getTaskSettingPage = function (req, res) {
+    console.log('-> 任务设置页面');
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, "name steps", function (err, taskDoc) {
+        res.render('taskSetting', {
+            steps: taskDoc.steps,
+            name: taskDoc.name
+        })
+    })
+}
+
+exports.getSteps = function (req, res) {
+    console.log('-> 获取未完成设置的步骤数据');
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, "steps", function (err, taskDoc) {
+        if (taskDoc.steps.length > 0) {
+            res.status(200).json(taskDoc.steps);
+        } else {
+            res.status(200).end("null");
+        }
+    })
+}
+
+exports.getTestingPage = function (req, res) {
+    console.log('-> 进入测试页');
+    res.render("testing");
+}
+
+exports.getStartStop = function (req, res) {
+    console.log('-> 获取任务起止步骤信息');
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, "steps", function (err, taskDoc) {
         if (err) throw err;
-        // 测试人次
-        v.testCount = userTests.length;
-        if (v.testCount == 0) {
-            res.render('task', v);
+        if (taskDoc.steps.length > 0) {
+            let steps = taskDoc.steps;
+            steps.splice(1, steps.length - 2);
+            res.status(200).json(steps);
+        } else {
+            res.status(200).end("null");
+        }
+    })
+}
+
+exports.updateTesting = function (req, res) {
+    console.log('-> 更新任务测试数据');
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        req.body.ip = req.ip;
+        
+        // 添加行为间隔时长
+        addDur(req.body.actions);
+        // 移除无效行为
+        removeInvalidSteps(req.body.actions);
+
+        const steps = taskDoc.steps;
+        // 遍历所有步骤，查找并标记匹配步骤的行为
+        for (let i = 0; i < steps.length; i++) {
+            let step = steps[i];
+            // 匹配条件
+            let isMatched = function (action) {
+                return action.eventType == step.eventType &&
+                action.target.domId == step.target.domId &&
+                action.target.nodeName == step.target.nodeName &&
+                action.target.innerText == step.target.innerText
+            }
+            // 找到与当前步骤相同的行为，并在行为上记录下匹配的步骤序号
+            let matchingIndex =  req.body.actions.findIndex(isMatched);
+            if(matchingIndex >= 0){
+                req.body.actions[matchingIndex].matchingStep = i;
+            }
+        }
+
+        taskDoc.testing.push(req.body);
+        taskDoc.save(function (err) {
+            if (err) throw err;
+            res.sendStatus(200);
+        })
+    })
+}
+
+exports.getDetail = function (req, res) {
+    console.log("-> 获取任务详情");
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc.testCount == 0) {
+            // todo 还未进行测试时，需显示一个提示
+            res.render('task', taskDoc);
             return;
         }
-        // 筛选完成任务的测试
-        v.completedTest = userTests.filter(usertest => usertest.isCompleted);
-        v.completedRatio = Math.round((v.completedTest.length/v.testCount)*100);
-        // 获取各次测试的完成时间求平均值
-        let avgOfDuration = 0;
-        for (const userTest of v.completedTest) {
-            avgOfDuration += userTest.totalDuration;
-        }
-        v.avgOfDuration = (avgOfDuration / v.testCount / 1000).toFixed(2);
-
-        res.render('task', v);
+        res.render('task', taskDoc);
     })
 }
 
-exports.getTaskData= function(req,res){
-    let taskData = {};
-    taskData.task = req.ptt.tasks[req.params.taskIndex - 1];
-    UserTest.find().byTaskId(taskData.id).exec(function (err, userTests) {
-        if (err) throw err;
-        // 测试人次
-        taskData.userTests = [].concat(userTests) ;
-        res.send(taskData);
-    })
+// 计算两个行为间的时长，最后一个行为不计算，默认值0
+function addDur(actions) {
+    // 便于渲染时直接获取时长
+    for (let i = 0; i < actions.length - 1; i++) {
+        actions[i].dur = actions[i + 1].time - actions[i].time;
+    }
 }
 
-exports.getTaskSettingPage = function(req,res){
-    console.log('-> 任务设置页面');
-    let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
+// 去除无效行为
+function removeInvalidSteps(actions) {
+    // 如果最后一个行为是load，则去除
+    if(actions[actions.length-1].eventType ==="load"){
+        actions.pop();
+    }
+}
+
+// 标记与步骤
+function mark(actions) {
     
-    res.render('taskSetting',{
-        steps: taskDoc.steps,
-        name: taskDoc.name
-    })
-}
-
-exports.getTaskSettingSteps = function (req,res) {  
-    console.log('-> 获取未完成设置的步骤数据');
-    let taskDoc = req.ptt.tasks[req.params.taskIndex - 1];
-    res.status(200).json(taskDoc.steps);
 }

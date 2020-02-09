@@ -18,7 +18,17 @@ var ActionSchema = new Schema({
             trim: true,
         }
     },
-    time: Date,
+    time: Number,
+    // 到上一个行为的时长
+    dur: {
+        type: Number,
+        default: 0
+    },
+    // 匹配的步骤
+    matchingStep:{
+        default: -1,
+        type: Number
+    }
 })
 
 module.exports = ActionSchema ;

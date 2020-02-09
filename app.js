@@ -4,19 +4,20 @@ var path = require('path');
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var test  = require('./test');
+// var test  = require('./test');
 
 var fileWatcher = require('./fileWatcher');
-fileWatcher.startWatch();
+// fileWatcher.startWatch();
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/prototester' ,{useNewUrlParser: true});
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.connect('mongodb://localhost/prototester' );
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var pttRouter = require('./routes/ptts');
-var userTestRouter = require('./routes/userTests');
-var taskRouter = require('./controllers/taskController');
+var userRouter = require('./routes/user');
+var taskRouter = require('./routes/tasks');
 
 var app = express();
 
@@ -43,10 +44,9 @@ app.all('/*', function (req,res,next) {
 
 // 路由
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/ptts',pttRouter);
+app.use('/user', userRouter);
+// app.use('/ptts',pttRouter);
 app.use('/tasks',taskRouter)
-app.use('/userTests', userTestRouter);
 app.use('/thanks', (req,res)=>{
   res.render('finish');
 })
