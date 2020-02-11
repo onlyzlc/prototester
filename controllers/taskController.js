@@ -9,7 +9,7 @@ exports.create = function (req, res) {
     addDur(req.body.actions);
     // 去除无效步骤
     removeInvalidSteps(req.body.actions);
-    
+
     let newTask = new Task({
         name: req.body.name,
         taskId: Date.now().toString(36),
@@ -17,8 +17,9 @@ exports.create = function (req, res) {
     });
     newTask.save(
         function (err, doc) {
+            if (err) throw err;
             console.log('任务创建成功');
-            res.status(201).end(doc.taskId);
+            res.status(201).end(newTask.taskId);
         }
     )
 }
@@ -32,10 +33,14 @@ exports.updateSteps = function (req, res) {
     removeInvalidSteps(req.body.actions);
     Task.findOneAndUpdate({
         "taskId": req.params.taskId
-    },{
+    }, {
         steps: req.body.actions,
-    }, function (err, doc) {
-        if (err) console.error(err);
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         res.status(200).end("任务步骤更新成功");
     })
 }
@@ -46,8 +51,12 @@ exports.updateStatus = function (req, res) {
         "taskId": req.params.taskId
     }, {
         status: req.body.status
-    }, function (err, doc) {
-        if (err) console.error(err);
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         res.status(200).end(req.body.status);
     })
 }
@@ -56,7 +65,12 @@ exports.deleteTask = function (req, res) {
     console.log("-> 删除任务");
     Task.findOneAndDelete({
         "taskId": req.params.taskId
-    }, function (err, doc) {
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         res.status(200).end('任务已删除');
     })
 }
@@ -66,6 +80,11 @@ exports.getTaskSettingPage = function (req, res) {
     Task.findOne({
         "taskId": req.params.taskId
     }, "name steps", function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         res.render('taskSetting', {
             steps: taskDoc.steps,
             name: taskDoc.name
@@ -78,6 +97,11 @@ exports.getSteps = function (req, res) {
     Task.findOne({
         "taskId": req.params.taskId
     }, "steps", function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         if (taskDoc.steps.length > 0) {
             res.status(200).json(taskDoc.steps);
         } else {
@@ -97,6 +121,10 @@ exports.getStartStop = function (req, res) {
         "taskId": req.params.taskId
     }, "steps", function (err, taskDoc) {
         if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         if (taskDoc.steps.length > 0) {
             let steps = taskDoc.steps;
             steps.splice(1, steps.length - 2);
@@ -113,8 +141,12 @@ exports.updateTesting = function (req, res) {
         "taskId": req.params.taskId
     }, function (err, taskDoc) {
         if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         req.body.ip = req.ip;
-        
+
         // 添加行为间隔时长
         addDur(req.body.actions);
         // 移除无效行为
@@ -127,13 +159,13 @@ exports.updateTesting = function (req, res) {
             // 匹配条件
             let isMatched = function (action) {
                 return action.eventType == step.eventType &&
-                action.target.domId == step.target.domId &&
-                action.target.nodeName == step.target.nodeName &&
-                action.target.innerText == step.target.innerText
+                    action.target.domId == step.target.domId &&
+                    action.target.nodeName == step.target.nodeName &&
+                    action.target.innerText == step.target.innerText
             }
             // 找到与当前步骤相同的行为，并在行为上记录下匹配的步骤序号
-            let matchingIndex =  req.body.actions.findIndex(isMatched);
-            if(matchingIndex >= 0){
+            let matchingIndex = req.body.actions.findIndex(isMatched);
+            if (matchingIndex >= 0) {
                 req.body.actions[matchingIndex].matchingStep = i;
             }
         }
@@ -152,6 +184,10 @@ exports.getDetail = function (req, res) {
         "taskId": req.params.taskId
     }, function (err, taskDoc) {
         if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
         if (taskDoc.testCount == 0) {
             // todo 还未进行测试时，需显示一个提示
             res.render('task', taskDoc);
@@ -172,12 +208,16 @@ function addDur(actions) {
 // 去除无效行为
 function removeInvalidSteps(actions) {
     // 如果最后一个行为是load，则去除
-    if(actions[actions.length-1].eventType ==="load"){
+    if (actions[actions.length - 1].eventType === "load") {
         actions.pop();
     }
 }
 
 // 标记与步骤
 function mark(actions) {
-    
+
+}
+
+function noTaskTip(res) {
+    res.sendStatus(404);
 }
