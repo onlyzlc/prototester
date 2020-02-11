@@ -10,7 +10,7 @@ html,body,input,textarea{
 /* 基本元素 */
 button{
     margin: 0;
-    padding: 0.5em 2.5em;
+    padding: 0.5em 1.5em;
     background-color: rgb(90, 90, 90);
     color: azure;
     border: none;

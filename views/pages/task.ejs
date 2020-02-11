@@ -14,13 +14,12 @@
       align-items: flex-start;
       box-sizing: border-box;
       z-index: 100;
-      border-bottom: 1px solid #d3d3d3;
-      padding: 1em;
       position: fixed;
       top: 0;
       width: 100%;
+      padding: 1em 2%;
       /* height: 200px; */
-      background-color: white;
+      background-color: #CFD8DC;
     }
     .overview h3{
       margin: 0;
@@ -28,20 +27,33 @@
     
     .timeLine{
       box-sizing: border-box;
-      padding: 1em;
-      width: 100%;
+      margin:auto;
+      width: 96%;
       margin-top: 85px;
+      position: relative;
+      /* z-index: 100; */
       /* overflow-; */
     }
     .case {
-      padding: 10px 30px;
+      padding: 1em 0;
+      margin:0;
       width: 100%;
       box-sizing: border-box;
       white-space: nowrap;
     }
+    .case:first-of-type{
+      border-bottom: 1px solid #c5c5c5;
+    }
     .case li {
         display: inline-block;
         vertical-align: top;
+    }
+    .case li.title{
+      width: 215px;
+      margin-right: 1em;
+      padding-right: 1em;
+      border-right: 1px solid rgb(226, 226, 226);
+      height: 2.5em;
     }
     .action {}
 
@@ -61,11 +73,7 @@
       font-size: 0.8em;
     }
 
-    .node .des {
-      padding: 5px;
-    }
-
-    .node p {
+    .case p {
       margin: 0;
     }
 
@@ -88,21 +96,22 @@
 
     .node .time {
       color: rgb(180, 180, 180);
-      position: absolute;
-      top: 2em;
+      padding-top: 0.2em;
     }
 
     .node .des {
+      padding: 5px;
       position: absolute;
       display: none;
       white-space: normal;
-      bottom: 2em;
+      bottom: 3.5em;
       width: 80px;
       /* height: 54px; */
       /* margin-bottom: 10px; */
       background-color: white;
       border-radius: 3px;
       box-shadow: 0px 0px 5px 0px hsla(0, 0%, 0%, 0.6);
+      z-index: 100;
     }
 
     .node:hover .des {
@@ -185,7 +194,7 @@
           <td><span><%= avgOfDuration %></span><span class="unit">秒</span></td>
         </tr>
       </table>
-
+      <input id="zoom" type="range" min='0.1' max="10">
       <button id='deleteTask'>删除此任务和数据</button>
     </div>
 
@@ -194,6 +203,7 @@
     <%# 宽度系数，与时长（毫秒数）相乘得出宽度 %> 
     <% var ws = 0.1 %>
     <ul class="case">
+      <li class="title">参考步骤</li>
       <% let startTime= steps[0].time %>
       <% for( let i = 0; i < steps.length; i++ ) { %>
       <% let action = steps[i] %>
@@ -219,7 +229,8 @@
       <%# 一个测试实例 %> 
       <ul class="case">
         <%# 记录当前测试记录的开始时间，用于显示各行为的时间节点 %>
-        <% let startTime= actions[0].time %>
+        <% let startSec= actions[0].time ,startTime = new Date(startSec) %>
+        <li class="title"><p>测试时间:<%= startTime.toLocaleString() %></p><p>ip:<%= actions[0].ip %></p></li>
         <% for( let j = 0; j < actions.length; j++ ) { %>
         <%# 一个行为 %> 
         <% let action = actions[j] %>
@@ -239,7 +250,7 @@
             </div>
             <%# 时间戳：自开始到当前行为的时间，[00:00]，不匹配步骤的行为不显示时间 %>
             <% if (mi >= 0) { %>
-              <% let timeNode = new Date(action.time-startTime); %>
+              <% let timeNode = new Date(action.time-startSec); %>
               <div class="time"><%= timeNode.toTimeString().slice(3,8) %> </div>
             <% } %>
           </div>
