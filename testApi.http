@@ -1,7 +1,17 @@
-### 用户注册
+### 用户登录
 POST http://localhost:8081/user/login HTTP/1.1
 content-type: application/json
 
-### 用户登录
+{
+    "email": 
+}
+
+### 用户注册
 POST http://localhost:8081/user/register HTTP/1.1
 content-type: application/json
+
+{
+    "email": "biubiu0_0@163.com",
+    "password": "123456",
+    "mobile": "17620304992"
+}
