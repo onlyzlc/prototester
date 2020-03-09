@@ -1,11 +1,12 @@
 // 监听文件变化，处理文件的初始化
 const fs = require('fs');
 const path = require('path');
+const watch = require('node-watch');
 // const Ptt = require('./models/model_ptt');
 
 const rootDir = path.join(__dirname, '/public/protos');
 var timer;
-var watcher;
+var watcher ;
 
 // 监听到文件夹变化时，清除计时器，将变化的文件堆栈到数组中；
 // 然后启动计时器；
@@ -36,12 +37,12 @@ function htmlInit() {
         var eventType = log.split(':')[0];
         var fileName = log.split(':')[1];
 
-        // 排除顶层文件夹的change记录
-        if (eventType == 'change' && !fileName.includes('\\')) continue;
+        // 排除顶层文件夹的update记录
+        if (eventType == 'update' && !fileName.includes('\\')) continue;
         if (fileName == null) continue;
 
-        var p = path.join(rootDir, '\\', fileName);
-
+        var p = path.join(rootDir, '\\', fileName); 
+		console.log(p);
         try {
             // 检查是否存在
             fs.accessSync(p);
@@ -64,7 +65,7 @@ function htmlInit() {
             }
         } catch {
             // 当前目录或文件不存在
-            console.log('已删除:' + fileName);
+            console.log('不存在:%s',fileName);
             continue;
         }
 
@@ -145,7 +146,7 @@ function progress(eventType, filename) {
 // 启动监听
 function startWatch() {
     // 原型数据存储
-    watcher = fs.watch(rootDir, {
+    watcher = watch(rootDir, {
         recursive: true
     }, progress);
     console.log('开始监听文件夹');
