@@ -12,6 +12,11 @@ var TaskSchema = new Schema({
         trim: true,
         default:"未命名任务"
     },
+    description:{
+    	type: String,
+    	maxlength: 500,
+    	required: true
+    },
     taskId:{
         type: String,
         trim: true,

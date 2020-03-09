@@ -5,12 +5,19 @@
   <title>我创建的测试任务</title>
   <%- include('../parts/head') %>
   <script src="/javascripts/tasks.js" defer></script>
+  
 </head>
 
 <body>
   <main>
     <h1>我创建的测试任务</h1>
     <a href="/tasks/newTask">新增测试任务</a>
+    
+    <% if(tasks.length){ %>
+      <%     var pTasks = tasks.filter(item=>item.status==="published") %>
+      <%     var uTasks = tasks.filter(item=>item.status==="unpublished")%>
+      <% } %>     
+           
     <ul>
       <% tasks.forEach(function(item){ %>
       <li data-taskId="<%=item.taskId%>" data-status="<%=item.status%>">

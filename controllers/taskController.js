@@ -12,6 +12,7 @@ exports.create = function (req, res) {
 
     let newTask = new Task({
         name: req.body.name,
+        description: req.body.description,
         taskId: Date.now().toString(36),
         steps: req.body.actions,
     });
@@ -46,13 +47,15 @@ exports.updateSteps = function (req, res) {
 }
 
 exports.updateStatus = function (req, res) {
-    console.log("-> 更新任务状态");
+    console.log("-> 更新任务状态未为 %s",req.body.status);
+   
     Task.findOneAndUpdate({
         "taskId": req.params.taskId
     }, {
         status: req.body.status
     }, function (err, taskDoc) {
         if (err) throw err;
+        debug;
         if (taskDoc === null) {
             noTaskTip(res);
             return;
