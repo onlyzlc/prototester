@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 // var test  = require('./test');
 
-var fileWatcher = require('./fileWatcher');
-// fileWatcher.startWatch();
+var fileWatcher = require('./fileWatcher_linux');
+fileWatcher.startWatch();
 
 var mongoose = require('mongoose');
 mongoose.set('useNewUrlParser', true);
