@@ -32,12 +32,25 @@ exports.login = function (req,res) {
         if(err) throw err;
         if(user){
             if(req.body.password === user.password){
+                let sess = req.session;
+                req.session.regenerate(function(err){ 
+                    if(err){
+                        return res.json({ret_code:2,ret_msg:"登录失败"})
+                    } 
+                    req.session.loginUser = user.email;
+                    res.json({ret_code:0,ret_msg:"登录成功"});
+                })
                 res.sendStatus(200);
             }else{
-                res.send("密码错误");
+                res.json({ret_code:1,ret_msg:"用户名或密码错误"})
             }
         }else{
             res.send("用户不存在");
         }
     })
+}
+
+exports.getProtos = function(req,res){
+    console.log("-> 导航到获取用户原型");
+    // User.findOne("email")
 }

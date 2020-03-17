@@ -17,7 +17,11 @@ var UserSchema = new Schema({
     mobile:{
         type: String,
         trim:true,
-    }
+    },
+    protos:[{
+        type: String,
+        
+    }]
 })
 
 module.exports = mongoose.model("User",UserSchema)
