@@ -2,8 +2,11 @@ var User = require("../models/model_user")
 
 exports.register = function(req,res){
     console.log("-> 导航到用户注册");
-    if(undefined === req.body.email ||req.body.email ) return;
-    if(typeof(req.body.email) !== "string") return;
+    let email = req.body.email;
+    let pw = req.body.password;
+    if(!email || !pw ) {
+        res.status(403).end("邮箱和地址不能为空")
+    };
 
     let user = new User({
         email: req.body.email,
@@ -32,19 +35,18 @@ exports.login = function (req,res) {
         if(err) throw err;
         if(user){
             if(req.body.password === user.password){
-                let sess = req.session;
+                req.session.loginUser = user.email;
                 req.session.regenerate(function(err){ 
                     if(err){
                         return res.json({ret_code:2,ret_msg:"登录失败"})
                     } 
-                    req.session.loginUser = user.email;
-                    res.json({ret_code:0,ret_msg:"登录成功"});
+                    
+                    res.status(200).json({ret_code:0,ret_msg:"登录成功"});
                 })
-                res.sendStatus(200);
             }else{
                 res.json({ret_code:1,ret_msg:"用户名或密码错误"})
             }
-        }else{
+        }else{  
             res.send("用户不存在");
         }
     })

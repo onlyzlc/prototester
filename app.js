@@ -6,13 +6,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var session = require('express-session');
-var FileStore = require('session-file-store');
-
-
+// var FileStore = require('session-file-store');
 // var test  = require('./test');
-
-var fileWatcher = require('./fileWatcher_linux');
-fileWatcher.startWatch();
+// var fileWatcher = require('./fileWatcher_linux');
+// fileWatcher.startWatch();
 
 var mongoose = require('mongoose');
 mongoose.set('useNewUrlParser', true);
@@ -25,7 +22,7 @@ var userRouter = require('./routes/user');
 var taskRouter = require('./routes/tasks');
 
 var app = express();
-
+console.log(app.get("env"));
 // view engine setup
 app.set('views', path.join(__dirname, 'views/pages'));
 app.set('view engine', 'ejs');
@@ -39,14 +36,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 var identitykey = 'skey';
 app.use(session({
-  name: identitykey,
-  secret: 'lonnie',  // 用来对session id相关的cookie进行签名
-  store: new FileStore(),  // 本地存储session（文本文件，也可以选择其他store，比如redis的）
-  saveUninitialized: false,  // 是否自动保存未初始化的会话，建议false
-  resave: false,  // 是否每次都重新保存会话，建议false
-  cookie: {
-      maxAge: 10 * 1000  // 有效期，单位是毫秒
-  }
+  key: 'session',
+  secret: 'Lonnie',
+  store: require('mongoose-session')(mongoose)
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -56,6 +48,9 @@ app.all('/*', function (req,res,next) {
   res.set("Access-Control-Allow-Origin","http://zhoulongchun.com"); 
   res.set("Access-Control-Allow-Origin","http://localhost"); 
   res.set("Access-Control-Allow-Methods","*"); 
+
+  console.log(req.session);
+  
   next();
 });
 

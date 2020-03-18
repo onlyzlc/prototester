@@ -1,7 +1,10 @@
 
 // 主机地址
-// const RECEIVER = 'https://bwh.zhoulongchun.com';
+//const RECEIVER = 'https://tencent.zhoulongchun.com';
+// 腾讯云主机，裸奔状态
+// const RECEIVER = 'http://111.229.196.217:8081';
 const RECEIVER = 'http://localhost:8081';
+// const RECEIVER = 'http://172.20.10.2:8081';
 
 // 表单元素
 const formElmsArr = ['input','select','textarea','label'];
@@ -34,6 +37,7 @@ if(window !== window.top){
         postToWin.url = location.href;
     }
     window.top.postMessage(postToWin, RECEIVER);
+    console.log("向窗口 %s 发送消息: %s",RECEIVER,postToWin);
 }
 
 function receiveMsgFromWin(e){
