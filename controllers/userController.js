@@ -27,21 +27,23 @@ exports.register = function(req,res){
 }
 
 exports.login = function (req,res) {
-    console.log("-> 导航到用户登录");
+    console.log("-> 用户登录");
     
     if(!req.body.hasOwnProperty("email")) return;
     if(typeof(req.body.email) !== "string") return;
+    let pw = req.body.password ;
     User.findOne({"email":req.body.email},function(err,user){
         if(err) throw err;
         if(user){
-            if(req.body.password === user.password){
-                req.session.loginUser = user.email;
+            if( pw === user.password){
                 req.session.regenerate(function(err){ 
                     if(err){
+                        // todo 登录失败提示；
                         return res.json({ret_code:2,ret_msg:"登录失败"})
                     } 
-                    
-                    res.status(200).json({ret_code:0,ret_msg:"登录成功"});
+                    req.session.loginUser = user.email;
+                    // res.status(200).json({ret_code:0,ret_msg:"登录成功"});
+                    res.location('/tasks');
                 })
             }else{
                 res.json({ret_code:1,ret_msg:"用户名或密码错误"})

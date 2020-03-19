@@ -6,8 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var session = require('express-session');
-// var FileStore = require('session-file-store');
-// var test  = require('./test');
+var MongoStore = require('connect-mongo')(session);
 // var fileWatcher = require('./fileWatcher_linux');
 // fileWatcher.startWatch();
 
@@ -15,7 +14,8 @@ var mongoose = require('mongoose');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://localhost/prototester' );
+let connectionOptions = 'mongodb://localhost/prototester';
+mongoose.connect(connectionOptions);
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
@@ -38,7 +38,10 @@ var identitykey = 'skey';
 app.use(session({
   key: 'session',
   secret: 'Lonnie',
-  store: require('mongoose-session')(mongoose)
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  cookie:{
+    maxAge: 24*60*60*1000
+  }
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -49,9 +52,18 @@ app.all('/*', function (req,res,next) {
   res.set("Access-Control-Allow-Origin","http://localhost"); 
   res.set("Access-Control-Allow-Methods","*"); 
 
-  console.log(req.session);
-  
-  next();
+  let user = req.session.loginUser;
+  let isLogined = !!user;
+  let reg = /\/login|\/register/;
+  // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
+  if(isLogined || reg.test(req.url)){
+    console.log("用户：%s 请求: %s",user,req.url);
+    next();
+  }else{
+    
+    res.redirect(302,'/login');
+    return;
+  }
 });
 
 // 路由
