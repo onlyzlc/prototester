@@ -10,6 +10,8 @@ $(function () {
             });
         }
     })
+    $("input#zoom").change(function(e){
+    })
 });
 
 // v.completedTest = userTests.filter(usertest => usertest.isCompleted);
