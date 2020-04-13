@@ -1,3 +1,9 @@
+axios.get('tasks/myTasks')
+    .then(function(response){
+        console.log(response);
+        
+    })
+
 $(document).ready(function () {
     $(".publish").click(function () {
         let $this = $(this);
@@ -21,6 +27,10 @@ $(document).ready(function () {
             	console.error(response);  
             }
         });
+    })
+
+    $("#newTask").click(function(e){
+        
     })
   
 });

@@ -4,6 +4,10 @@ const Task = require('../models/model_task')
 const UserTest = require('../models/model_userTest');
 var path = require('path');
 
+exports.getMyTasks = function(req,res){
+    res.send('ok');
+}
+
 exports.create = function (req, res) {
     // 计算每步时长
     addDur(req.body.actions);

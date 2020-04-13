@@ -3,6 +3,7 @@ var router = express.Router();
 var taskApi = require('../controllers/taskController')
 var Task = require('../models/model_task');
 
+// 显示任务页面
 router.get('/',function (req,res) { 
     console.log('-> 进入任务列表');
     let v = {};
@@ -11,6 +12,9 @@ router.get('/',function (req,res) {
         res.render('tasks',v);
     }) 
 })
+
+// 获取任务数据
+router.get('/myTasks',taskApi.getMyTasks);
 
 router.get('/newTask', function(req,res){
     console.log("进入添加任务页");
