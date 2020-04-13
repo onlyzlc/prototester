@@ -29,15 +29,19 @@
             z-index: 100;
             box-shadow: 0px -1px 5px 0px rgb(0, 0, 0);
         }
-
-        dialog>div {
+        #favDialog{
+            position: fixed;
+            width: 450px;
+            margin: auto;
+        }
+        #favDialog>div {
             margin-bottom: 1em;
         }
     </style>
 </head>
 
 <body>
-    <dialog id="favDialog">
+    <div id="favDialog">
         <div>
             <label for="pttUrl">原型链接</label>
             <input id="pttUrl" name="pttUrl" type="text">
@@ -54,7 +58,7 @@
             <button id="start">开始录制任务步骤</button>
             <a id="cancel" href="/tasks">取消</a>
         </div>
-    </dialog>
+    </div>
     <iframe id="pttPrv" src="" frameborder="0"></iframe>
 </body>
 

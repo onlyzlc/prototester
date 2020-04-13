@@ -2,10 +2,7 @@ $(document).ready(function () {
 
     // 显示原型链接对话框
     let favDialog = document.getElementById('favDialog');
-    if (typeof favDialog.showModal === "function") {
-        favDialog.showModal();
-    } 
-
+   
     let actions = [];
     let task  = {
         name : "",

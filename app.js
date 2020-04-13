@@ -56,15 +56,15 @@ app.use('/', (req,res,next)=>{
 
   let user = req.session.loginUser;
   let isLogined = !!user;
-  let reg = /\/login|\/register/;
+  let reg = /\/login|\/register|\/favicon.ico/;
   // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
   if(isLogined || reg.test(req.url)){
     console.log("用户：%s 请求: %s",user,req.url);
     next();
   }else{
     console.log("未登录用户请求：%s",req.url);
-    // res.redirect(302,'/login');
-    res.sendStatus(404).end();
+    res.redirect(302,'/login');
+    // res.sendStatus(404).end();
   }
 });
 
