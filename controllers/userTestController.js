@@ -1,4 +1,4 @@
-var Ptt = require('../models/model_ptt');
+// var Ptt = require('../models/model_ptt');
 var UserTest = require('../models/model_userTest');
 var cookieOption = {};
 

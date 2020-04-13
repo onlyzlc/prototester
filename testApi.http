@@ -1,0 +1,22 @@
+### 用户登录
+POST http://localhost:8081/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "abc@abc.com",
+    "password": "abc"
+}
+
+### 用户注册
+POST http://localhost:8081/register HTTP/1.1
+content-type: application/json
+
+{
+    "email": "biubiu0_0@163.com",
+    "password": "123456",
+    "mobile": "17620304992"
+}
+
+### 获取任务
+GET http://localhost:8081/tasks/myTasks HTTP/1.1
+content-type: application/json

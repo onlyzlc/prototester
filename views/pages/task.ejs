@@ -4,37 +4,265 @@
 <head>
   <title><%= name %></title>
   <%- include('../parts/head') %>
-  <script src="/javascripts/pttMain.js" defer></script>
+  <!-- <script src="/javascripts/pttMain.js" defer></script> -->
   <script src="/javascripts/task.js" defer></script>
+  <style>
+    .overview{
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      box-sizing: border-box;
+      z-index: 100;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1em 2%;
+      /* height: 200px; */
+      background-color: #CFD8DC;
+    }
+    .overview h3{
+      margin: 0;
+    }
+    
+    .timeLine{
+      box-sizing: border-box;
+      margin:auto;
+      width: 96%;
+      margin-top: 85px;
+      position: relative;
+      /* z-index: 100; */
+      /* overflow-; */
+    }
+    .case {
+      padding: 1em 0;
+      margin:0;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: nowrap;
+    }
+    .case:first-of-type{
+      border-bottom: 1px solid #c5c5c5;
+    }
+    .case li {
+        display: inline-block;
+        vertical-align: top;
+    }
+    .case li.title{
+      width: 215px;
+      margin-right: 1em;
+      padding-right: 1em;
+      border-right: 1px solid rgb(226, 226, 226);
+      height: 2.5em;
+    }
+    .action {}
+
+    .line {
+      margin-top: 6px;
+      background-color: #e1e1e1;
+      height: 12px;
+      box-sizing: border-box;
+      border-radius: 6px;
+    }
+
+    .node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      font-size: 0.8em;
+    }
+
+    .case p {
+      margin: 0;
+    }
+
+    .node .icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      /* background-color: cadetblue; */
+      color: white;
+      text-align: center;
+      line-height: 24px;
+    }
+
+    /* 不匹配步骤的行为，显示小点 */
+    .node .icon.bg_-1{
+      width: 12px;
+      height: 12px;
+      margin-top: 6px;
+    }
+
+    .node .time {
+      color: rgb(180, 180, 180);
+      padding-top: 0.2em;
+    }
+
+    .node .des {
+      padding: 5px;
+      position: absolute;
+      display: none;
+      white-space: normal;
+      bottom: 3.5em;
+      width: 80px;
+      /* height: 54px; */
+      /* margin-bottom: 10px; */
+      background-color: white;
+      border-radius: 3px;
+      box-shadow: 0px 0px 5px 0px hsla(0, 0%, 0%, 0.6);
+      z-index: 100;
+    }
+
+    .node:hover .des {
+      display: block;
+    }
+
+    /* 95a2ff - fa8080 - ffc076 - fae768 - 87e885 - 3cb9fc - 73abf5 - cb9bff - 434348 - 90ed7d - f7a35c - 8085e9​​​​​​​ */
+    /* 3682be - 45a776 - f05326 - eed777 - 334f65 - b3974e - 38cb7d - ddae33 - 844bb3 - 93c555 - 5f6694 - df3881  */
+    .bg_-1 {
+      background-color: rgb(194, 194, 194);
+    }
+    .bg_0 {
+      background-color: #3682be;
+    }
+
+    .bg_1 {
+      background-color: #45a776;
+    }
+
+    .bg_2 {
+      background-color: #f05326;
+    }
+
+    .bg_3 {
+      background-color: #eed777;
+    }
+
+    .bg_4 {
+      background-color: #334f65;
+    }
+
+    .bg_5 {
+      background-color: #b3974e;
+    }
+
+    .bg_6 {
+      background-color: #38cb7d;
+    }
+
+    .bg_7 {
+      background-color: #ddae33;
+    }
+
+    .bg_8 {
+      background-color: #844bb3;
+    }
+
+    .bg_9 {
+      background-color: #93c555;
+    }
+
+    .bg_10 {
+      background-color: #5f6694;
+    }
+
+    .bg_11 {
+      background-color: #df3881;
+    }
+  </style>
 </head>
 
 <body>
-<main>
-    <h1><%= name %></h1>
+  <% include("../parts/header") %> 
+    <div class="overview">  
+      <div class="title">
+        <a href="/tasks">返回任务列表</a>
+        <h3><%= name %></h3>
+      </div>
+      <table class="">
+        <tr>
+          <th>测试次数</th>
+          <th>完成次数</th>
+          <th>完成率</th>
+          <th>平均完成时长</th>
+        </tr>
+        <tr>
+          <td><span></span><%= testCount %> </td>
+          <td><span><%= completedTestings.length %> </span></td>
+          <td><span><%= completedRatio %></span><span class="unit">%</span></td>
+          <td><span><%= avgOfDuration %></span><span class="unit">秒</span></td>
+        </tr>
+      </table>
+      <input id="zoom" type="range" min='0.1' max="10">
+      <button id='deleteTask'>删除此任务和数据</button>
+    </div>
 
-    <h2>测试概况</h2>
-    <table class="">
-      <tr>
-        <th>测试次数</th>
-        <th>完成次数</th>
-        <th>完成率</th>
-        <th>平均完成时长</th>
-      </tr>
-      <tr>
-        <td ><span id="testCount"></span></td>
-        <td ><span id="completedCount"></span></td>
-        <td><span id="completedRatio"></span><span class="unit">%</span></td>
-        <td><span id="avgOfDuration"></span><span class="unit">秒</span></td>
-      </tr>
-    </table>
 
-    <h2>步骤 <span id="stepsCount"></span></h2>
-    <ul id="steps">
+    <div class="timeLine">
+    <%# 宽度系数，与时长（毫秒数）相乘得出宽度 %> 
+    <% var ws = 0.1 %>
+    <ul class="case">
+      <li class="title">参考步骤</li>
+      <% let startTime= steps[0].time %>
+      <% for( let i = 0; i < steps.length; i++ ) { %>
+      <% let action = steps[i] %>
+      <% let timeNode = new Date(action.time-startTime); %>
+      <li class="action">
+        <div class="node">
+          <div class="des">
+            <p><%= action.eventType %></p>
+            <p><%= action.target.innerText %></p>
+          </div>
+          <div class="icon bg_<%=i%>"><%=i+1%></div>
+          <div class="time"><%= timeNode.toTimeString().slice(3,8) %> </div>
+        </div>
+      </li>
+      <% if(i === steps.length-1) break %>
+      <li class="line" style="width:<%= action.dur*ws %>px;"></li>
+      <% } %>
     </ul>
-    <button id='goBack'>返回原型主页</button>
-    <button id='deleteTask'>删除此任务和数据</button>
 
-  </main>
+    <%# 遍历所有测试实例 %>
+    <% for( let i = 0; i < testing.length; i++ ) { %>
+      <% let actions = testing[i].actions  %>
+      <%# 一个测试实例 %> 
+      <ul class="case">
+        <%# 记录当前测试记录的开始时间，用于显示各行为的时间节点 %>
+        <% let startSec= actions[0].time ,startTime = new Date(startSec) %>
+        <li class="title"><p>测试时间:<%= startTime.toLocaleString() %></p><p>ip:<%= actions[0].ip %></p></li>
+        <% for( let j = 0; j < actions.length; j++ ) { %>
+        <%# 一个行为 %> 
+        <% let action = actions[j] %>
+        <li class="action">
+          <div class="node">
+            <%# 行为描述 %>
+            <div class="des">
+              <p><%= action.eventType %></p>
+              <p><%= action.target.innerText %></p>
+            </div>
+            <%# 与步骤相同的行为 %> 
+            <% let mi = action.matchingStep; %> 
+            <div class="icon bg_<%=mi%> ">
+            <% if (mi >= 0) { %>
+              <%= mi+1 %>
+            <% } %>
+            </div>
+            <%# 时间戳：自开始到当前行为的时间，[00:00]，不匹配步骤的行为不显示时间 %>
+            <% if (mi >= 0) { %>
+              <% let timeNode = new Date(action.time-startSec); %>
+              <div class="time"><%= timeNode.toTimeString().slice(3,8) %> </div>
+            <% } %>
+          </div>
+        </li>
+        <% if(j === actions.length-1) break %>
+          <li class="line" style="width:<%= action.dur*ws %>px;"></li>
+        <% } %>
+      </ul>
+    <% } %>
+    </div>
+    
+ 
 </body>
 
 </html>

@@ -35,9 +35,9 @@
             position: fixed;
             right: 0px;
             top: 0px;
-            width: 300px;
+            /* width: 300px; */
             background-color: azure;
-            height: 100%;
+            max-height: calc(100% - 40px);
             
         }
 
@@ -53,7 +53,20 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
+        #steps .pageTitle{
+            color: #c9c9c9;
+            font-size: 0.8em;
+        }
+        #steps li .remove{
+            cursor: pointer;
+        }
+        #steps li .remove:hover{
+            background-color: #c4c4c4;
+        }
+        #steps li .remove[disabled=disabled]{
+            color: #e4e4e4;
+            cursor:not-allowed;
+        }
     </style>
 </head>
 
@@ -63,21 +76,33 @@
     </header>
 
     <div id="sidebar">
-        <form id="setting" target="/" mathod='post'>
+        <form id="setting" >
             <ol id = "steps">
-                <% var i = 0 %>
-                <% steps.forEach(function(step){%>
-                <li data-num="<%= i++ %>">
-                    <span class="icon point" ><%= i %> </span>
-                    在<%= step.pageTitle %> 中 <%= step.eventType %> <%= (step.target)?step.target.innerText:'' %>
-                    <span class="icon remove"> ×</span>
-                </li>
+                <!-- i是完整步骤序号，s是用户行为序号 -->
+                <!-- 将载入和关闭事件作为分割点 -->
+                <% var i = 0%>
+                <% steps.forEach(function(step){%> 
+                    <% if ("load".includes(step.eventType) ) { %>
+                        <li class="pageTitle" data-num="<%= i++ %>">
+                            <%= step.eventType %> : <%= step.pageTitle %> 
+                        </li>
+                    <% } else { %>
+                        <li data-num="<%= i++ %>">
+                            <%= step.eventType %> <%= step.target.innerText %>
+                            <button class="icon remove"> ×</button>
+                        </li>
+                    <% } %>
                 <% }) %>
             </ol>
+            <button type="submit">保存</button>
+            <button id="undo" disabled>恢复</button>
+            <button id="cancel">取消</button>
+            <button id="delete">删除任务</button>
         </form>
 
     </div>
-    <iframe id='stepRecorder' src='<%= steps[0].url%>'></iframe>
+    <!-- url末尾增加＃号,以便统一分割 -->
+    <iframe id='stepRecorder' src='<%= steps[0].url%>#' aria-disabled="true"></iframe>
 </body>
 
 </html>

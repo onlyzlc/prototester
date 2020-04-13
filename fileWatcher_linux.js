@@ -32,35 +32,32 @@ function htmlInit() {
     var htmls = [];
 
     const reg = /index\.html|start_c_1\.html|start_g_0\.html|start\.html/;
+    // 原型根目录路径深度
+    const rdl = rootDir.split("/").length;
 
     for (const log of filesLog) {
         var eventType = log.split(':')[0];
         var fileName = log.split(':')[1];
 
         // 排除顶层文件夹的update记录
-        if (eventType == 'update' && !fileName.includes('\\')) continue;
-        if (fileName == null) continue;
-
-        var p = path.join(rootDir, '\\', fileName); 
-		console.log(p);
+        // if (eventType == 'update' && !fileName.includes('\\')) continue;
+        if (eventType == 'remove' || fileName == null) continue;
+        
+		console.log(fileName);
         try {
             // 检查是否存在
-            fs.accessSync(p);
-            var stat = fs.statSync(p);
-
-            // 是否根节点,是否文件夹 
-            if (fileName.split('\\').length == 1 &&
-                stat.isDirectory()) {
-                folders.push(fileName);
-                continue;
-            }
+            fs.accessSync(fileName);
+            var stat = fs.statSync(fileName);
 
             // 是否原型的 html 页面
-            else if (fileName.endsWith('.html') &&
-                !reg.test(fileName) &&
-                fileName.split('\\').length == 2) {
-
+            if (fileName.endsWith('.html') &&
+                !reg.test(fileName)) {
                 htmls.push(fileName);
+                continue;
+            }else if (fileName.split('/').length == (rdl+1) &&
+                stat.isDirectory()) {
+                // 是否根节点,是否文件夹 
+                folders.push(fileName);
                 continue;
             }
         } catch {
@@ -86,7 +83,7 @@ function htmlInit() {
 
     let i = htmls.length;
     if (i == 0) {
-    console.log("没有要处理的HTML");
+        console.log("没有要处理的HTML");
         return;
     }
 
@@ -97,8 +94,8 @@ function htmlInit() {
 
     for (const file of htmls) {
         // 遍历fs，依每个文件类型在s中插入对应的链接
-        const p = path.join(rootDir, '\\', file)
-        fs.readFile(p, (err, data) => {
+        // const file = path.join(rootDir, '\\', file)
+        fs.readFile(file, (err, data) => {
             if (err) {
                 console.log(err);
                 i--;
@@ -115,7 +112,7 @@ function htmlInit() {
                     // 如果html中没有head标签,则先写入一个head标签
                     htmlStr = oldHtml.concat("\t<head>" + insertHead);
                 }
-                fs.writeFile(p, htmlStr, (err) => {
+                fs.writeFile(file, htmlStr, (err) => {
                     if (err) console.log(err);
                     i--;
                     console.log('已修改：' + file + "--还有" + i + '个');
@@ -136,9 +133,7 @@ var files = new Set();
 function progress(eventType, filename) {
     // 关闭定时器，延时处理
     clearTimeout(timer);
-    
     files.add(eventType + ":" + filename);
-
     // 延时处理
     timer = setTimeout(htmlInit, 5000);
 }
