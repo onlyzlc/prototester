@@ -7,10 +7,12 @@ var Task = require('../models/model_task');
 router.get('/',function (req,res) { 
     console.log('-> 进入任务列表');
     let v = {};
-    Task.find({},function(err,tasks){
-        v.tasks = tasks;
-        res.render('tasks',v);
-    }) 
+    res.render('tasks');
+    // 改由vue渲染
+    // Task.find({},function(err,tasks){
+    //     v.tasks = tasks;
+        
+    // }) 
 })
 
 // 获取任务数据

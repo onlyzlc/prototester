@@ -12,22 +12,15 @@
   <main>
     <h1>我创建的测试任务</h1>
     <a href="/tasks/newTask">新增测试任务</a>
-    
-    <% if(tasks.length){ %>
-      <%     var pTasks = tasks.filter(item=>item.status==="published") %>
-      <%     var uTasks = tasks.filter(item=>item.status==="unpublished")%>
-      <% } %>     
            
-    <ul>
-      <% tasks.forEach(function(item){ %>
-      <li data-taskId="<%=item.taskId%>" data-status="<%=item.status%>" >
-        <a href="/tasks/<%=item.taskId%>"> <%= item.name%> </a> |
-        <span class="status"><%= (item.status=="unpublished")?("已撤下"):("已发布") %></span> |
-        <a href="/tasks/<%=item.taskId%>/setting">设置步骤</a> |
-        <a href="/tasks/<%=item.taskId%>/testing">开始测试</a> |
-        <a class="publish"><%= (item.status=="unpublished")?("发布"):("撤下") %></a>
+    <ul id="tasks">
+      <li v-for="task,index in tasks" :data-taskId="task.taskId" :data-status="task.status" >
+        <a :href="'/tasks/'+task.taskId"> {{ task.name}} </a> |
+        <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
+        <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
+        <a :href="'/tasks/'+task.taskId+'/testing'">开始测试</a> |
+        <a class="publish" @click="publish(index)">{{ (task.status=="unpublished")?("发布"):("撤下") }}</a>
       </li>
-      <%})%>
     </ul>
 
   </main>

@@ -1,36 +1,25 @@
+var vm = new Vue({
+    el:"#tasks",
+    data: {
+        tasks:[]
+    },
+    methods: {
+        publish: function(index){
+            let thisTask = this.tasks[index];
+            let newStatus = (thisTask.status === "published")? "unpublished":"published";
+            axios.patch("/tasks/"+thisTask.taskId+"/status",{status:newStatus})
+                .then(()=> thisTask.status = newStatus)
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                  })
+        },
+        selectPtt: function(){
+        }
+    }
+})
 axios.get('tasks/myTasks')
     .then(function(response){
-        console.log(response);
-        
+        console.log(response.data);
+        vm.tasks = response.data;
     })
-
-$(document).ready(function () {
-    $(".publish").click(function () {
-        let $this = $(this);
-        let $thisItem = $this.parent("li");
-        let taskId = $thisItem.attr("data-taskId");
-       	let cur_status = $thisItem.attr("data-status");
-        $.ajax({
-            type: "patch",
-            url: "/tasks/"+taskId+"/status",
-            data: {
-            	status: (cur_status === "published")?"unpublished":"published"
-            },
-            success: function (response) {
-                console.info(response);
-                $this.text(response==="published"?"撤下":"发布");
-                $thisItem.attr("data-status",response)
-                    .children(".status").text(response==="published"?"已发布":"已撤下")
-                
-            },
-            error: function (response) {
-            	console.error(response);  
-            }
-        });
-    })
-
-    $("#newTask").click(function(e){
-        
-    })
-  
-});

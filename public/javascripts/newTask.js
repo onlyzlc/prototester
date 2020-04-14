@@ -1,9 +1,25 @@
-$(document).ready(function () {
-
+let actions = [];
+let postToWin = {};
+var vm = new Vue({
+    el:"main",
+    data:{
+        task:{
+            name : "",
+            description: "",
+            actions : actions,    
+        }
+    },
+    methods: {
+        check: function(){
+            window.alert('请输入有效的原型链接');
+        }
+    },
+})
+    
+// =================
     // 显示原型链接对话框
     let favDialog = document.getElementById('favDialog');
    
-    let actions = [];
     let task  = {
         name : "",
         description: "",
@@ -135,4 +151,3 @@ $(document).ready(function () {
         }
         // todo 原型未设置插件的提示。
     }
-});

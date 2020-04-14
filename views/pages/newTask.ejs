@@ -41,25 +41,27 @@
 </head>
 
 <body>
-    <div id="favDialog">
-        <div>
-            <label for="pttUrl">原型链接</label>
-            <input id="pttUrl" name="pttUrl" type="text">
+    <main>
+        <div id="favDialog">
+            <div>
+                <label for="pttUrl">原型链接</label>
+                <input id="pttUrl" name="pttUrl" type="text" v-model="">
+            </div>
+            <div>
+                <label for="taskName">任务名称</label>
+                <input name="taskName" id="taskName"/>
+            </div>
+            <div>
+                <label for="description">任务要求</label>
+                <textarea name="description" id="description" cols="100" rows="10"></textarea>
+            </div>
+            <div>
+                <button id="start" @click="check">开始录制任务步骤</button>
+                <a id="cancel" href="/tasks">取消</a>
+            </div>
         </div>
-        <div>
-            <label for="taskName">任务名称</label>
-            <input name="taskName" id="taskName"/>
-        </div>
-        <div>
-        	<label for="description">任务要求</label>
-        	<textarea name="description" id="description" cols="100" rows="10"></textarea>
-        </div>
-        <div>
-            <button id="start">开始录制任务步骤</button>
-            <a id="cancel" href="/tasks">取消</a>
-        </div>
-    </div>
-    <iframe id="pttPrv" src="" frameborder="0"></iframe>
+        <iframe id="pttPrv" src="" frameborder="0"></iframe>
+    </main>
 </body>
 
 </html>

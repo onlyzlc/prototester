@@ -1,11 +1,16 @@
 const fs = require('fs');
 // var Ptt = require('../models/model_ptt');
 const Task = require('../models/model_task')
-const UserTest = require('../models/model_userTest');
+const User = require('../models/model_user');
 var path = require('path');
 
 exports.getMyTasks = function(req,res){
-    res.send('ok');
+    User.findOne({email:req.session.loginUser},function(err,doc){ 
+        Task.find({owner:doc.id},function(err,tasks){
+            if (err) throw err;
+            res.json(tasks);
+        }) 
+    });
 }
 
 exports.create = function (req, res) {
@@ -59,12 +64,11 @@ exports.updateStatus = function (req, res) {
         status: req.body.status
     }, function (err, taskDoc) {
         if (err) throw err;
-        debug;
         if (taskDoc === null) {
             noTaskTip(res);
             return;
         }
-        res.status(200).end(req.body.status);
+        res.sendStatus(200);
     })
 }
 
