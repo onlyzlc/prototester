@@ -1,5 +1,5 @@
 var vm = new Vue({
-    el:"#tasks",
+    el:"#app",
     data: {
         tasks:[]
     },
@@ -15,6 +15,7 @@ var vm = new Vue({
                   })
         },
         selectPtt: function(){
+            
         }
     }
 })
@@ -22,4 +23,5 @@ axios.get('tasks/myTasks')
     .then(function(response){
         console.log(response.data);
         vm.tasks = response.data;
-    })
+    });
+

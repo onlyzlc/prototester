@@ -42,7 +42,7 @@ exports.login = function (req,res) {
                         // todo 登录失败提示；
                         return res.json({ret_code:2,ret_msg:"登录失败"})
                     } 
-                    req.session.loginUser = user.email;
+                    req.session.loginUser = user.id;
                     // res.status(200).json({ret_code:0,ret_msg:"登录成功"});
                     res.redirect(302,'/tasks');
                 })

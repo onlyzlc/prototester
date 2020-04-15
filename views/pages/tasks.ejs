@@ -9,12 +9,15 @@
 </head>
 
 <body>
-  <main>
+  <main id="app">
     <h1>我创建的测试任务</h1>
-    <a href="/tasks/newTask">新增测试任务</a>
+    <a @click="selectPtt">新增测试任务</a>
+    <div v-if:"">
+      
+    </div>
            
     <ul id="tasks">
-      <li v-for="task,index in tasks" :data-taskId="task.taskId" :data-status="task.status" >
+      <li v-for="task,index in tasks" >
         <a :href="'/tasks/'+task.taskId"> {{ task.name}} </a> |
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
