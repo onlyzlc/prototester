@@ -5,7 +5,7 @@ const User = require('../models/model_user');
 var path = require('path');
 
 exports.getMyTasks = function(req,res){
-    Task.find({owner:"5e7add59742717408769cee8"})
+    Task.find()
         .exec(function(err,tasks){
             if (err) throw err;
             res.json(tasks);

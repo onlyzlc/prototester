@@ -56,6 +56,14 @@ exports.login = function (req,res) {
 }
 
 exports.getProtos = function(req,res){
-    console.log("-> 导航到获取用户原型");
-    // User.findOne("email")
+    console.log("-> 导航到获取用户原型,用户：%s",req.session.loginUser);
+    User.findOne({_id:req.session.loginUser},function(err,doc){
+        if(err) throw err;
+        if(doc){
+            res.json(doc.protos)
+        }else{
+            res.sendStatus(404);
+        }
+    })
+
 }

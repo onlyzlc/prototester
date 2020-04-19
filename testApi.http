@@ -29,3 +29,6 @@ POST http://localhost:8081/tasks/
     "description": "task01task01task01",
     "steps":[{},{}]
 }
+
+### 获取原型列表
+GET http://localhost:8081/user/ptts
