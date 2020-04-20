@@ -2,9 +2,8 @@
 Vue.component("dlg",{
     props: ["dialog"],
     data: function(){
-        this.dialog.visibility= false;
         return{
-            // visibility: this.dialog.visibility
+            // visibility: this.dialog.visibility=false
         }
     },
     template:`
@@ -15,13 +14,20 @@ Vue.component("dlg",{
                     <slot></slot>
                 </div>
                 <div class="dialog_foot">
-                    <button v-on:click="$emit('ok')">确定</button>
-                    <button>取消</button>
+                    <button @click="dialog.visibility=false">确定</button>
+                    <button @click="dialog.visibility=false">取消</button>
                 </div>
             </div>
         </div>
     `,
-    
+    methods:{
+        show: function(){
+            this.visibility=true;
+        },
+        hide: function(){
+            this.visibility=false;
+        }
+    }
 })
 
 
