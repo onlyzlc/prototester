@@ -27,12 +27,17 @@
     </div>
 
     <!-- v-if="dialog_selectPtt" -->
-    <dlg v-bind:dialog='dlg_a'>
-      
+    <dlg v-bind:dialog='dlg_a' @dlg-confirm="dlg_a.visibility=false">
+            
       <select name="protos" id="protos" v-model="selectedPtt">
         <option v-for="proto in protos">{{proto}}</option>
       </select>
-      <button >新增</button>
+
+      <template  v-slot:foot_left>
+        <button>
+          新增
+        </button>
+      </template>
       
     </dlg>
 

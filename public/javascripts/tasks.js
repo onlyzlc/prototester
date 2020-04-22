@@ -3,7 +3,6 @@ Vue.component("dlg",{
     props: ["dialog"],
     data: function(){
         return{
-            // visibility: this.dialog.visibility=false
         }
     },
     template:`
@@ -14,20 +13,19 @@ Vue.component("dlg",{
                     <slot></slot>
                 </div>
                 <div class="dialog_foot">
-                    <button @click="dialog.visibility=false">确定</button>
-                    <button @click="dialog.visibility=false">取消</button>
+                    <div class="left">
+                        <slot name="foot_left"></slot>
+                    </div>
+                    <div class="right"> 
+                        <slot name="foot_right">
+                            <button @click="$emit('dlg-confirm')">确定</button>
+                            <button @click="$emit('dlg-cancel')">取消</button>
+                        </slot>
+                    </div>
                 </div>
             </div>
         </div>
-    `,
-    methods:{
-        show: function(){
-            this.visibility=true;
-        },
-        hide: function(){
-            this.visibility=false;
-        }
-    }
+    `
 })
 
 
@@ -44,8 +42,7 @@ var vm = new Vue({
             visibility: false
         },
         dlg_b:{
-            title: '选择上传方式',
-            visibility: false
+            title: '选择上传方式'
         }
         
     },
@@ -60,8 +57,9 @@ var vm = new Vue({
                     console.log(error);
                   })
         },
-
-
+        createTask: function(){
+            
+        }
     }
 })
 axios.get('tasks/myTasks')

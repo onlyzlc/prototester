@@ -149,6 +149,7 @@ iframe{
     content: '任务名称不能重复';
 }
 
+
 /* 对话框背景阴影 */
 dialog::backdrop {
     background: rgba(255,0,0,.25);
@@ -173,7 +174,20 @@ dialog::backdrop {
     min-height: 200px;
     background-color: white;
     border-radius: 5px;
+    display: flex;
+    flex-flow: column;
+}
+.dialog_content {
+    flex-grow: 1;
 }
 .dialog_panel h3{
     margin: 0;
+}
+.dialog_foot{
+    display: flex;
+    flex-flow: row;
+}
+
+.dialog_foot .left{
+   flex-grow: 1;
 }
