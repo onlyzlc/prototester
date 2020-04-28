@@ -1,5 +1,37 @@
 let actions = [];
 let postToWin = {};
+
+// 对话框组件
+Vue.component("dlg",{
+    props: ["dialog"],
+    data: function(){
+        return{
+        }
+    },
+    template:`
+        <div class="dialog_container" v-if="dialog.visibility">
+            <div class="dialog_panel">
+                <h3>{{dialog.title}}</h3>
+                <div class="dialog_content">
+                    <slot></slot>
+                </div>
+                <div class="dialog_foot">
+                    <div class="left">
+                        <slot name="foot_left"></slot>
+                    </div>
+                    <div class="right"> 
+                        <slot name="foot_right">
+                            <button @click="$emit('dlg-confirm')">确定</button>
+                            <button @click="$emit('dlg-cancel')">取消</button>
+                        </slot>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+})
+
+
 var vm = new Vue({
     el:"main",
     data:{

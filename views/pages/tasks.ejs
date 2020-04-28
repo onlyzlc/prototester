@@ -13,21 +13,7 @@
     <h1>我创建的测试任务</h1>
     <button @click="dlg_a.visibility=true">新增测试任务</button>
 
-    <div class="dialog_container" v-if="dialog_selectPtt">
-      <div class="dialog_panel">
-        <h3>选择原型</h3>
-        <div class="dialog_content">
-          
-        </div>
-        <div class="dialog_foot">
-          <button>确定</button>
-          <button>取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- v-if="dialog_selectPtt" -->
-    <dlg v-bind:dialog='dlg_a' @dlg-confirm="dlg_a.visibility=false">
+    <dlg v-bind:dialog='dlg_a' @dlg-confirm="dlg_a.visibility=false" @dlg-confirm="dlg_a.visibility=false">
             
       <select name="protos" id="protos" v-model="selectedPtt">
         <option v-for="proto in protos">{{proto}}</option>

@@ -155,39 +155,3 @@ dialog::backdrop {
     background: rgba(255,0,0,.25);
   }
 
-.dialog_container{
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    top: 0;
-    left: 0;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.dialog_panel{
-    padding: 20px ;
-    min-width:300px;
-    min-height: 200px;
-    background-color: white;
-    border-radius: 5px;
-    display: flex;
-    flex-flow: column;
-}
-.dialog_content {
-    flex-grow: 1;
-}
-.dialog_panel h3{
-    margin: 0;
-}
-.dialog_foot{
-    display: flex;
-    flex-flow: row;
-}
-
-.dialog_foot .left{
-   flex-grow: 1;
-}
