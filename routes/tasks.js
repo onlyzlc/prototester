@@ -7,7 +7,7 @@ var Task = require('../models/model_task');
 router.get('/',function (req,res) { 
     console.log('-> 进入任务列表');
     let v = {};
-    res.render('tasks');
+    res.json('tasks');
     // 改由vue渲染
     // Task.find({},function(err,tasks){
     //     v.tasks = tasks;
@@ -20,7 +20,7 @@ router.get('/myTasks',taskApi.getMyTasks);
 
 router.get('/newTask', function(req,res){
     console.log("进入添加任务页");
-    res.render('newTask');
+    // res.render('newTask');
 })
 
 router.post('/',taskApi.create);

@@ -101,7 +101,7 @@ exports.getTaskSettingPage = function (req, res) {
             noTaskTip(res);
             return;
         }
-        res.render('taskSetting', {
+        res.json({
             steps: taskDoc.steps,
             name: taskDoc.name
         })
@@ -128,7 +128,7 @@ exports.getSteps = function (req, res) {
 
 exports.getTestingPage = function (req, res) {
     console.log('-> 进入测试页');
-    res.render("testing");
+    res.json("testing");
 }
 
 exports.getStartStop = function (req, res) {
@@ -206,10 +206,10 @@ exports.getDetail = function (req, res) {
         }
         if (taskDoc.testCount == 0) {
             // todo 还未进行测试时，需显示一个提示
-            res.render('task', taskDoc);
+            res.json(taskDoc);
             return;
         }
-        res.render('task', taskDoc);
+        res.json(taskDoc);
     })
 }
 

@@ -1,4 +1,9 @@
 node_modules
+public
 public/protos
 .vscode/launch.json
 package-lock.json
+ui/dist
+ui/public
+ui/node_modules
+

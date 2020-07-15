@@ -4,6 +4,7 @@ var path = require('path');
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var history = require('connect-history-api-fallback');
 
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
@@ -14,6 +15,7 @@ var mongoose = require('mongoose');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 let connectionOptions = 'mongodb://localhost/prototester';
 mongoose.connect(connectionOptions);
 
@@ -23,6 +25,7 @@ var taskRouter = require('./routes/tasks');
 
 var app = express();
 console.log(app.get("env"));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views/pages'));
 app.set('view engine', 'ejs');
@@ -33,6 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(history());
 
 var identitykey = 'skey';
 app.use(session({
@@ -94,8 +98,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-// test();
-
 
 module.exports = app;
