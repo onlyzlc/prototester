@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/tasks/:taskId',
     name: 'TaskBoard',
-    component: TaskBoard,
+    component: TaskBoard
   },
   {
     path: '/tasks/:taskId/testId',
