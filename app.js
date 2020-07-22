@@ -43,8 +43,8 @@ app.use(session({
   key: 'session',
   secret: 'Lonnie',
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie:{
-    maxAge: 24*60*60*1000
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000
   },
   saveUninitialized: true,
   resave: false
@@ -52,22 +52,23 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', (req,res,next)=>{
-  res.set("Access-Control-Allow-Origin","https://axshare.com"); 
-  res.set("Access-Control-Allow-Origin","http://zhoulongchun.com"); 
-  res.set("Access-Control-Allow-Origin","http://localhost"); 
-  res.set("Access-Control-Allow-Methods","*"); 
+app.use('/', (req, res, next) => {
+  res.set("Access-Control-Allow-Origin", "https://axshare.com");
+  res.set("Access-Control-Allow-Origin", "http://zhoulongchun.com");
+  res.set("Access-Control-Allow-Origin", "http://localhost");
+  res.set("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.set("Access-Control-Allow-Methods", "*");
 
   let user = req.session.loginUser;
   let isLogined = !!user;
   let reg = /\/login|\/register|\/favicon.ico/;
   // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
-  if(isLogined || reg.test(req.url)){
-    console.log("用户：%s 请求: %s",user,req.url);
+  if (isLogined || reg.test(req.url)) {
+    console.log("用户：%s 请求: %s", user, req.url);
     next();
-  }else{
-    console.log("未登录用户请求：%s",req.url);
-    res.redirect(302,'/login');
+  } else {
+    console.log("未登录用户请求：%s", req.url);
+    res.redirect(302, '/login');
     // res.sendStatus(404).end();
   }
 });
@@ -76,22 +77,22 @@ app.use('/', (req,res,next)=>{
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 // app.use('/ptts',pttRouter);
-app.use('/tasks',taskRouter)
-app.use('/thanks', (req,res)=>{
+app.use('/tasks', taskRouter)
+app.use('/thanks', (req, res) => {
   res.render('finish');
 })
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   console.error(err.message);
-  
+
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <img src="" alt="" />
+    <img src alt />
     <form @submit.prevent="submit">
       <div>
         <label for="email">邮箱</label>
@@ -14,37 +14,41 @@
         />
       </div>
       <div>
-        <label for="pw">密码</label>
+        <label for="password">密码</label>
         <input
-          v-model="user.pw"
+          v-model="user.password"
           type="password"
           autocomplete="current-password"
-          name="pw"
-          id="pw"
+          name="password"
+          id="password"
           required
         />
       </div>
       <button type="submit">提交</button>
-      <p>已有账号？<a href="/login">去登录</a></p>
+      <p>
+        已有账号？
+        <a href="/login">去登录</a>
+      </p>
     </form>
   </main>
 </template>
 
 <script>
-import axios from "axios";
 export default {
-  data: {
-    user: {
-      email: "",
-      pw: ""
+  data: function () {
+    return {
+      user: {
+        email: '',
+        password: ''
+      }
     }
   },
   methods: {
-    submit: function() {
-      axios.post("/login", this.user).then();
+    submit: function () {
+      this.$http.post('/login', this.user).then()
     }
   }
-};
+}
 </script>
 
 <style></style>

@@ -12,7 +12,7 @@
                 <div class="left">
                     <slot name="foot_left"></slot>
                 </div>
-                <div class="right"> 
+                <div class="right">
                     <slot name="foot_right">
                         <button @click="$emit('confirm')">确定</button>
                         <button @click="$emit('cancel')">取消</button>
@@ -25,22 +25,22 @@
 
 <script>
 export default {
-    name: "dialog-ln",
-    props:{
-        title:{
-            type: String,
-            default: "对话框"
-        },
-        vv:{
-            type:Boolean,
-            default:true
-        }
+  name: 'dialog-ln',
+  props: {
+    title: {
+      type: String,
+      default: '对话框'
+    },
+    vv: {
+      type: Boolean,
+      default: true
     }
+  }
 }
 </script>
 
 <style scoped>
-    
+
     .dialog_container{
         position: fixed;
         height: 100%;
@@ -81,7 +81,7 @@ export default {
         padding: 1em 0;
         flex-grow: 1;
     }
-    
+
     .dialog_foot{
         display: flex;
         flex-flow: row;
