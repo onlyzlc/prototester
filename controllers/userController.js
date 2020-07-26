@@ -40,11 +40,11 @@ exports.login = function (req, res) {
                 req.session.regenerate(function (err) {
                     if (err) {
                         // todo 登录失败提示；
-                        return res.json({ ret_code: 2, ret_msg: "登录失败" })
+                        return res.json({ret_code: 2, ret_msg: "登录失败" })
                     }
                     req.session.loginUser = user.id;
-                    // res.status(200).json({ret_code:0,ret_msg:"登录成功"});
-                    res.redirect(302, '/tasks');
+                    res.status(200).json({ret_code: 0, ret_msg: "登录成功"});
+                    // res.redirect(302, '/tasks');
                 })
             } else {
                 res.json({ ret_code: 1, ret_msg: "用户名或密码错误" })

@@ -2,14 +2,25 @@ const express = require('express');
 var router = express.Router();
 var userApi = require('../controllers/userController');
 
-// router.get('/login',function (req,res) {  
-//     res.render('login')
-// })
-// router.get('/register',function (req,res) {  
-//     res.render('register')
-// })
+// 中间件:登陆检查
+router.use('/', (req, res, next) => {
+    let user = req.session.loginUser;
+    let isLogined = !!user;
+    let reg = /\/login|\/register|\/favicon.ico/;
+    // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
+    if (isLogined || reg.test(req.url)) {
+      console.log("用户：%s 请求: %s", user, req.url);
+      next();
+    } else {
+      console.log("未登录用户请求：%s", req.url);
+      res.sendStatus(511);
+    }
+  });
+
+router.use('/tasks', require('./tasks'));
 
 router.post('/register', userApi.register);
 router.post('/login', userApi.login);
+
 
 module.exports = router;

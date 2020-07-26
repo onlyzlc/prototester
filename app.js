@@ -20,8 +20,6 @@ let connectionOptions = 'mongodb://localhost/prototester';
 mongoose.connect(connectionOptions);
 
 var indexRouter = require('./routes/index');
-var userRouter = require('./routes/user');
-var taskRouter = require('./routes/tasks');
 
 var app = express();
 console.log(app.get("env"));
@@ -52,35 +50,18 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 中间件:响应头设置
 app.use('/', (req, res, next) => {
-  res.set("Access-Control-Allow-Origin", "https://axshare.com");
-  res.set("Access-Control-Allow-Origin", "http://zhoulongchun.com");
-  res.set("Access-Control-Allow-Origin", "http://localhost");
-  res.set("Access-Control-Allow-Origin", "http://localhost:8081");
+  // res.set("Access-Control-Allow-Origin", "https://axshare.com");
+  // res.set("Access-Control-Allow-Origin", "http://zhoulongchun.com");
+  // res.set("Access-Control-Allow-Origin", "http://localhost");
+  // res.set("Access-Control-Allow-Origin", "http://localhost:8080"); 
   res.set("Access-Control-Allow-Methods", "*");
-
-  let user = req.session.loginUser;
-  let isLogined = !!user;
-  let reg = /\/login|\/register|\/favicon.ico/;
-  // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
-  if (isLogined || reg.test(req.url)) {
-    console.log("用户：%s 请求: %s", user, req.url);
-    next();
-  } else {
-    console.log("未登录用户请求：%s", req.url);
-    res.redirect(302, '/login');
-    // res.sendStatus(404).end();
-  }
+  next();
 });
 
 // 路由
-app.use('/', indexRouter);
-app.use('/user', userRouter);
-// app.use('/ptts',pttRouter);
-app.use('/tasks', taskRouter)
-app.use('/thanks', (req, res) => {
-  res.render('finish');
-})
+app.use('/api', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
