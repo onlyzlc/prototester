@@ -1,7 +1,7 @@
 // const proxy = require('http-proxy-middleware');
 
 module.exports = {
-  outputDir: '../public',
+  outputDir: 'dist',
   devServer: {
     open: true,
     port: 8080,
