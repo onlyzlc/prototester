@@ -1,6 +1,5 @@
 <template>
   <main>
-    <img src alt />
     <form @submit.prevent="submit">
       <div>
         <label for="email">邮箱</label>
@@ -45,7 +44,13 @@ export default {
   },
   methods: {
     submit: function () {
-      this.$http.post('/login', this.user).then()
+      this.$http.post('/login', this.user)
+        .then(res => {
+          if (res.data.ret_code === 0) {
+            sessionStorage.setItem('user', this.user.email)
+            this.$router.push('tasks')
+          }
+        })
     }
   }
 }
