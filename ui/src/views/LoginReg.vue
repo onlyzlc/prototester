@@ -48,7 +48,8 @@ export default {
         .then(res => {
           if (res.data.ret_code === 0) {
             sessionStorage.setItem('user', this.user.email)
-            this.$router.push('tasks')
+            const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
+            this.$router.push(orginUrl)
           }
         })
     }

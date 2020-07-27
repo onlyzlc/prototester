@@ -16,6 +16,11 @@ ax.interceptors.response.use(function (response) {
   return response
 }, function (error) {
   console.log(error)
+  if (error.response.status === 511) {
+    sessionStorage.clear('user')
+    sessionStorage.setItem('urlReq', error.config.url)
+    router.push('/loginReg')
+  }
   return Promise.reject(error)
 })
 
