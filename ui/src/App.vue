@@ -3,7 +3,7 @@
     <div id="nav">
       <router-link to="/tasks">测试任务</router-link> |
       <router-link to="/setting">设置</router-link> |
-      <router-link to="/loginReg">登陆/注册</router-link> |
+      <router-link  to="/loginReg">登陆/注册</router-link> |
     </div>
     <router-view/>
   </div>

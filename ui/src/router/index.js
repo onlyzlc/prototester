@@ -49,4 +49,12 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  // console.log(router.app.status)
+  const status = router.app.status || JSON.parse(localStorage.getItem('statusStore'))
+  if (to.name !== 'LoginReg' && !status.isVerified) {
+    next({ name: 'LoginReg' })
+  } else next()
+})
+
 export default router
