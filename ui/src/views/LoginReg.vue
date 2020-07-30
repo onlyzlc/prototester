@@ -4,26 +4,28 @@
       <div>
         <label for="email">邮箱</label>
         <input
+          id="email"
           v-model="user.email"
           type="email"
           autocomplete="username"
           name="email"
-          id="email"
           required
-        />
+        >
       </div>
       <div>
         <label for="password">密码</label>
         <input
+          id="password"
           v-model="user.password"
           type="password"
           autocomplete="current-password"
           name="password"
-          id="password"
           required
-        />
+        >
       </div>
-      <button type="submit">提交</button>
+      <button type="submit">
+        提交
+      </button>
       <p>
         已有账号？
         <a href="/login">去登录</a>

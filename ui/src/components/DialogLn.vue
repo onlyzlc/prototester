@@ -1,31 +1,41 @@
 <template>
-    <div class="dialog_container" v-if="vv">
-        <div class="dialog_panel">
-            <div class="dialog_header">
-                <h3>{{title}}</h3>
-                <i class="close" @click="$emit('cancel')"></i>
-            </div>
-            <div class="dialog_content">
-                <slot></slot>
-            </div>
-            <div class="dialog_foot">
-                <div class="left">
-                    <slot name="foot_left"></slot>
-                </div>
-                <div class="right">
-                    <slot name="foot_right">
-                        <button @click="$emit('confirm')">确定</button>
-                        <button @click="$emit('cancel')">取消</button>
-                    </slot>
-                </div>
-            </div>
+  <div
+    v-if="vv"
+    class="dialog_container"
+  >
+    <div class="dialog_panel">
+      <div class="dialog_header">
+        <h3>{{ title }}</h3>
+        <i
+          class="close"
+          @click="$emit('cancel')"
+        />
+      </div>
+      <div class="dialog_content">
+        <slot />
+      </div>
+      <div class="dialog_foot">
+        <div class="left">
+          <slot name="foot_left" />
         </div>
+        <div class="right">
+          <slot name="foot_right">
+            <button @click="$emit('confirm')">
+              确定
+            </button>
+            <button @click="$emit('cancel')">
+              取消
+            </button>
+          </slot>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'dialog-ln',
+  name: 'DialogLn',
   props: {
     title: {
       type: String,
