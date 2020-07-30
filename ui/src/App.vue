@@ -1,13 +1,35 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/tasks">测试任务</router-link> |
-      <router-link to="/setting">设置</router-link> |
-      <router-link  to="/loginReg">登陆/注册</router-link> |
+      <router-link to="/tasks">
+        测试任务
+      </router-link> |
+      <router-link to="/setting">
+        设置
+      </router-link> |
+      <div>
+        <router-link
+          v-if="appState.isVerified"
+          to="/loginReg"
+        >
+          登陆/注册
+        </router-link> |
+      </div>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
+
+<script>
+import appStore from './store'
+export default {
+  data () {
+    return {
+      appState: appStore.state
+    }
+  }
+}
+</script>
 
 <style>
 #app {
