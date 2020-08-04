@@ -29,9 +29,11 @@ Vue.use(VueAxios, ax)
 
 Vue.config.productionTip = false
 
+Vue.prototype.store = appStore
+
 new Vue({
   beforeCreate () {
-    appStore.init()
+    this.store.init()
   },
   created () {
   },
