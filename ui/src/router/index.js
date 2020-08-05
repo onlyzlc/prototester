@@ -6,6 +6,7 @@ import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
 import Testing from '../views/Testing.vue'
 import Setting from '../views/Setting.vue'
+import appStore from '../store'
 
 Vue.use(VueRouter)
 
@@ -51,7 +52,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // console.log(router.app.status)
-  const status = router.app.status || JSON.parse(localStorage.getItem('statusStore'))
+  const status = appStore.state
   if (to.name !== 'LoginReg' && !status.isVerified) {
     next({ name: 'LoginReg' })
   } else next()

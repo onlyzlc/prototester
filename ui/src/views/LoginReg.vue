@@ -35,13 +35,15 @@
 </template>
 
 <script>
+import appStore from '../store'
 export default {
   data: function () {
     return {
       user: {
         email: '',
         password: ''
-      }
+      },
+      state: appStore.state
     }
   },
   methods: {
@@ -49,9 +51,13 @@ export default {
       this.$http.post('/login', this.user)
         .then(res => {
           if (res.data.ret_code === 0) {
-            sessionStorage.setItem('user', this.user.email)
-            const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
-            this.$router.push(orginUrl)
+            // sessionStorage.setItem('user', this.user.email)
+            // const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
+            // this.$router.push(orginUrl)
+            appStore.updateUser({
+              isVerified: true,
+              email: this.user.email
+            })
           }
         })
     }
