@@ -6,6 +6,7 @@ import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
 import Testing from '../views/Testing.vue'
 import Setting from '../views/Setting.vue'
+import appStore from '../store'
 
 Vue.use(VueRouter)
 
