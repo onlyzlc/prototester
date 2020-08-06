@@ -10,7 +10,7 @@
       <div>
         <router-link
           v-if="appState.isVerified"
-          to="/loginReg"
+          to="/login"
         >
           登陆/注册
         </router-link> |

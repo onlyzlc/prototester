@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import LoginReg from '../views/LoginReg.vue'
+import Login from '../views/Login.vue'
 import Tasks from '../views/Tasks.vue'
 import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
@@ -37,9 +37,12 @@ const routes = [
     component: Setting
   },
   {
-    path: '/loginReg',
-    name: 'LoginReg',
-    component: LoginReg
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    props: {
+      to: 'Tasks'
+    }
   }
 ]
 
@@ -50,10 +53,10 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // console.log(router.app.status)
-  const status = router.app.status || JSON.parse(localStorage.getItem('statusStore'))
-  if (to.name !== 'LoginReg' && !status.isVerified) {
-    next({ name: 'LoginReg' })
+  const status = router.app.store.state
+  if (to.name !== 'Login' && !status.isVerified) {
+    console.log('登录超时, 跳转到登录页')
+    next({ name: 'Login', props: { to: to.name } })
   } else next()
 })
 
