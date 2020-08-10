@@ -58,6 +58,8 @@ export default {
             // sessionStorage.setItem('user', this.user.email)
             // 返回登录前的状态
             // const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
+            // 更新登录状态
+            this.Store.update(this.user)
             this.$router.push({ name: this.to })
           }
         })

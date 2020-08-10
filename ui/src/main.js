@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import appStore from './store'
+import Store from './store'
 
 console.log(process.env.NODE_ENV)
 
@@ -20,7 +20,7 @@ ax.interceptors.response.use(function (response) {
   if (error.response.status === 511) {
     sessionStorage.clear('user')
     sessionStorage.setItem('urlReq', error.config.url)
-    router.push('/loginReg')
+    router.push('/login')
   }
   return Promise.reject(error)
 })
@@ -29,13 +29,21 @@ Vue.use(VueAxios, ax)
 
 Vue.config.productionTip = false
 
-Vue.prototype.store = appStore
+Vue.prototype.Store = Store
 
 new Vue({
   beforeCreate () {
-    this.store.init()
+    this.Store.init()
   },
   created () {
+    // 全局添加登录超时校验
+    router.beforeEach((to, from, next) => {
+      const status = this.Store.state
+      if (to.name !== 'Login' && !status.isVerified) {
+        console.log('登录超时, 跳转到登录页')
+        next({ name: 'Login', props: { to: to.name } })
+      } else next()
+    })
   },
   methods: {
   },

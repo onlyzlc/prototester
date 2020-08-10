@@ -6,7 +6,6 @@ import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
 import Testing from '../views/Testing.vue'
 import Setting from '../views/Setting.vue'
-import appStore from '../store'
 
 Vue.use(VueRouter)
 
@@ -51,14 +50,6 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
-})
-
-router.beforeEach((to, from, next) => {
-  const status = router.app.store.state
-  if (to.name !== 'Login' && !status.isVerified) {
-    console.log('登录超时, 跳转到登录页')
-    next({ name: 'Login', props: { to: to.name } })
-  } else next()
 })
 
 export default router

@@ -9,7 +9,7 @@
       </router-link> |
       <div>
         <router-link
-          v-if="appState.isVerified"
+          v-if="Store.state.isVerified"
           to="/login"
         >
           登陆/注册
@@ -21,11 +21,9 @@
 </template>
 
 <script>
-import appStore from './store'
 export default {
   data () {
     return {
-      appState: appStore.state
     }
   }
 }
