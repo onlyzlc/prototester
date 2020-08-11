@@ -41,7 +41,7 @@ const routes = [
     name: 'Login',
     component: Login,
     props: {
-      to: 'Tasks'
+      to: 'Tasks' // 登陆后默认返回的位置.
     }
   }
 ]

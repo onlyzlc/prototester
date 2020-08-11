@@ -35,6 +35,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     to: {
@@ -53,16 +54,20 @@ export default {
   methods: {
     submit: function () {
       this.$http.post('/login', this.user)
-        .then(res => {
-          if (res.data.ret_code === 0) {
-            // sessionStorage.setItem('user', this.user.email)
-            // 返回登录前的状态
-            // const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
-            // 更新登录状态
-            this.Store.update(this.user)
-            this.$router.push({ name: this.to })
-          }
-        })
+        .then(res => this.loginSecuess(res))
+    },
+    loginSecuess: function (res) {
+      // const Store = this.Store
+      // const user = this.user
+      if (res.data.ret_code === 0) {
+        // sessionStorage.setItem('user', this.user.email)
+        // 返回登录前的状态
+        // const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
+        // 更新登录状态
+        this.user.isVerified = true
+        this.Store.updateUser(this.user)
+        this.$router.push({ name: this.to })
+      }
     }
   }
 }

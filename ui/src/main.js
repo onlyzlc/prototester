@@ -39,7 +39,7 @@ new Vue({
     // 全局添加登录超时校验
     router.beforeEach((to, from, next) => {
       const status = this.Store.state
-      if (to.name !== 'Login' && !status.isVerified) {
+      if (to.name !== 'Login' && !status.user.isVerified) {
         console.log('登录超时, 跳转到登录页')
         next({ name: 'Login', props: { to: to.name } })
       } else next()
