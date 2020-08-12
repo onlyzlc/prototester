@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="vv"
+    v-if="vis"
     class="dialog_container"
   >
     <div class="dialog_panel">
@@ -20,11 +20,11 @@
         </div>
         <div class="right">
           <slot name="foot_right">
-            <button @click="$emit('confirm')">
-              确定
+            <button class="primary" @click="$emit('click_primary')">
+              {{ btnPrimary }}
             </button>
-            <button @click="$emit('cancel')">
-              取消
+            <button class="secondary" @click="$emit('click_secondary')">
+              {{ btnSecondary }}
             </button>
           </slot>
         </div>
@@ -41,9 +41,17 @@ export default {
       type: String,
       default: '对话框'
     },
-    vv: {
+    vis: {
       type: Boolean,
-      default: true
+      default: false
+    },
+    btnPrimary: {
+      type: String,
+      default: '确定'
+    },
+    btnSecondary: {
+      type: String,
+      default: '取消'
     }
   }
 }
@@ -67,7 +75,7 @@ export default {
     .dialog_panel{
         padding: 20px ;
         min-width:300px;
-        min-height: 200px;
+        min-height: 20px;
         background-color: white;
         border-radius: 5px;
         display: flex;
@@ -99,5 +107,9 @@ export default {
 
     .dialog_foot .left{
     flex-grow: 1;
+    }
+
+    button.primary{
+
     }
 </style>

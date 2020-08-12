@@ -6,7 +6,7 @@ var userApi = require('../controllers/userController');
 router.use('/', (req, res, next) => {
     let user = req.session.loginUser;
     let isLogined = !!user;
-    let reg = /\/login|\/register|\/favicon.ico/;
+    let reg = /\/login|\/regist|\/favicon.ico/;
     // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
     if (isLogined || reg.test(req.url)) {
       console.log("用户：%s 请求: %s", user, req.url);
@@ -19,8 +19,9 @@ router.use('/', (req, res, next) => {
 
 router.use('/tasks', require('./tasks'));
 
-router.post('/register', userApi.register);
+router.post('/regist', userApi.regist);
 router.post('/login', userApi.login);
+router.post('/logout', userApi.logout);
 
 
 module.exports = router;

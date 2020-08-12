@@ -7,6 +7,11 @@ import Store from './store'
 
 console.log(process.env.NODE_ENV)
 
+Vue.config.productionTip = false
+
+Store.init()
+Vue.prototype.Store = Store
+
 const ax = axios.create({
   baseURL: '/api'
 })
@@ -16,7 +21,7 @@ ax.interceptors.response.use(function (response) {
   // 对响应数据做点什么
   return response
 }, function (error) {
-  console.log(error)
+  if (Store.debug) console.log(error)
   if (error.response.status === 511) {
     sessionStorage.clear('user')
     sessionStorage.setItem('urlReq', error.config.url)
@@ -25,25 +30,21 @@ ax.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
+// 全局添加登录超时校验
+router.beforeEach((to, from, next) => {
+  const state = Store.state
+  if (to.name !== 'Regist' && to.name !== 'Login' && !state.isVerified) {
+    if (Store.debug) console.log('登录超时, 跳转注册页')
+    next({ name: 'Regist', props: { to: to.name } })
+  } else next()
+})
+
 Vue.use(VueAxios, ax)
-
-Vue.config.productionTip = false
-
-Vue.prototype.Store = Store
 
 new Vue({
   beforeCreate () {
-    this.Store.init()
   },
   created () {
-    // 全局添加登录超时校验
-    router.beforeEach((to, from, next) => {
-      const status = this.Store.state
-      if (to.name !== 'Login' && !status.user.isVerified) {
-        console.log('登录超时, 跳转到登录页')
-        next({ name: 'Login', props: { to: to.name } })
-      } else next()
-    })
   },
   methods: {
   },

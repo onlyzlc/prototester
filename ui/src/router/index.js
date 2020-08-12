@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
+import Regist from '../views/Regist.vue'
 import Tasks from '../views/Tasks.vue'
 import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
@@ -42,6 +43,14 @@ const routes = [
     component: Login,
     props: {
       to: 'Tasks' // 登陆后默认返回的位置.
+    }
+  },
+  {
+    path: '/regist',
+    name: 'Regist',
+    component: Regist,
+    props: {
+      to: 'Tasks' // 注册完成后默认返回的位置.
     }
   }
 ]

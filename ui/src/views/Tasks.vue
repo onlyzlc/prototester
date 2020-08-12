@@ -14,7 +14,7 @@ export default {
     fetchData: function () {
       this.$http.get('tasks')
         .then(res => {
-          console.log(res.data)
+          if (this.Store.debug) console.log(res.data)
         })
     }
   }

@@ -18,17 +18,25 @@
           id="password"
           v-model="user.password"
           type="password"
-          autocomplete="current-password"
-          name="password"
           required
         >
       </div>
+      <div>
+        <label for="password">确认密码</label>
+        <input
+          id="password"
+          v-model="user.passwordConfirm"
+          type="password"
+          required
+        >
+      </div>
+      <div v-if='errorTip'>{{ errorTip }}</div>
       <button type="submit">
-        登录
+        注册
       </button>
       <p>
-        没有账号？
-        <a href="/regist">注册</a>
+        已有账号？
+        <a href="/login">去登录</a>
       </p>
     </form>
   </main>
@@ -47,21 +55,24 @@ export default {
       user: {
         email: '',
         password: '',
+        passwordConfirm: '',
         isVerified: false
       }
     }
   },
+  computed: {
+    errorTip: function () {
+      if (this.password !== this.passwordConfirm) return '两次输入密码不一致'
+      else return ''
+    }
+  },
   methods: {
     submit: function () {
-      this.$http.post('/login', this.user)
-        .then(res => this.loginSecuess(res))
+      this.$http.post('/regist', this.user)
+        .then(res => this.registSecuess(res))
     },
-    loginSecuess: function (res) {
+    registSecuess: function (res) {
       if (res.data.ret_code === 0) {
-        // sessionStorage.setItem('user', this.user.email)
-        // 返回登录前的状态
-        // const orginUrl = sessionStorage.getItem('urlReq') || '/tasks'
-        // 更新登录状态
         this.user.isVerified = true
         this.Store.updateUser(this.user)
         this.$router.push({ name: this.to })
