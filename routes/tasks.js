@@ -3,20 +3,8 @@ var router = express.Router();
 var taskApi = require('../controllers/taskController')
 var Task = require('../models/model_task');
 
-// 显示任务页面
-router.get('/',function (req,res) { 
-    console.log('-> 进入任务列表');
-    let v = {};
-    res.json('tasks');
-    // 改由vue渲染
-    // Task.find({},function(err,tasks){
-    //     v.tasks = tasks;
-        
-    // }) 
-})
-
-// 获取任务数据
-router.get('/myTasks',taskApi.getMyTasks);
+// 获取用户的任务数据
+router.get('/',taskApi.getTasks)
 
 router.get('/newTask', function(req,res){
     console.log("进入添加任务页");

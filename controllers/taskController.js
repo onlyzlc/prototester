@@ -4,7 +4,7 @@ const Task = require('../models/model_task')
 const User = require('../models/model_user');
 var path = require('path');
 
-exports.getMyTasks = function(req,res){
+exports.getTasks = function(req,res){
     Task.find()
         .exec(function(err,tasks){
             if (err) throw err;

@@ -1,22 +1,35 @@
 <template>
-  <div>这里会有个测试任务列表</div>
+  <div>
+    <ul>
+
+    </ul>
+  </div>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      tasks: []
+    }
+  },
   watch: {
     $route: 'fetchData'
   },
   created () {
-    // this.fetchData()
+    this.fetchData()
   },
   methods: {
-    fetchData: function () {
-      this.$http.get('tasks')
+    fetchData () {
+      this.$http.get('/tasks')
         .then(res => {
-          if (this.Store.debug) console.log(res.data)
+          if (Array.isArray(res.data)) {
+            this.tasks = res.data
+          } else if (this.Store.debug) console.error('数据传输类型错误')
         })
+        .catch(console.error('数据传输错误'))
     }
+
   }
 }
 </script>
