@@ -55,12 +55,15 @@ export default {
       errorTip: ''
     }
   },
+  computed: {
+  },
   methods: {
     submit: function () {
       this.$http.post('/login', this.user)
-        .then(res => this.loginSecuess(res))
+        .then(res => this.handler(res))
+        .catch(res => { this.errorTip = '网络似乎有问题, 连不上服务器' })
     },
-    loginSecuess: function (res) {
+    handler: function (res) {
       switch (res.data.ret_code) {
         // 登录成功
         case 0: {
@@ -77,6 +80,7 @@ export default {
         // 登录失败: 用户不存在
         case 2: {
           this.errorTip = '用户不存在'
+          // this.nonexistentUsers.push()
           break
         }
         default: {

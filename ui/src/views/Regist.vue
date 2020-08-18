@@ -62,12 +62,14 @@ export default {
         passwordConfirm: '',
         isVerified: false
       },
-      existingEmail: []
+      existingEmail: [],
+      abnormal: ''
     }
   },
   computed: {
-    errorTip: function () {
-      if (this.existingEmail.includes(this.user.email)) return '此用户已存在'
+    errorTip () {
+      if (this.abnormal) return this.abnormal
+      else if (this.existingEmail.includes(this.user.email)) return '此用户已存在'
       else if (this.user.password !== '' &&
         this.user.passwordConfirm !== '' &&
         this.user.password !== this.user.passwordConfirm
@@ -79,10 +81,10 @@ export default {
     submit () {
       if (this.errorTip) return false
       this.$http.post('/regist', this.user)
-        .then(res => this.handle(res))
-        .catch(res => this.registFailed(res))
+        .then(res => this.handler(res))
+        .catch(res => { this.abnormal = '网络异常, 无法连接服务器.' })
     },
-    handle (res) {
+    handler (res) {
       switch (res.data.ret_code) {
         // 注册成功,跳转到原页面
         case 0: {
@@ -102,8 +104,6 @@ export default {
           break
         }
       }
-    },
-    registFailed (res) {
     }
   }
 }
