@@ -8,12 +8,14 @@
         name="pttUrl"
         type="url"
       >
-      <span class="tip" v-if="pttUrl !== '' && urlIsValid">URL OK</span>
-      <span class="tip" v-else-if="pttUrl !== '' && urlIsValid === false">URL 无效</span>
+      <template v-if = "pttUrl.trim() !== ''">
+        <span class="tip" v-if="urlIsValid">URL OK</span>
+        <span class="tip" v-else-if="iframeSrc !== ''" >URL 无效</span>
+      </template>
     </div>
     <div>
       <iframe
-        :src="pttUrl"
+        :src="iframeSrc"
         frameborder="0"
       />
     </div>
@@ -25,46 +27,72 @@ export default {
   data () {
     return {
       pttUrl: '',
+      iframeSrc: '',
       urlIsValid: false
     }
   },
   mounted () {
-    //   监听框架上传的消息
+    // 监听框架上传的消息
     window.addEventListener('message', this.receiveMsgFromWin, false)
   },
   watch: {
     pttUrl: function () {
+      // 去空格
       const url = this.pttUrl.trim()
-      if (url === '') return
-      if (url !== this.pttUrl) this.pttUrl = url
-      else this.timmer = setTimeout(this.timeOutHandle, 5000)
+      // 如果为空或者没变, 则不管
+      if (url === '' || url === this.iframeSrc) return
+      // 若有修改则清除,重置定时器
+      if (this.lazyLoadTimer) clearTimeout(this.lazyLoadTimer)
+      if (this.reloadTimer) clearInterval(this.reloadTimer)
+      // 延时加载框架
+      this.lazyLoadTimer = setTimeout(this.lazyLoad, 1000, url)
     }
   },
   methods: {
     receiveMsgFromWin (e) {
+      if (this.iframeSrc === '') return
       const eData = e.data
       const pttOrigin = e.origin
       // 判断是否为用户输入的地址发送的消息
-      if (this.pttUrl.trim() === '') return
-      if (e.origin !== new URL(this.pttUrl.trim()).origin) return
-      if (this.Store.debug) { console.info('收到 %s 的消息： %o', pttOrigin, eData) }
-      // 消息判断和处理
-      switch (eData.status) {
-        case 'init': {
-          clearTimeout(this.timmer)
-          this.pttUrl = eData.url
-          break
-        }
-        case 'isReady': {
-          clearTimeout(this.timmer)
-          this.urlIsValid = true
-          break
+      if (new URL(this.iframeSrc).origin === e.origin) {
+        if (this.Store.debug) { console.info('收到 %s 的消息： %o', pttOrigin, eData) }
+        this.urlIsValid = true
+        clearInterval(this.reloadTimer)
+        // 消息判断和处理
+        switch (eData.status) {
+          case 'init': {
+            this.iframeSrc = eData.url
+            break
+          }
+          case 'isReady': {
+            this.urlIsValid = true
+            break
+          }
         }
       }
     },
-    timeOutHandle () {
+    timeReload (url) {
       console.info('原型超时未应答')
       this.urlIsValid = false
+      // iframe重载
+      this.iframeSrc = url
+    },
+    lazyLoad (url) {
+      try {
+        let fullUrl = url
+        // 检查是否有协议标头
+        if (!fullUrl.startsWith('http:') && !fullUrl.startsWith('https:')) fullUrl = 'http://' + fullUrl
+        // 检查是否为有效的URL格式
+        const src = new URL(fullUrl)
+        // 设置框架链接, 立即加载
+        this.iframeSrc = src.href
+        // 超时循环加载
+        this.reloadTimer = setInterval(this.timeReload, 8000, src.href)
+      } catch (error) {
+        // URL无效
+        this.iframeSrc = ''
+        this.urlIsValid = false
+      }
     }
   }
 }
