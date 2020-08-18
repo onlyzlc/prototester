@@ -31,7 +31,10 @@
           required
         >
       </div>
-      <div v-if="errorTip" class="errorTip">
+      <div
+        v-if="errorTip"
+        class="errorTip"
+      >
         {{ errorTip }}
       </div>
       <button type="submit">
