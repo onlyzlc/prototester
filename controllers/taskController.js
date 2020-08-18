@@ -5,17 +5,21 @@ const User = require('../models/model_user');
 var path = require('path');
 
 exports.getTasks = function(req,res){
-    Task.find()
-        .exec(function(err,tasks){
-            if (err) throw err;
-            res.json(tasks);
-        })
-    // User.findOne({email:req.session.loginUser},function(err,doc){ 
-    //     Task.find({owner:doc.id},function(err,tasks){
+    // Task.find()
+    //     .exec(function(err,tasks){
+    //         if (err) throw err;
+    //         res.json(tasks);
+    //     })
+    // User.findOne({id:req.session.loginUser},function(err,doc){ 
+    //     Task.find({owner:req.session.loginUser.id},function(err,tasks){
     //         if (err) throw err;
     //         res.json(tasks);
     //     }) 
     // });
+    Task.find({owner:req.session.loginUser},function(err,tasks){
+        if (err) throw err;
+        res.json(tasks);
+    }) 
 }
 
 exports.create = function (req, res) {
