@@ -64,9 +64,15 @@ export default {
     submit: function () {
       this.$http.post('/login', this.user)
         .then(res => this.handler(res))
-        .catch(res => { this.errorTip = '网络似乎有问题, 连不上服务器' })
+        .catch(() => {
+          if (this.retryTimmer) return false
+          this.errorTip = '网络似乎有问题, 连不上服务器，正在重试...'
+          this.retryTimmer = setInterval(this.submit, 3000)
+        })
     },
     handler: function (res) {
+      if (this.retryTimmer) clearInterval(this.retryTimmer)
+      this.errorTip = ''
       switch (res.data.ret_code) {
         // 登录成功
         case 0: {
