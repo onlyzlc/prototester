@@ -1,30 +1,28 @@
 <template>
   <div>
-    <div>
-      <form @submit.prevent="submit">
-        <label for="ipturl">原型链接</label>
-        <input
-          id="ipturl"
-          v-model="ipturl"
-          name="ipturl"
-          type="url"
-          placeholder="http://protomanager.com/yourproto"
-          required
-        >
-        <button type="submit">确定</button>
-        <input type="checkbox" id="retry" v-model="retry">
-        <label for="retry">自动重试</label>
-      </form>
-      <template v-if = "ipturl.trim() !== ''">
-        <div class="tip" v-if="urlState !== ''" v-html="urlState"></div>
-        <div>
-          <iframe
-            :src="iframeSrc"
-            frameborder="0"
-          />
-        </div>
-      </template>
-    </div>
+    <form @submit.prevent="submit">
+      <label for="ipturl">原型链接</label>
+      <input
+        id="ipturl"
+        v-model="ipturl"
+        name="ipturl"
+        type="url"
+        placeholder="http://protomanager.com/yourproto"
+        required
+      >
+      <button type="submit">确定</button>
+      <input type="checkbox" id="retry" v-model="retry">
+      <label for="retry">自动重试</label>
+    </form>
+    <template v-if = "ipturl.trim() !== ''">
+      <div class="tip" v-if="urlState !== ''" v-html="urlState"></div>
+      <div id="capture">
+        <iframe
+          :src="iframeSrc"
+          frameborder="0"
+        />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -77,14 +75,14 @@ export default {
           // 消息判断和处理
           switch (eData.status) {
             case 'init': {
-              this.urlState = '原型地址定位中...'
+              this.urlState = '稍等一下...'
               this.iframeSrc = eData.url
               clearInterval(this.reloadTimer)
               break
             }
             case 'isReady': {
-              this.urlState = '原型已准备好, 可以开始创建任务'
               clearInterval(this.reloadTimer)
+              this.urlState = '原型已准备好, 可以开始创建任务'
               break
             }
           }
@@ -116,5 +114,8 @@ export default {
 iframe {
   width: 100%;
   height: 100%;
+}
+input[type='url']{
+  width: 30em;
 }
 </style>
