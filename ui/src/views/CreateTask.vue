@@ -32,11 +32,11 @@
 export default {
   data () {
     return {
-      ipturl: '',
-      iframeSrc: '',
-      urlState: '',
-      retry: false,
-      retryDur: 6000
+      ipturl: '', // 用户输入的url
+      iframeSrc: '', // 绑定到框架src，自动去除首尾空格，提交时赋值，可利用html原生url类型校验，避免无效url。
+      urlState: '', // 文字描述用户地址的具体情况
+      retry: false, // 自动重试
+      retryDur: 6000 // 重试间隔
     }
   },
   mounted () {
