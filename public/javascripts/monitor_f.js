@@ -44,7 +44,7 @@ if(window !== window.top){
                 clearInterval(timer)
                 html2canvas(document.querySelector('body'))
                     .then((canvas) => {
-                        // postToWin.imgcanvas = JSON.stringify(canvas)
+                        postToWin.imageData = canvas.toDataURL("image/png")
                         window.top.postMessage(postToWin, RECEIVER);
                         console.log("向窗口 %s 发送消息: %o",RECEIVER,postToWin);
                 })
