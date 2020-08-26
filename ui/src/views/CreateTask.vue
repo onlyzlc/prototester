@@ -14,13 +14,17 @@
       <input type="checkbox" id="retry" v-model="retry">
       <label for="retry">自动重试</label>
     </form>
-    <template v-if = "ipturl.trim() !== ''">
+    <iframe
+      :src="iframeSrc"
+      frameborder="0"
+    />
+    <template v-if = "iframeSrc !== ''">
       <div class="tip" v-if="urlState !== ''" v-html="urlState"></div>
+      <button v-if="pass">从这个页面上创建任务</button>
       <div id="capture">
-        <iframe
-          :src="iframeSrc"
-          frameborder="0"
-        />
+        <div class="thumbnail" :style="{ backgroundImage: 'url(' + thumbnail + ')' }" >
+        </div>
+        <!-- <img :src="thumbnail" alt="" class="thumbnail"> -->
       </div>
     </template>
   </div>
@@ -33,13 +37,11 @@ export default {
       ipturl: '', // 用户输入的url
       iframeSrc: '', // 绑定到框架src，自动去除首尾空格，提交时赋值，可利用html原生url类型校验，避免无效url。
       urlState: '', // 文字描述用户地址的具体情况
+      pass: false,
       retry: false, // 自动重试
-      retryDur: 6000 // 重试间隔
+      retryDur: 6000, // 重试间隔
+      thumbnail: '' // 从iframe中传输的 采用canvas克隆DOM的截图dataurl
     }
-  },
-  mounted () {
-    // 监听框架上传的消息
-    window.addEventListener('message', this.receiveMsgFromWin, false)
   },
   watch: {
     ipturl () {
@@ -49,6 +51,10 @@ export default {
         this.urlState = ''
       }
     }
+  },
+  mounted () {
+    // 监听框架上传的消息
+    window.addEventListener('message', this.receiveMsgFromWin, false)
   },
   methods: {
     submit () {
@@ -61,6 +67,7 @@ export default {
       if (this.reloadTimer) clearInterval(this.reloadTimer)
       this.urlState = '正在检查地址...'
       this.iframeSrc = url
+      this.pass = false
       // 设定超时重试处理
       this.reloadTimer = setInterval(this.reload, this.retryDur, url)
     },
@@ -82,7 +89,9 @@ export default {
             }
             case 'isReady': {
               clearInterval(this.reloadTimer)
-              this.urlState = '原型已准备好, 可以开始创建任务'
+              this.urlState = ''
+              this.thumbnail = eData.imageData
+              this.pass = true
               break
             }
           }
@@ -112,8 +121,41 @@ export default {
 
 <style>
 iframe {
+  width: 1920px;
+  height: 0;
+  position: fixed;
+}
+#capture{
+  width: 80%;
+  height: 600px;
+  margin: auto;
+  margin-top: 4em;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 1px 1px 8px 0px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.thumbnail {
+  position: absolute;
   width: 100%;
   height: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  transition: all 500ms;
+  z-index: -1;
+}
+#capture:hover .thumbnail{
+  filter: blur(1px);
+}
+#capture button{
+  padding: 0.5em 1em;
+  border-radius: 2em;
+  border: 0;
 }
 input[type='url']{
   width: 30em;
