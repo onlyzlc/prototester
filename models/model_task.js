@@ -42,7 +42,7 @@ var TaskSchema = new Schema({
             default: false
         },
         actions: [ActionSchema]
-    }],
+    }]
 })
 
 TaskSchema.virtual('url').get(function () {  
