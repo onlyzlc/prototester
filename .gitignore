@@ -1,5 +1,4 @@
 node_modules
-public
 public/protos
 .vscode/launch.json
 package-lock.json
