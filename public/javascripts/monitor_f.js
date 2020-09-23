@@ -1,13 +1,25 @@
 // 加载截图插件
-var ele= document.createElement("script");
-ele.setAttribute("type", "text/javascript");
-ele.setAttribute("src", "http://html2canvas.hertzen.com/dist/html2canvas.min.js");
-document.querySelector('head').appendChild(ele)
+// var ele= document.createElement("script");
+// ele.setAttribute("type", "text/javascript");
+// ele.setAttribute("src", "http://html2canvas.hertzen.com/dist/html2canvas.min.js");
+// document.querySelector('head').appendChild(ele)
+
+if ($.fn.jquery === undefined) {
+    var script= document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("src", "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js");
+    document.querySelector('head').appendChild(script)
+    let timer = setInterval( ()=> {
+        if( $.fn.jquery === undefined ) {
+            console.log( 'jquery尚未加载完' );
+        } else {
+            clearInterval(timer)
+            console.log( 'jquery已加载' );
+        }
+    },1000)
+}
 
 // 主机地址
-//const RECEIVER = 'https://tencent.zhoulongchun.com';
-// 腾讯云主机，裸奔状态
-// const RECEIVER = 'http://111.229.196.217:8081';
 const RECEIVER = 'http://localhost:8080';
 
 // 表单元素
@@ -37,19 +49,19 @@ if(window !== window.top){
         postToWin.status = "isReady";
         postToWin.pageTitle = document.title;
         // 生成截图
-        let timer = setInterval( ()=> {
-            if( html2canvas === undefined ) {
-                console.log( '截图插件尚未加载完...' );
-            } else{
-                clearInterval(timer)
-                html2canvas(document.querySelector('body'))
-                    .then((canvas) => {
-                        postToWin.imageData = canvas.toDataURL("image/png")
-                        window.top.postMessage(postToWin, RECEIVER);
-                        console.log("向窗口 %s 发送消息: %o",RECEIVER,postToWin);
-                })
-            }
-        },1000)
+        // let timer = setInterval( ()=> {
+        //     if( html2canvas === undefined ) {
+        //         console.log( '截图插件尚未加载完...' );
+        //     } else{
+        //         clearInterval(timer)
+        //         html2canvas(document.querySelector('body'))
+        //             .then((canvas) => {
+        //                 postToWin.imageData = canvas.toDataURL("image/png")
+        //                 window.top.postMessage(postToWin, RECEIVER);
+        //                 console.log("向窗口 %s 发送消息: %o",RECEIVER,postToWin);
+        //         })
+        //     }
+        // },1000)
         
     }else{
         postToWin.status = "init";
