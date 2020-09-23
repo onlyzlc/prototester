@@ -4,11 +4,12 @@
 // ele.setAttribute("src", "http://html2canvas.hertzen.com/dist/html2canvas.min.js");
 // document.querySelector('head').appendChild(ele)
 
+// 检查jQuery
 if ($.fn.jquery === undefined) {
     var script= document.createElement("script");
     script.setAttribute("type", "text/javascript");
     script.setAttribute("src", "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js");
-    document.querySelector('head').appendChild(script)
+    document.querySelector('head').append(script)
     let timer = setInterval( ()=> {
         if( $.fn.jquery === undefined ) {
             console.log( 'jquery尚未加载完' );
@@ -20,7 +21,26 @@ if ($.fn.jquery === undefined) {
 }
 
 // 主机地址
-const RECEIVER = 'http://localhost:8080';
+const RECEIVER = 'http://localhost:8081';
+
+// 插入内联框架
+let iframe = document.createElement('iframe')
+let box = $('<div></div>').css({
+    'position': 'fixed',
+    'z-index': '10000',
+    'box-shadow': '0px 1px 30px 0px #00000024, 2px 2px 6px 1px #00000054',
+    'right': '20px',
+    'top': '20px',
+    'border-radius': '10px',
+    'overflow': 'hidden',
+    'background': 'white'
+})
+iframe.src = RECEIVER
+iframe.style.border = 'none'
+iframe.style.width = '100%'
+iframe.style.height = '300px'
+$(box).append(iframe)
+$('body').append(box)
 
 // 表单元素
 const formElmsArr = ['input','select','textarea','label'];
