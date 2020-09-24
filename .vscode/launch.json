@@ -7,6 +7,19 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "正式环境",
+            "program": "${workspaceFolder}/bin/www",
+            "env": {
+                "NODE_ENV": "product",
+                "PORT": "80"
+            },
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "调试",
             "skipFiles": [
                 "<node_internals>/**"
