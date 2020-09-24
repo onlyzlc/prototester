@@ -23,6 +23,7 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 console.log(app.get("env"));
+global.DEBUG = (app.get("env") === 'development')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views/pages'));
@@ -42,9 +43,10 @@ app.use(session({
   secret: 'Lonnie',
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000
+    maxAge: 60 * 60 * 1000 // 1小时登录失效
   },
-  saveUninitialized: true,
+  saveUninitialized: false,
+  rolling: true,
   resave: false
 }));
 

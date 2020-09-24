@@ -65,7 +65,9 @@ exports.login = function (req, res) {
 
 exports.logout = function (req, res) {
     console.log('注销用户:' + req.session.loginUser)
-    req.session.loginUser = false
+    req.session.destroy(function(err){
+        if(err) req.session.loginUser = false
+    })
     res.sendStatus(200)
 }
 

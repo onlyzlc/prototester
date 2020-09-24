@@ -9,8 +9,8 @@ router.use('/', (req, res, next) => {
     let reg = /\/login|\/regist|\/favicon.ico/;
     // 若已登录，或请求路径为登录或注册时，直接跳过，否则跳转到登录页。
     if (isLogined || reg.test(req.url)) {
-      console.log("用户：%s 请求: %s", user, req.url);
-      next();
+      if(global.DEBUG) console.log("用户：%s 请求: %s, 剩余有效期: %s", user, req.url, req.session.cookie.maxAge);
+      next();   
     } else {
       console.log("未登录用户请求：%s", req.url);
       res.sendStatus(511);
