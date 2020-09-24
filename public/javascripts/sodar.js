@@ -1,7 +1,25 @@
 console.log('sodar.js 加载成功')
 var htmlHead = document.getElementsByTagName('head').item(0)
 
-if ($) console.info('jQuery Found!')
+// 检查jQuery
+if (typeof jQuery == 'undefined') {
+  let script_jq= document.createElement("script");
+  script_jq.type =  "text/javascript";
+  script_jq.src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js";
+  htmlHead.append(script_jq)
+  let timer = setInterval( ()=> {
+      if( typeof jQuery == 'undefined' ) {
+          console.log( 'jquery尚未加载完' );
+      } else {
+          clearInterval(timer)
+          let script_m= document.createElement("script");
+          script_m.type =  "text/javascript";
+          script_m.src = 'http://localhost:8081/javascripts/monitor_f.js'
+          htmlHead.append(script_m)
+          console.log( 'jquery已加载' );
+      }
+  },500)
+}
 
 
 // 任务管理和引导
@@ -14,10 +32,10 @@ if(window.location.search.includes('testid')){
   console.log('获取测试任务:'+ testid); 
   
   // 加载测试插件
-  var script_sodar = document.createElement('script')
-  script_sodar.setAttribute("type", "text/javascript");
-  script_sodar.setAttribute('defer','defer')
-  script_sodar.src = 'http://localhost:8081/javascripts/monitor_f.js'
-  htmlHead.append(script_sodar)
+  // var script_sodar = document.createElement('script')
+  // script_sodar.setAttribute("type", "text/javascript");
+  // script_sodar.setAttribute('defer','defer')
+  // script_sodar.src = 'http://localhost:8081/javascripts/monitor_f.js'
+  // htmlHead.append(script_sodar)
 }
 

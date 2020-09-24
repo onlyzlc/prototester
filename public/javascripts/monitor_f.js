@@ -4,22 +4,6 @@
 // ele.setAttribute("src", "http://html2canvas.hertzen.com/dist/html2canvas.min.js");
 // document.querySelector('head').appendChild(ele)
 
-// 检查jQuery
-if ($.fn.jquery === undefined) {
-    var script= document.createElement("script");
-    script.setAttribute("type", "text/javascript");
-    script.setAttribute("src", "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js");
-    document.querySelector('head').append(script)
-    let timer = setInterval( ()=> {
-        if( $.fn.jquery === undefined ) {
-            console.log( 'jquery尚未加载完' );
-        } else {
-            clearInterval(timer)
-            console.log( 'jquery已加载' );
-        }
-    },1000)
-}
-
 // 主机地址
 const RECEIVER = 'http://localhost:8081';
 
