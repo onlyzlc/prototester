@@ -1,5 +1,5 @@
 // const proxy = require('http-proxy-middleware');
-
+const path = require('path');
 module.exports = {
   outputDir: 'dist',
   devServer: {
@@ -10,6 +10,7 @@ module.exports = {
         target: 'http://localhost:8081',
         changeOrigin: true
       }
-    }
+    },
+    contentBase: [path.resolve(__dirname,'static')]
   }
 }
