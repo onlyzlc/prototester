@@ -1,24 +1,31 @@
 console.log('sodar.js 加载成功')
-var htmlHead = document.getElementsByTagName('head').item(0)
+
+// Sodar 服务器地址
+var RECEIVER = 'http://127.0.0.1:8081';
+
+let htmlHead = document.getElementsByTagName('head').item(0)
+let script_m= document.createElement("script");
+script_m.type =  "text/javascript";
+script_m.src = RECEIVER + '/javascripts/monitor_f.js'
 
 // 检查jQuery
 if (typeof jQuery == 'undefined') {
   let script_jq= document.createElement("script");
   script_jq.type =  "text/javascript";
-  script_jq.src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js";
+  // script_jq.src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js";
+  script_jq.src = RECEIVER + "/javascripts/jquery.js";
   htmlHead.append(script_jq)
   let timer = setInterval( ()=> {
       if( typeof jQuery == 'undefined' ) {
           console.log( 'jquery尚未加载完' );
       } else {
           clearInterval(timer)
-          let script_m= document.createElement("script");
-          script_m.type =  "text/javascript";
-          script_m.src = 'http://localhost:8081/javascripts/monitor_f.js'
           htmlHead.append(script_m)
           console.log( 'jquery已加载' );
       }
   },500)
+} else {
+  htmlHead.append(script_m)
 }
 
 
