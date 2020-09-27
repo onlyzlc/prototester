@@ -10,20 +10,34 @@
         placeholder="http://protomanager.com/yourproto"
         required
       >
-      <button type="submit">确定</button>
-      <input type="checkbox" id="retry" v-model="retry">
+      <button type="submit">
+        确定
+      </button>
+      <input
+        id="retry"
+        v-model="retry"
+        type="checkbox"
+      >
       <label for="retry">自动重试</label>
     </form>
     <iframe
       :src="iframeSrc"
       frameborder="0"
     />
-    <template v-if = "iframeSrc !== ''">
-      <div class="tip" v-if="urlState !== ''" v-html="urlState"></div>
-      <button v-if="pass">从这个页面上创建任务</button>
+    <template v-if="iframeSrc !== ''">
+      <div
+        v-if="urlState !== ''"
+        class="tip"
+        v-html="urlState"
+      />
+      <button v-if="pass">
+        从这个页面上创建任务
+      </button>
       <div id="capture">
-        <div class="thumbnail" :style="{ backgroundImage: 'url(' + thumbnail + ')' }" >
-        </div>
+        <div
+          class="thumbnail"
+          :style="{ backgroundImage: 'url(' + thumbnail + ')' }"
+        />
         <!-- <img :src="thumbnail" alt="" class="thumbnail"> -->
       </div>
     </template>

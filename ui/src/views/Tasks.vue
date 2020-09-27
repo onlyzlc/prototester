@@ -8,7 +8,7 @@
         v-for="(task, index) in tasks"
         :key="task.taskId"
       >
-        <a :href="'/tasks/'+task.taskId"> {{ task.name }} </a> |
+        <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> |
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
         <a :href="'/tasks/'+task.taskId+'/testing'">开始测试</a> |
@@ -42,19 +42,24 @@ export default {
   },
   methods: {
     fetchData () {
-      this.$http.get('/tasks')
+      this.$http
+        .get('/tasks')
         .then(res => {
           if (Array.isArray(res.data)) {
             this.tasks = res.data
           } else if (this.Store.debug) console.error('数据传输类型错误')
         })
-        .catch((err) => console.error(err))
+        .catch(err => console.error(err))
     },
     publish (index) {
       const thisTask = this.tasks[index]
-      const newStatus = (thisTask.status === 'published') ? 'unpublished' : 'published'
-      this.$http.patch('/tasks/' + thisTask.taskId + '/status', { status: newStatus })
-        .then(() => { thisTask.status = newStatus })
+      const newStatus =
+        thisTask.status === 'published' ? 'unpublished' : 'published'
+      this.$http
+        .patch('/tasks/' + thisTask.taskId + '/status', { status: newStatus })
+        .then(() => {
+          thisTask.status = newStatus
+        })
         .catch(function (error) {
           // handle error
           console.log(error)
@@ -65,5 +70,4 @@ export default {
 </script>
 
 <style>
-
 </style>
