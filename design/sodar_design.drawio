@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-10-20T04:26:42.713Z" agent="5.0 (X11)" etag="DCh-hKt897FV1XJR2m7n" version="13.8.0" type="github" pages="10">
+<mxfile host="app.diagrams.net" modified="2020-10-20T04:43:36.353Z" agent="5.0 (X11)" etag="rBgDI2kqwjLnsVCaJZvi" version="13.8.0" type="github" pages="10">
   <diagram id="r4wDJCv4_4U2Mo3Nr3qL" name="信息架构">
     <mxGraphModel dx="1874" dy="938" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -1447,11 +1447,11 @@
     </mxGraphModel>
   </diagram>
   <diagram id="rRkIPqoeCEejMfiybCYX" name="sodar.js">
-    <mxGraphModel dx="1474" dy="1738" grid="1" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1600" pageHeight="1200" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1395" dy="2138" grid="1" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="0" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" background="none" math="0" shadow="0">
       <root>
         <mxCell id="gpVePTBef-EZtfH_4kRC-0" />
         <mxCell id="gpVePTBef-EZtfH_4kRC-1" parent="gpVePTBef-EZtfH_4kRC-0" />
-        <mxCell id="HRL0WPqYHxDpPY2hh8r1-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="gpVePTBef-EZtfH_4kRC-1" source="HRL0WPqYHxDpPY2hh8r1-1" target="HRL0WPqYHxDpPY2hh8r1-3" edge="1">
+        <mxCell id="HRL0WPqYHxDpPY2hh8r1-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;spacingLeft=8;spacingBottom=8;spacingRight=8;" parent="gpVePTBef-EZtfH_4kRC-1" source="HRL0WPqYHxDpPY2hh8r1-1" target="HRL0WPqYHxDpPY2hh8r1-3" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="HRL0WPqYHxDpPY2hh8r1-1" value="进入原型测试网页" style="ellipse;whiteSpace=wrap;html=1;" parent="gpVePTBef-EZtfH_4kRC-1" vertex="1">
@@ -1793,6 +1793,29 @@
         </mxCell>
         <mxCell id="ZgIaglhBjvL-7aTpqFwy-11" value="zhoulongchun.com/tasks/new" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;fontStyle=1" parent="ZgIaglhBjvL-7aTpqFwy-9" vertex="1">
           <mxGeometry x="128" y="60" width="250" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-0" value="01232m3402.axureshare.com/page.html" style="shape=umlFrame;whiteSpace=wrap;html=1;width=258;height=32;container=1;" vertex="1" parent="ZgIaglhBjvL-7aTpqFwy-9">
+          <mxGeometry x="10" y="120" width="810" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-1" value="Sodar.js" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="MrhVbvjgT7-gLhNB6yj4-0">
+          <mxGeometry x="16.048519480519474" y="39.5" width="72.32142857142856" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-9" value="" style="group;labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;rounded=1;arcSize=3;resizable=1;allowArrows=0;recursiveResize=0;expand=1;rotatable=0;imageWidth=24;labelPadding=0;container=1;" vertex="1" connectable="0" parent="MrhVbvjgT7-gLhNB6yj4-0">
+          <mxGeometry x="590" y="11" width="211.18" height="218.62" as="geometry">
+            <mxRectangle x="560" y="130" width="50" height="40" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-10" value="Sodar" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=10;fontColor=#050505;" vertex="1" parent="MrhVbvjgT7-gLhNB6yj4-9">
+          <mxGeometry x="19.284875934448582" y="6.447169811320755" width="24.93486254170015" height="15.169811320754718" as="geometry" />
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-11" value="" style="html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;shadow=0;dashed=0;strokeWidth=2;shape=mxgraph.ios7.misc.add;fillColor=#00dd00;strokeColor=#ffffff;aspect=fixed;" vertex="1" parent="MrhVbvjgT7-gLhNB6yj4-9">
+          <mxGeometry x="180.99" y="9.62" width="20.38" height="20.38" as="geometry" />
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-12" value="创建任务" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;html=1;fontSize=16;" vertex="1" parent="MrhVbvjgT7-gLhNB6yj4-9">
+          <mxGeometry x="16.07487593444858" y="30.001698113207553" width="95.99922078554556" height="15.169811320754718" as="geometry" />
+        </mxCell>
+        <mxCell id="MrhVbvjgT7-gLhNB6yj4-24" value="Primary" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=4;strokeColor=none;strokeWidth=1;fillColor=#0085FC;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacingLeft=8;fontStyle=0;fontSize=14;spacing=5;spacingTop=4;fontFamily=Helvetica;spacingBottom=4;spacingRight=8;" vertex="1" parent="gpVePTBef-EZtfH_4kRC-1">
+          <mxGeometry x="50" y="2430" width="100" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
