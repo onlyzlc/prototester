@@ -4,11 +4,10 @@
 // ele.setAttribute("src", "http://html2canvas.hertzen.com/dist/html2canvas.min.js");
 // document.querySelector('head').appendChild(ele)
 
-// 主机地址
-// const RECEIVER = 'http://127.0.0.1:8081';
+// 主机地址 RECEIVER 定义于 sodar.js
 
 // 插入内联框架
-let iframe = document.createElement('iframe')
+let sodarFrame = document.createElement('iframe')
 let box = $('<div></div>').css({
     'position': 'fixed',
     'z-index': '10000',
@@ -17,13 +16,14 @@ let box = $('<div></div>').css({
     'top': '20px',
     'border-radius': '10px',
     'overflow': 'hidden',
-    'background': 'white'
+    'background': 'white',
+    'width': '400px'
 })
-iframe.src = RECEIVER
-iframe.style.border = 'none'
-iframe.style.width = '100%'
-iframe.style.height = '300px'
-$(box).append(iframe)
+sodarFrame.src = RECEIVER
+sodarFrame.style.border = 'none'
+sodarFrame.style.width = '100%'
+sodarFrame.style.minHeight = '300px'
+$(box).append(sodarFrame)
 $('body').append(box)
 
 // 表单元素
@@ -43,7 +43,7 @@ const Action = function () {
     this.time = Date.now();
 }
 
-// 与父窗口对接
+// 与Sodar窗口对接
 if(window !== window.top){
     // 监听父窗口发送的消息
     window.addEventListener("message", receiveMsgFromWin, false);

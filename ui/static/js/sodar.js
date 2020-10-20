@@ -2,7 +2,7 @@ console.log('sodar.js 加载成功')
 
 // Sodar 服务器地址 
 // 8080: vue serve 开发环境端口号
-var RECEIVER = 'http://127.0.0.1:8080';ubuntu
+var RECEIVER = 'http://127.0.0.1:8080';
 
 let htmlHead = document.getElementsByTagName('head').item(0)
 let script_m= document.createElement("script");

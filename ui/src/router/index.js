@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Regist from '../views/Regist.vue'
 import Tasks from '../views/Tasks.vue'
-import CreateTask from '../views/CreateTask.vue'
+import NewTask from '../views/NewTask.vue'
 import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
 import Testing from '../views/Testing.vue'
@@ -20,8 +20,8 @@ const routes = [
   },
   {
     path: '/tasks/new',
-    name: 'CreateTask',
-    component: CreateTask
+    name: 'NewTask',
+    component: NewTask
   },
   {
     path: '/tasks/:taskId',

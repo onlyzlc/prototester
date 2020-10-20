@@ -1,5 +1,5 @@
 // const proxy = require('http-proxy-middleware');
-const path = require('path');
+const path = require('path')
 module.exports = {
   outputDir: 'dist',
   devServer: {
@@ -11,6 +11,6 @@ module.exports = {
         changeOrigin: true
       }
     },
-    contentBase: [path.resolve(__dirname,'static')]
+    contentBase: [path.resolve(__dirname, 'static')]
   }
 }

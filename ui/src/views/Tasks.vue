@@ -1,8 +1,11 @@
 <template>
   <div>
-    <button @click="$router.push({ name: 'CreateTask' })">
+    <a
+      target="view_window"
+      :href="'/tasks/new?page=' + protoPage"
+    >
       新增测试任务
-    </button>
+    </a>
     <ul>
       <li
         v-for="(task, index) in tasks"
@@ -32,6 +35,12 @@ export default {
         name: '',
         description: ''
       }
+    }
+  },
+  computed: {
+    protoPage () {
+      if (window.parent) return window.parent.location.href
+      else return false
     }
   },
   watch: {
