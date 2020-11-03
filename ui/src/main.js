@@ -33,11 +33,16 @@ ax.interceptors.response.use(function (response) {
 
 // 全局添加登录超时校验
 router.beforeEach((to, from, next) => {
+  // 免登录页面
+  const publicPage = /Regist|Login|Testing/
   const state = Store.state
-  if (to.name !== 'Regist' && to.name !== 'Login' && !state.isVerified) {
+  if (publicPage.test(to.name) || state.isVerified) next()
+  else {
     if (Store.debug) console.log('登录超时, 跳转注册页')
     next({ name: 'Regist', props: { to: to.name } })
-  } else next()
+  }
+  // if (to.name !== 'Regist' && to.name !== 'Login' && !state.isVerified) {
+  // } else next()
 })
 
 Vue.use(VueAxios, ax)

@@ -58,6 +58,11 @@ const routes = [
     props: {
       to: 'Tasks' // 注册完成后默认返回的位置.
     }
+  },
+  {
+    path: '/testing',
+    name: 'Testing',
+    component: Testing
   }
 ]
 
