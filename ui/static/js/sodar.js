@@ -29,6 +29,12 @@ if (typeof jQuery == 'undefined') {
   htmlHead.append(script_m)
 }
 
+// 插入内联框架
+let sodarFrame = document.createElement('iframe')
+sodarFrame.src = RECEIVER
+sodarFrame.style.border = 'none'
+sodarFrame.style.width = '100%'
+sodarFrame.style.minHeight = '300px'
 
 // 任务管理和引导
 // 任务测试报告
@@ -38,12 +44,21 @@ if(window.location.search.includes('testid')){
   // 检查id长度是否正确
   console.info('todo: 获取任务前检查id长度是否正确')
   console.log('获取测试任务:'+ testid); 
-  
-  // 加载测试插件
-  // var script_sodar = document.createElement('script')
-  // script_sodar.setAttribute("type", "text/javascript");
-  // script_sodar.setAttribute('defer','defer')
-  // script_sodar.src = 'http://localhost:8081/javascripts/monitor_f.js'
-  // htmlHead.append(script_sodar)
+  sodarFrame.src += 'testing'
 }
 
+let box = document.createElement('div')
+let boxStyle = `
+    position: fixed;
+    z-index: 10000;
+    box-shadow: 0px 1px 30px 0px #00000024, 2px 2px 6px 1px #00000054;
+    right: 20px;
+    top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+    width: 400px
+`
+box.setAttribute('style',boxStyle)
+box.append(sodarFrame)
+document.querySelector('body').append(box)

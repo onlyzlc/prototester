@@ -6,25 +6,7 @@
 
 // 主机地址 RECEIVER 定义于 sodar.js
 
-// 插入内联框架
-let sodarFrame = document.createElement('iframe')
-let box = $('<div></div>').css({
-    'position': 'fixed',
-    'z-index': '10000',
-    'box-shadow': '0px 1px 30px 0px #00000024, 2px 2px 6px 1px #00000054',
-    'right': '20px',
-    'top': '20px',
-    'border-radius': '10px',
-    'overflow': 'hidden',
-    'background': 'white',
-    'width': '400px'
-})
-sodarFrame.src = RECEIVER
-sodarFrame.style.border = 'none'
-sodarFrame.style.width = '100%'
-sodarFrame.style.minHeight = '300px'
-$(box).append(sodarFrame)
-$('body').append(box)
+
 
 // 表单元素
 const formElmsArr = ['input','select','textarea','label'];
