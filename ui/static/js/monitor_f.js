@@ -4,9 +4,7 @@
 // ele.setAttribute("src", "http://html2canvas.hertzen.com/dist/html2canvas.min.js");
 // document.querySelector('head').appendChild(ele)
 
-// 主机地址 RECEIVER 定义于 sodar.js
-
-
+// 主机地址 SODAR_HOST 定义于 sodar.js
 
 // 表单元素
 const formElmsArr = ['input','select','textarea','label'];
@@ -43,8 +41,8 @@ if(window !== window.top){
         //         html2canvas(document.querySelector('body'))
         //             .then((canvas) => {
         //                 postToWin.imageData = canvas.toDataURL("image/png")
-        //                 window.top.postMessage(postToWin, RECEIVER);
-        //                 console.log("向窗口 %s 发送消息: %o",RECEIVER,postToWin);
+        //                 window.top.postMessage(postToWin, SODAR_HOST);
+        //                 console.log("向窗口 %s 发送消息: %o",SODAR_HOST,postToWin);
         //         })
         //     }
         // },1000)
@@ -52,8 +50,8 @@ if(window !== window.top){
     }else{
         postToWin.status = "init";
         postToWin.url = location.href;
-        window.top.postMessage(postToWin, RECEIVER);
-        console.log("向窗口 %s 发送消息: %o",RECEIVER,postToWin);
+        window.top.postMessage(postToWin, SODAR_HOST);
+        console.log("向窗口 %s 发送消息: %o",SODAR_HOST,postToWin);
     }
 }
 
@@ -71,7 +69,7 @@ function receiveMsgFromWin(e){
                 status : "rec",
                 log: action
             };
-            window.parent.postMessage(postToWin,RECEIVER);
+            window.parent.postMessage(postToWin,SODAR_HOST);
 
             monitor();
             break;
@@ -178,7 +176,7 @@ function record(e) {
         status : "rec",
         log: action
     };
-    parent.postMessage(postToWin,RECEIVER);
+    parent.postMessage(postToWin,SODAR_HOST);
 };
 
 function renderSteps(steps) {
