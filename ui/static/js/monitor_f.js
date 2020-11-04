@@ -23,7 +23,7 @@ const Action = function () {
     this.time = Date.now();
 }
 
-// 与Sodar窗口对接
+// 
 if(window !== window.top){
     // 监听父窗口发送的消息
     window.addEventListener("message", receiveMsgFromWin, false);
@@ -32,21 +32,8 @@ if(window !== window.top){
     if(window.parent === window.top){
         postToWin.status = "isReady";
         postToWin.pageTitle = document.title;
-        // 生成截图
-        // let timer = setInterval( ()=> {
-        //     if( html2canvas === undefined ) {
-        //         console.log( '截图插件尚未加载完...' );
-        //     } else{
-        //         clearInterval(timer)
-        //         html2canvas(document.querySelector('body'))
-        //             .then((canvas) => {
-        //                 postToWin.imageData = canvas.toDataURL("image/png")
-        //                 window.top.postMessage(postToWin, SODAR_HOST);
-        //                 console.log("向窗口 %s 发送消息: %o",SODAR_HOST,postToWin);
-        //         })
-        //     }
-        // },1000)
-        
+        window.top.postMessage(postToWin, SODAR_HOST);
+       
     }else{
         postToWin.status = "init";
         postToWin.url = location.href;

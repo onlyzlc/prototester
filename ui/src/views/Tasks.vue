@@ -31,6 +31,7 @@ export default {
   data () {
     return {
       tasks: [],
+      pttHost: ['http://127.0.0.1:8082'],
       newTask: {
         name: '',
         description: ''
@@ -39,17 +40,29 @@ export default {
   },
   computed: {
     protoPage () {
-      if (window.parent) return window.parent.location.href
-      else return false
+      // if (window.parent) return window.parent.location.href
+      // else
+      return false
     }
   },
   watch: {
     $route: 'fetchData'
   },
   created () {
+    // 查看能否在插件框架中
+    window.addEventListener('message', this.reciveMsg, false)
     this.fetchData()
   },
   methods: {
+    reciveMsg (e) {
+      console.error('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+      // 需要通过用户注册的原型地址实现来源限制
+      if (!this.pttHost.includes(e.origin)) {
+        return false
+      }
+      console.log(e.data)
+      e.source.postMessage('ready', e.origin)
+    },
     fetchData () {
       this.$http
         .get('/tasks')
