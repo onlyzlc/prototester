@@ -49,21 +49,30 @@ if(window.parent.location.origin === SODAR_HOST){
   window.addEventListener("message", receiveMsg, false);
   function receiveMsg(e){
     if(e.origin === SODAR_HOST){
+      // 回应
       console.log(e.data);
-      if(e.data === 'ready'){
-        clearInterval(timer)
-        e.source.postMessage(page, e.origin)
+      switch (e.data) {        
+        case 'ready': {
+          clearInterval(timer)
+          break
+        }
+        case 'href': {
+          e.source.postMessage('href?'+page, e.origin)
+          break
+        }
       }
     }
   }
   // 由于此时插件窗口可能还没加载完,或者还没登录,需重复 sayhi
   let timer = setInterval(function () {
     try {
-      sodarFrame.contentWindow.postMessage('are u ready?', SODAR_HOST)
+      // knock knock knock penny 等待对方回应.
+      sodarFrame.contentWindow.postMessage('Knock! Knock! Knock!', SODAR_HOST)
+      sodarFrame.contentWindow.postMessage('Penny?', SODAR_HOST)
     } catch (error) {
       return false    
     }
-  },100)
+  },1000)
 }
 
 // 加入跟踪脚本

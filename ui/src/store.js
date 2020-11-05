@@ -2,7 +2,8 @@ export default {
   debug: process.env.NODE_ENV === 'development',
   state: {
     isVerified: false,
-    email: ''
+    email: '',
+    pttUrl: ''
   },
   init: function () {
     // 获取状态信息,并开启状态监听

@@ -2,7 +2,7 @@
   <div>
     <a
       target="view_window"
-      :href="'/tasks/new?page=' + protoPage"
+      href="/new"
     >
       新增测试任务
     </a>
@@ -32,6 +32,7 @@ export default {
     return {
       tasks: [],
       pttHost: ['http://127.0.0.1:8082'],
+      curPage: '',
       newTask: {
         name: '',
         description: ''
@@ -61,7 +62,23 @@ export default {
         return false
       }
       console.log(e.data)
-      e.source.postMessage('ready', e.origin)
+      try {
+        const msg = e.data.split('?')[1]
+        const magHead = e.data.split('?')[0]
+        switch (magHead) {
+          case 'Penny': {
+            e.source.postMessage('ready', e.origin)
+            e.source.postMessage('href', e.origin)
+            break
+          }
+          case 'href': {
+            this.curPage = msg
+            break
+          }
+        }
+      } catch (error) {
+        console.log('出错了')
+      }
     },
     fetchData () {
       this.$http
