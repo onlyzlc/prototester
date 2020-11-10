@@ -16,7 +16,7 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-let connectionOptions = 'mongodb://localhost/prototester';
+let connectionOptions = (process.env.NODE_ENV == 'development') ? "mongodb+srv://sodar:zlc-7895123@moonsea.8ucon.azure.mongodb.net/prototester?retryWrites=true&w=majority" : 'mongodb://localhost/prototester';
 mongoose.connect(connectionOptions);
 
 var indexRouter = require('./routes/index');

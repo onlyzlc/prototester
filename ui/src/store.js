@@ -18,7 +18,7 @@ export default {
   save: function () {
     localStorage.setItem('state', JSON.stringify(this.state))
   },
-  updateUser: function (newValue) {
+  update: function (newValue) {
     if (this.debug) console.log('更新用户状态信息:%o', newValue)
     const { isVerified, email } = newValue
     this.state.isVerified = isVerified
