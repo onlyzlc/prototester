@@ -77,7 +77,7 @@ export default {
         // 登录成功
         case 0: {
           this.user.isVerified = true
-          this.Store.updateUser(this.user)
+          this.Store.update(this.user)
           this.$router.push({ name: this.to })
           break
         }

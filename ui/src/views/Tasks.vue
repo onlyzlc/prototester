@@ -68,6 +68,7 @@ export default {
         switch (magHead) {
           case 'Penny': {
             e.source.postMessage('ready', e.origin)
+            // 获取原型页面链接
             e.source.postMessage('href', e.origin)
             break
           }
