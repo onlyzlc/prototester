@@ -20,14 +20,22 @@ export default {
   },
   update: function (newValue) {
     if (this.debug) console.log('更新用户状态信息:%o', newValue)
-    const { isVerified, email } = newValue
-    this.state.isVerified = isVerified
-    this.state.email = email
+    for (const p in newValue) {
+      if (Object.prototype.hasOwnProperty.call(this.state, p)) {
+        this.state[p] = newValue[p]
+      }
+    }
     this.save()
   },
   clear: function () {
+    if (this.debug) console.log('清除存储信息')
     this.state.isVerified = false
     this.state.email = ''
+    for (const p in this.state) {
+      if (Object.prototype.hasOwnProperty.call(this.state, p)) {
+        this.state[p] = ''
+      }
+    }
     this.save()
   }
 }
