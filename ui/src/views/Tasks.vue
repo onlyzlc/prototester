@@ -63,8 +63,7 @@ export default {
       }
       console.log(e.data)
       try {
-        const msg = e.data.split('?')[1]
-        const magHead = e.data.split('?')[0]
+        const [magHead, msg] = e.data.split('?')
         switch (magHead) {
           case 'Penny': {
             e.source.postMessage('ready', e.origin)
@@ -73,6 +72,7 @@ export default {
           }
           case 'href': {
             this.curPage = msg
+            this.Store.update({ pttUrl: msg })
             break
           }
         }
