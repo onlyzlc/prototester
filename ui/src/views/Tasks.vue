@@ -2,7 +2,7 @@
   <div>
     <a
       target="view_window"
-      href="/new"
+      href="/tasks/new"
     >
       新增测试任务
     </a>
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     reciveMsg (e) {
-      console.error('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+      console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
       // 需要通过用户注册的原型地址实现来源限制
       if (!this.pttHost.includes(e.origin)) {
         return false
