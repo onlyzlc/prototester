@@ -2,7 +2,7 @@
   <div>
     <a
       target="view_window"
-      href="/new"
+      href="/tasks/new"
     >
       新增测试任务
     </a>
@@ -56,15 +56,14 @@ export default {
   },
   methods: {
     reciveMsg (e) {
-      console.error('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+      console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
       // 需要通过用户注册的原型地址实现来源限制
       if (!this.pttHost.includes(e.origin)) {
         return false
       }
       console.log(e.data)
       try {
-        const msg = e.data.split('?')[1]
-        const magHead = e.data.split('?')[0]
+        const [magHead, msg] = e.data.split('?')
         switch (magHead) {
           case 'Penny': {
             e.source.postMessage('ready', e.origin)
@@ -74,6 +73,7 @@ export default {
           }
           case 'href': {
             this.curPage = msg
+            this.Store.update({ pttUrl: msg })
             break
           }
         }
