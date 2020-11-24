@@ -24,55 +24,55 @@ const Action = function () {
 }
 
 // 
-if(window !== window.top){
-    // 监听父窗口发送的消息
-    window.addEventListener("message", receiveMsgFromWin, false);
-    let postToWin={};
-    // 是否为第二层
-    if(window.parent === window.top){
-        postToWin.status = "isReady";
-        postToWin.pageTitle = document.title;
-        window.top.postMessage(postToWin, SODAR_HOST);
+// if(window !== window.top){
+//     // 监听父窗口发送的消息
+//     window.addEventListener("message", receiveMsgFromWin, false);
+//     let postToWin={};
+//     // 是否为第二层
+//     if(window.parent === window.top){
+//         postToWin.status = "isReady";
+//         postToWin.pageTitle = document.title;
+//         window.top.postMessage(postToWin, SODAR_HOST);
        
-    }else{
-        postToWin.status = "init";
-        postToWin.url = location.href;
-        window.top.postMessage(postToWin, SODAR_HOST);
-        console.log("向窗口 %s 发送消息: %o",SODAR_HOST,postToWin);
-    }
-}
+//     }else{
+//         postToWin.status = "init";
+//         postToWin.url = location.href;
+//         window.top.postMessage(postToWin, SODAR_HOST);
+//         console.log("向窗口 %s 发送消息: %o",SODAR_HOST,postToWin);
+//     }
+// }
 
-function receiveMsgFromWin(e){
-    let status = e.data.status;
-    // console.log(status);
-    switch (status) {
-        case "stepRec_start":{
-            console.log("开始跟踪");
-            let action = new Action;
-            action.target.innerText = document.title;
-            action.eventType = 'load';
-            action.time = Date.now();
-            let postToWin={
-                status : "rec",
-                log: action
-            };
-            window.parent.postMessage(postToWin,SODAR_HOST);
+// function receiveMsgFromWin(e){
+//     let status = e.data.status;
+//     // console.log(status);
+//     switch (status) {
+//         case "stepRec_start":{
+//             console.log("开始跟踪");
+//             let action = new Action;
+//             action.target.innerText = document.title;
+//             action.eventType = 'load';
+//             action.time = Date.now();
+//             let postToWin={
+//                 status : "rec",
+//                 log: action
+//             };
+//             window.parent.postMessage(postToWin,SODAR_HOST);
 
-            monitor();
-            break;
-        }
-        case "stepRec_over":{
-            console.log("结束跟踪");
-            // 录制结束时，将数据发送给newTask.js
-            monitorOff();
-            break;
-        }
-        case "render":{
-            // 接收自taskSetting.js，将步骤标记渲染到页面上
-            renderSteps(e.data.steps);
-        }
-    }
-}
+//             monitor();
+//             break;
+//         }
+//         case "stepRec_over":{
+//             console.log("结束跟踪");
+//             // 录制结束时，将数据发送给newTask.js
+//             monitorOff();
+//             break;
+//         }
+//         case "render":{
+//             // 接收自taskSetting.js，将步骤标记渲染到页面上
+//             renderSteps(e.data.steps);
+//         }
+//     }
+// }
 
 
 
@@ -107,34 +107,8 @@ $("head").append(`
     </style>
 `)  
 
-// 启用跟踪, 绑定事件
-function monitor() {
-    $(formElms).on("change", record);
-    $("[type=submit]").click(record);
-    $("div.ax_default").click(record);
-    // $(window).on('unload', record);
-
-    // 只在ax_default叶子节点上绑定，移除掉其父节点绑定
-    $("div.ax_default").has(".ax_default").off("click",record);
-
-    // 排除所有与表单元素及其父元素的点击事件
-    $(formElms).off("click",record);
-    formElmsArr.forEach(elm => {
-        $("div.ax_default").has(elm).off("click",record);
-    });    
-}
-
-// 关闭跟踪
-function monitorOff() {
-    // $(window).off('unload', record);
-    $(formElms).off("change", record);
-    $("div.ax_default ").off("click", record);
-}
-
-
 // 事件记录和发送
 function record(e) {
-    
     // 阻止事件冒泡，对于Axure中的动态面板的多层ax_default有效————只截取最底层的那个元素事件
     // event.stopPropagation();
 
@@ -165,8 +139,33 @@ function record(e) {
     };
     parent.postMessage(postToWin,SODAR_HOST);
 };
+ 
+// 启用跟踪, 绑定事件
+export function monitor() {
+    $(formElms).on("change", record);
+    $("[type=submit]").click(record);
+    $("div.ax_default").click(record);
+    // $(window).on('unload', record);
 
-function renderSteps(steps) {
+    // 只在ax_default叶子节点上绑定，移除掉其父节点绑定
+    $("div.ax_default").has(".ax_default").off("click",record);
+
+    // 排除所有与表单元素及其父元素的点击事件
+    $(formElms).off("click",record);
+    formElmsArr.forEach(elm => {
+        $("div.ax_default").has(elm).off("click",record);
+    });    
+}
+
+// 关闭跟踪
+export function monitorOff() {
+    // $(window).off('unload', record);
+    $(formElms).off("change", record);
+    $("div.ax_default ").off("click", record);
+}
+
+// 渲染标记
+export function renderSteps(steps) {
     // 删除已有标记
     $("._mark,._markDes").remove();
     console.log("渲染步骤标记");
@@ -196,12 +195,4 @@ function renderSteps(steps) {
             }
         }
     })    
-}
-
-function clearCookies(e) {
-    console.log('清除Cookies');
-    $.ajax({
-        type: 'delete',
-        url: '/userTests',
-    })
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <a
-      target="view_window"
+      target="_top"
       href="/tasks/new"
     >
       新增测试任务

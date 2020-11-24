@@ -15,7 +15,7 @@ if(window.top !== window){
 }
 
 window.addEventListener("message", msgFromOutside);
-// 若收到消息,则清除定时器
+// 若收到消息,则表示原型位于 SODAR_HOST 页面框架内,处于
 function msgFromOutside (e){
   if(e.origin === SODAR_HOST){
     // 消息路由
@@ -27,9 +27,9 @@ function msgFromOutside (e){
         break
       case 'loadMonitor':
         // 加载跟踪程序
-        let script_m= document.createElement("script");
-        script_m.type =  "text/javascript";
-        script_m.src = SODAR_HOST + '/js/monitor_f.js'
+        let trackjs= document.createElement("script");
+        trackjs.type =  "text/javascript";
+        trackjs.src = SODAR_HOST + '/js/track.js'
         
         // 检查 jQuery, 若 jQuery 加载成功则继续加载 插件.
         if (typeof jQuery == 'undefined') {
@@ -38,19 +38,22 @@ function msgFromOutside (e){
           script_jq.src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js";
           // script_jq.src = SODAR_HOST + "/js/jquery.js";
           htmlHead.append(script_jq)
+          // 等待jquery加载
           let timer = setInterval( ()=> {
               if( typeof jQuery == 'undefined' ) {
                   console.log( 'jquery尚未加载完' );
               } else {
                   clearInterval(timer)
                   console.log( 'jquery已加载' );
-                  htmlHead.append(script_m)
+                  htmlHead.append(trackjs)
               }
           },2000)
         } else {
-          htmlHead.append(script_m)
+          htmlHead.append(trackjs)
         }
         break
+      case 'rec':
+        console.log('开始记录');
     }
   }
 }
@@ -119,31 +122,4 @@ function timer1Handle(){
       return false    
     }
   },1000)
-}
-
-// 加入跟踪脚本
-if( false ){
-  let script_m= document.createElement("script");
-  script_m.type =  "text/javascript";
-  script_m.src = SODAR_HOST + '/js/monitor_f.js'
-  
-  // 检查 jQuery, 若 jQuery 加载成功则继续加载 插件.
-  if (typeof jQuery == 'undefined') {
-    let script_jq= document.createElement("script");
-    script_jq.type =  "text/javascript";
-    script_jq.src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js";
-    // script_jq.src = SODAR_HOST + "/js/jquery.js";
-    htmlHead.append(script_jq)
-    let timer = setInterval( ()=> {
-        if( typeof jQuery == 'undefined' ) {
-            console.log( 'jquery尚未加载完' );
-        } else {
-            clearInterval(timer)
-            console.log( 'jquery已加载' );
-            htmlHead.append(script_m)
-        }
-    },2000)
-  } else {
-    htmlHead.append(script_m)
-  }
 }

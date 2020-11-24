@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1>创建新任务</h1>
+    <div>
+      <button @click="rec">
+        开始记录
+      </button>
+    </div>
     <iframe
       :src="pttUrl"
       frameborder="0"
@@ -13,8 +17,12 @@ export default {
   data () {
     return {
       pttHost: ['http://127.0.0.1:8082'],
-      pttUrl: this.Store.state.pttUrl
+      pttUrl: this.Store.state.pttUrl,
+      origin: ''
     }
+  },
+  computed: {
+    frame: () => document.querySelector('iframe')
   },
   created () {
     window.addEventListener('message', (e) => {
@@ -23,6 +31,7 @@ export default {
       if (!this.pttHost.includes(e.origin)) {
         return false
       }
+      this.origin = e.origin
       console.log(e.data)
       try {
         const [magHead] = e.data.split('?')
@@ -36,6 +45,11 @@ export default {
         console.log('出错了')
       }
     })
+  },
+  methods: {
+    rec: function () {
+      this.frame.contentWindow.postMessage('rec', this.origin)
+    }
   }
 }
 </script>
