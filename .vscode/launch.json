@@ -29,6 +29,19 @@
                 "NODE_ENV": "development",
                 "PORT": "8081"
             }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "调试@Raspi",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/www",
+            "env": {
+                "NODE_ENV": "development1",
+                "PORT": "8081"
+            }
         }
     ]
 }

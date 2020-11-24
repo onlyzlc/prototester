@@ -8,19 +8,33 @@ var history = require('connect-history-api-fallback');
 var indexRouter = require('./routes/index');
 
 var app = express();
-console.log(app.get("env"));
-global.DEBUG = (app.get("env") === 'development')
+
+const ENV = app.get("env");
+console.log(ENV);
+global.DEBUG = (ENV.startsWith('development'))
 
 // var fileWatcher = require('./fileWatcher_linux');
 // fileWatcher.startWatch();
 
-// 配置数据库连接
+//////// 配置数据库连接 ////////
 var mongoose = require('mongoose');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-let connectionOptions = (process.env.NODE_ENV == 'development') ? "mongodb+srv://sodar:zlc-7895123@moonsea.8ucon.azure.mongodb.net/prototester?retryWrites=true&w=majority" : 'mongodb://localhost/prototester';
+// 开发环境调用远程数据库, 
+// let connectionOptions = (process.env.NODE_ENV == 'development') ? "mongodb+srv://sodar:zlc-7895123@moonsea.8ucon.azure.mongodb.net/prototester?retryWrites=true&w=majority" : 'mongodb://localhost/prototester';
+let connectionOptions
+switch(ENV){
+  case 'development1' :
+    connectionOptions = "mongodb+srv://sodar:zlc-7895123@moonsea.8ucon.azure.mongodb.net/prototester?retryWrites=true&w=majority"
+    break
+  case 'development':
+    connectionOptions = 'mongodb://localhost/prototester'
+    break
+  default:
+    connectionOptions = 'mongodb://localhost/prototester'
+}
 mongoose.connect(connectionOptions);
 const cnt = mongoose.connection;
 cnt.on('connected',function () {
@@ -29,7 +43,7 @@ cnt.on('connected',function () {
   throw '数据库连接失败'
 })
 
-// 配置后端视图模板
+//////// 配置后端视图模板(暂时没用) //////// 
 // view engine setup
 app.set('views', path.join(__dirname, 'views/pages'));
 app.set('view engine', 'ejs');
