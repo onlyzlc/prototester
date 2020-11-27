@@ -38,7 +38,7 @@ export default {
         switch (magHead) {
           case 'Penny':
             e.source.postMessage('ready', e.origin)
-            e.source.postMessage('loadMonitor', e.origin)
+            // e.source.postMessage('loadMonitor', e.origin)
             break
         }
       } catch (error) {
