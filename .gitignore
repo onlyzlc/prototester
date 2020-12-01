@@ -6,3 +6,4 @@ ui/dist
 ui/public
 ui/node_modules
 
+ui/static/js/sodar.js

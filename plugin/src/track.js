@@ -11,16 +11,21 @@ const eventTypes = ['click','change']
 const elmTypes = /input|select|textarea|label/
 
 // log对象
-const Action = function () {
-    this.eventType = "";
-    this.target =  {
+const Recorder = function () {
+    this.action = {}
+    this.action.eventType = "";
+    this.action.target =  {
         innerText: "",
-        domId: "",
-        nodeName: "",
+        id: "",
+        nodeName: "",   
     };
-    this.url = location.href;
-    this.pageTitle= document.title;
-    this.time = Date.now();
+    this.action.url = location.href;
+    this.action.pageTitle= document.title;
+    this.action.time = Date.now();
+}
+
+Recorder.prototype.cache = function () {
+    sessionStorage.setItem(this.action.time,JSON.stringify(this.action))
 }
 
 // if(window !== window.top){
@@ -73,36 +78,7 @@ const Action = function () {
 //     }
 // }
 
-// axure特征
-// 标记步骤的元素
-// $("head").append(`
-//     <style>
-//         ._mark{
-//             border: 1px #F44336 dashed !important;
-//             width: 100%;
-//             height: 100%;
-//             background-color: rgba(244, 67, 54, 0.2);
-//             transition: background 100ms;
-//             position: absolute;
-//             z-index:1000;
-//         }
-//         ._markDes{
-//             color: white;
-//             position: absolute;
-//             z-index: 1000;
-//             display: flex;
-//             margin: 0;
-//             list-style: none;
-//             padding-left: 0;
-//             right: 0;
-//         }
-//         ._markDes li{
-//             background: #F44336;
-//             padding: 1px 2px;
-//             margin-right: 1px;
-//         }
-//     </style>
-// `)  
+ 
 
 // 事件记录和发送
 function clickRecord(e) {
@@ -111,18 +87,18 @@ function clickRecord(e) {
     // 事件过滤
     if(e.target){
         if(e.target.matches(targetClass) || e.target.matches("[type='submit']")){
-            let action = new Action;
-            action.eventType = 'click';
-            action.time = Date.now();
-            action.target.nodeName = e.target.nodeName.toLowerCase();
-            action.target.domId = e.target.id;
-            action.target.innerText = e.target.innerText.trim() || e.target.value || e.target.id;
-            console.log(action);
-            console.log('准备发送给:'+ SODAR_HOST)
-            parent.postMessage({
-                status : "rec",
-                log: action
-            },SODAR_HOST);
+            let rec = new Recorder();
+            rec.action.eventType = 'click';
+            rec.action.time = Date.now();
+            rec.action.target.nodeName = e.target.nodeName.toLowerCase();
+            rec.action.target.domId = e.target.id;
+            rec.action.target.innerText = e.target.innerText.trim() || e.target.value || e.target.id;
+            rec.cache();
+            // console.log('准备发送给:'+ SODAR_HOST)
+            // parent.postMessage({
+            //     status : "rec",
+            //     log: action
+            // },SODAR_HOST);
         }
     }
 
@@ -206,3 +182,34 @@ export function renderSteps(steps) {
         // }
     })    
 }
+
+// axure特征
+// 标记步骤的元素
+// $("head").append(`
+//     <style>
+//         ._mark{
+//             border: 1px #F44336 dashed !important;
+//             width: 100%;
+//             height: 100%;
+//             background-color: rgba(244, 67, 54, 0.2);
+//             transition: background 100ms;
+//             position: absolute;
+//             z-index:1000;
+//         }
+//         ._markDes{
+//             color: white;
+//             position: absolute;
+//             z-index: 1000;
+//             display: flex;
+//             margin: 0;
+//             list-style: none;
+//             padding-left: 0;
+//             right: 0;
+//         }
+//         ._markDes li{
+//             background: #F44336;
+//             padding: 1px 2px;
+//             margin-right: 1px;
+//         }
+//     </style>
+// `) 

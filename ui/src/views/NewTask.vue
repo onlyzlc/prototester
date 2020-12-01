@@ -1,8 +1,11 @@
 <template>
   <div>
     <div>
-      <button @click="rec">
+      <button @click="startrec">
         开始记录
+      </button>
+      <button @click="submit">
+        提交记录
       </button>
     </div>
     <iframe
@@ -47,8 +50,18 @@ export default {
     })
   },
   methods: {
-    rec: function () {
+    startrec: function () {
       this.frame.contentWindow.postMessage('rec', this.origin)
+    },
+    submit: function () {
+      const log = []
+      const l = sessionStorage.length
+      for (let i = 0; i === l; i++) {
+        const key = sessionStorage.key(i)
+        log.push(sessionStorage.getItem(key))
+        sessionStorage.removeItem(key)
+      }
+      
     }
   }
 }
