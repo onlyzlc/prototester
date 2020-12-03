@@ -63,17 +63,20 @@ export default {
       }
       console.log(e.data)
       try {
-        const [magHead, msg] = e.data.split('?')
-        switch (magHead) {
-          case 'Penny': {
-            e.source.postMessage('ready', e.origin)
+        // const [cmd, content] = e.data.split('?')
+        const { cmd, content } = e.data
+        switch (cmd) {
+          case 'init': {
             // 获取原型页面链接
-            e.source.postMessage('href', e.origin)
+            e.source.postMessage({
+              cmd: 'href'
+            }, e.origin)
+            // e.source.postMessage('href', e.origin)
             break
           }
           case 'href': {
-            this.curPage = msg
-            this.Store.update({ pttUrl: msg })
+            this.curPage = content
+            this.Store.update({ pttUrl: content })
             break
           }
         }

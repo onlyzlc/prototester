@@ -11,7 +11,12 @@
         <label for="name">名称</label>
         <input type="text" id='name'>
         <button type="submit">提交</button>
-        <div class="ax_default" style="width: 100px; height: 40px; background-color: bisque;"></div>
+        <div class="ax_default" style="width: 100px; height: 40px; background-color: bisque;">
+            外面的
+            <div class="ax_default">
+                里面的
+            </div>
+        </div>
     </form>
     <script>
         document.querySelector("form").onsubmit = function (e) {

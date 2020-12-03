@@ -8,11 +8,17 @@ const SODAR_HOST = 'http://127.0.0.1:8080';
 let htmlHead = document.querySelector('head')
 const page = window.location.href
 
+const sayHi = {
+  cmd: 'init',
+  content: 'DoDoDo!!! Penny? ~DoDoDo!!! Penny? ~DoDoDo!!! Penny?'
+}
+
 // 启动定时器:等待 SODAR_HOST 发送消息, 若超时没收到, 则代表当前原型不在 SODAR_HOST 页面框架内
 const timer1 = setTimeout(timer1Handle,2000)
 if(window.top !== window){
-  window.top.postMessage('Knock! Knock! Knock!', SODAR_HOST)
-  window.top.postMessage('Penny?', SODAR_HOST)
+  // window.top.postMessage('Knock! Knock! Knock!', SODAR_HOST)
+  // window.top.postMessage('Penny?', SODAR_HOST)
+  window.top.postMessage(sayHi, SODAR_HOST)
 }
 
 window.addEventListener("message", msgFromOutside);
@@ -21,7 +27,9 @@ function msgFromOutside (e){
   if(e.origin === SODAR_HOST){
     // 消息路由
     console.log(e.data);
-    switch (e.data) {
+    switch (e.data.cmd) {
+      case 'rec':
+        track.monitor();        
       case 'ready': 
         // 原型位于Sodar框架内, 需反馈已准备好
         clearTimeout(timer1)
@@ -53,8 +61,7 @@ function msgFromOutside (e){
       //     htmlHead.append(trackjs)
       //   }
       //   break
-      case 'rec':
-        track.monitor();
+
     }
   }
 }
@@ -102,13 +109,14 @@ function timer1Handle(){
     if(e.origin === SODAR_HOST){
       // 消息路由
       console.log(e.data);
-      switch (e.data) {
-        case 'ready': 
-          clearInterval(timer2)
-          break
+      switch (e.data.cmd) {
         case 'href': 
-          e.source.postMessage('href?'+page, e.origin)
-          break
+        e.source.postMessage({
+          cmd: 'href',
+          content: page
+        }, e.origin)
+        case 'ready':
+          clearInterval(timer2)
       }
     }
   }
@@ -116,9 +124,9 @@ function timer1Handle(){
   // 由于此时插件窗口可能还没加载完,或者还没登录,需重复 sayhi
   let timer2 = setInterval(function () {
     try {
-      // knock knock knock penny 等待对方回应.
-      sodarFrame.contentWindow.postMessage('Knock! Knock! Knock!', SODAR_HOST)
-      sodarFrame.contentWindow.postMessage('Penny?', SODAR_HOST)
+      // sodarFrame.contentWindow.postMessage('Knock! Knock! Knock!', SODAR_HOST)
+      // sodarFrame.contentWindow.postMessage('Penny?', SODAR_HOST)
+      sodarFrame.contentWindow.postMessage(sayHi, SODAR_HOST)
     } catch (error) {
       return false    
     }

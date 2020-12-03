@@ -7,98 +7,40 @@
 import {SODAR_HOST} from './index.js'
 const pttType = 'Axure'
 const targetClass = (pttType === 'Axure')?'.ax_default':'*'
+const elmTypes = "input,select,textarea,label"
+const elmSelector = targetClass + ',' + elmTypes
 const eventTypes = ['click','change']
-const elmTypes = /input|select|textarea|label/
 
-// log对象
-const Recorder = function () {
-    this.action = {}
-    this.action.eventType = "";
-    this.action.target =  {
-        innerText: "",
-        id: "",
-        nodeName: "",   
-    };
-    this.action.url = location.href;
-    this.action.pageTitle= document.title;
-    this.action.time = Date.now();
+// 记录event对象的某些属性,采用解构赋值传入
+const Recorder = function ({type, timeStamp, target:{nodeName, id, innerText} }) {
+    this.action = {
+        type: type,
+        timeStamp: timeStamp,
+        nodeName: nodeName,
+        id: id,
+        innerText: innerText,
+        pageUrl: location.href,
+        pageTitle: document.title
+    }
 }
-
-Recorder.prototype.cache = function () {
+// 发送日志
+Recorder.prototype.post = function () {
     sessionStorage.setItem(this.action.time,JSON.stringify(this.action))
+    console.log('准备发送给:'+ SODAR_HOST)
+    parent.postMessage({
+        cmd : "post",
+        content: this.action
+    },SODAR_HOST);
+    console.log(`${this.action.type} the element: <${this.action.nodeName}>  ${this.action.innerText} at ${this.action.timeStamp}`);
 }
-
-// if(window !== window.top){
-//     // 监听父窗口发送的消息
-//     window.addEventListener("message", receiveMsgFromWin, false);
-//     let postToWin={};
-//     // 是否为第二层
-//     if(window.parent === window.top){
-//         postToWin.status = "isReady";
-//         postToWin.pageTitle = document.title;
-//         window.top.postMessage(postToWin, SODAR_HOST);
-       
-//     }else{
-//         postToWin.status = "init";
-//         postToWin.url = location.href;
-//         window.top.postMessage(postToWin, SODAR_HOST);
-//         console.log("向窗口 %s 发送消息: %o",SODAR_HOST,postToWin);
-//     }
-// }
-
-// function receiveMsgFromWin(e){
-//     let status = e.data.status;
-//     // console.log(status);
-//     switch (status) {
-//         case "stepRec_start":{
-//             console.log("开始跟踪");
-//             let action = new Action;
-//             action.target.innerText = document.title;
-//             action.eventType = 'load';
-//             action.time = Date.now();
-//             let postToWin={
-//                 status : "rec",
-//                 log: action
-//             };
-//             window.parent.postMessage(postToWin,SODAR_HOST);
-
-//             monitor();
-//             break;
-//         }
-//         case "stepRec_over":{
-//             console.log("结束跟踪");
-//             // 录制结束时，将数据发送给newTask.js
-//             monitorOff();
-//             break;
-//         }
-//         case "render":{
-//             // 接收自taskSetting.js，将步骤标记渲染到页面上
-//             renderSteps(e.data.steps);
-//         }
-//     }
-// }
-
- 
-
 // 事件记录和发送
-function clickRecord(e) {
+function record(e) {
     // 阻止事件冒泡，对于Axure中的动态面板的多层ax_default有效————只截取最底层的那个元素事件
-    // event.stopPropagation();
     // 事件过滤
     if(e.target){
-        if(e.target.matches(targetClass) || e.target.matches("[type='submit']")){
-            let rec = new Recorder();
-            rec.action.eventType = 'click';
-            rec.action.time = Date.now();
-            rec.action.target.nodeName = e.target.nodeName.toLowerCase();
-            rec.action.target.domId = e.target.id;
-            rec.action.target.innerText = e.target.innerText.trim() || e.target.value || e.target.id;
-            rec.cache();
-            // console.log('准备发送给:'+ SODAR_HOST)
-            // parent.postMessage({
-            //     status : "rec",
-            //     log: action
-            // },SODAR_HOST);
+        if(e.target.matches(elmSelector)){
+            let rec = new Recorder(e);
+            rec.post();
         }
     }
 
@@ -124,10 +66,9 @@ function clickRecord(e) {
 // 启用跟踪, 绑定事件
 export function monitor() {
     console.log('开始记录');
-    // for (const type of eventTypes) {
-        
-    // }
-    window.addEventListener('click', clickRecord, true);
+    for (const type of eventTypes) {
+        window.addEventListener(type, record, false);
+    }
     // $(formElms).on("change", record);
     // $("[type=submit]").click(record);
     // $("div.ax_default").click(record);

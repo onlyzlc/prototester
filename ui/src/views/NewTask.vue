@@ -21,7 +21,8 @@ export default {
     return {
       pttHost: ['http://127.0.0.1:8082'],
       pttUrl: this.Store.state.pttUrl,
-      origin: ''
+      origin: '',
+      steps: []
     }
   },
   computed: {
@@ -37,12 +38,16 @@ export default {
       this.origin = e.origin
       console.log(e.data)
       try {
-        const [magHead] = e.data.split('?')
-        switch (magHead) {
-          case 'Penny':
-            e.source.postMessage('ready', e.origin)
-            // e.source.postMessage('loadMonitor', e.origin)
+        const { cmd, content } = e.data
+        switch (cmd) {
+          case 'init':
+            e.source.postMessage({
+              cmd: 'ready'
+            }, e.origin)
             break
+          case 'post':
+            // 接收保存新新动作
+            this.steps.push(content)
         }
       } catch (error) {
         console.log('出错了')
@@ -51,17 +56,11 @@ export default {
   },
   methods: {
     startrec: function () {
-      this.frame.contentWindow.postMessage('rec', this.origin)
+      this.frame.contentWindow.postMessage({
+        cmd: 'rec'
+      }, this.origin)
     },
     submit: function () {
-      const log = []
-      const l = sessionStorage.length
-      for (let i = 0; i === l; i++) {
-        const key = sessionStorage.key(i)
-        log.push(sessionStorage.getItem(key))
-        sessionStorage.removeItem(key)
-      }
-      
     }
   }
 }
