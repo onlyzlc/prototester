@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div
-      v-if="Store.state.isVerified"
+      v-if="false"
       id="nav"
     >
       <div class="links">
@@ -72,13 +72,12 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
 
 #nav {
-  padding: 30px;
   display: flex;
+  height: 40px;
 }
 
 #nav a {

@@ -29,7 +29,11 @@ function msgFromOutside (e){
     console.log(e.data);
     switch (e.data.cmd) {
       case 'rec':
-        track.monitor();        
+        track.monitor(); 
+        break   
+      case 'stop':
+        track.monitorOff(); 
+        break   
       case 'ready': 
         // 原型位于Sodar框架内, 需反馈已准备好
         clearTimeout(timer1)

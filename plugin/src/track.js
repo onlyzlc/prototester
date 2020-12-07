@@ -6,19 +6,20 @@
 //(pttType == 'Axure')? 'ax_default':
 import {SODAR_HOST} from './index.js'
 const pttType = 'Axure'
-const targetClass = (pttType === 'Axure')?'.ax_default':'*'
-const elmTypes = "input,select,textarea,label"
-const elmSelector = targetClass + ',' + elmTypes
+const elmTypes = "input,select,textarea,label,[type=submit]"
+let elmSelector = elmTypes
+if (pttType === 'Axure') elmSelector += ',.ax_default'
 const eventTypes = ['click','change']
 
 // 记录event对象的某些属性,采用解构赋值传入
-const Recorder = function ({type, timeStamp, target:{nodeName, id, innerText} }) {
+const Recorder = function ({type, timeStamp, target:{nodeName, id, innerText, value} }) {
     this.action = {
         type: type,
         timeStamp: timeStamp,
         nodeName: nodeName,
         id: id,
         innerText: innerText,
+        value: value,
         pageUrl: location.href,
         pageTitle: document.title
     }
@@ -31,36 +32,17 @@ Recorder.prototype.post = function () {
         cmd : "post",
         content: this.action
     },SODAR_HOST);
-    console.log(`${this.action.type} the element: <${this.action.nodeName}>  ${this.action.innerText} at ${this.action.timeStamp}`);
+    console.log(`${this.action.type} the element: <${this.action.nodeName}>  ${this.action.innerText || this.action.value } at ${this.action.timeStamp}`);
 }
 // 事件记录和发送
 function record(e) {
     // 阻止事件冒泡，对于Axure中的动态面板的多层ax_default有效————只截取最底层的那个元素事件
-    // 事件过滤
     if(e.target){
         if(e.target.matches(elmSelector)){
             let rec = new Recorder(e);
             rec.post();
         }
     }
-
-    // switch (action.eventType) {
-    //     // 表单元素和普通元素点击事件，需记录不同的对象信息：e.target和this
-    //     case "change": {
-    //         action.target.domId= e.target.id;
-    //         action.target.nodeName= e.target.nodeName.toLowerCase();
-    //         // action.target.innerText= $(e.target).val().trim();
-    //         break;
-    //         // todo 需将改变后的值记录下来
-    //     }
-    //     case "click": {
-    //         action.target.nodeName = this.nodeName.toLowerCase();
-    //         action.target.domId = this.id;
-    //         action.target.innerText = this.innerText.trim() || this.value || e.target.id;
-    //         break;
-    //     }
-    // }
-    
 };
  
 // 启用跟踪, 绑定事件
@@ -69,26 +51,13 @@ export function monitor() {
     for (const type of eventTypes) {
         window.addEventListener(type, record, false);
     }
-    // $(formElms).on("change", record);
-    // $("[type=submit]").click(record);
-    // $("div.ax_default").click(record);
-    // // $(window).on('unload', record);
-
-    // // 只在ax_default叶子节点上绑定，移除掉其父节点绑定
-    // $("div.ax_default").has(".ax_default").off("click",record);
-
-    // // 排除所有与表单元素及其父元素的点击事件
-    // $(formElms).off("click",record);
-    // formElmsArr.forEach(elm => {
-    //     $("div.ax_default").has(elm).off("click",record);
-    // });    
 }
 
 // 关闭跟踪
 export function monitorOff() {
-    // $(window).off('unload', record);
-    // $(formElms).off("change", record);
-    // $("div.ax_default ").off("click", record);
+    for (const type of eventTypes) {
+        window.removeEventListener(type, record, false);
+    }
 }
 
 // 渲染标记
