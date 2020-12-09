@@ -27,7 +27,6 @@
             "program": "${workspaceFolder}/bin/www",
             "env": {
                 "NODE_ENV": "development",
-                "PORT": "8081"
             }
         },
         {
@@ -40,7 +39,6 @@
             "program": "${workspaceFolder}/bin/www",
             "env": {
                 "NODE_ENV": "development1",
-                "PORT": "8081"
             }
         }
     ]
