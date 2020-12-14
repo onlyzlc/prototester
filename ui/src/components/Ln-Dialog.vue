@@ -16,19 +16,19 @@
       </div>
       <div class="dialog_foot">
         <div class="left">
-          <slot name="foot_left" />
+          <slot name="foot-left" />
         </div>
         <div class="right">
-          <slot name="foot_right">
+          <slot name="foot-right">
             <button
               class="primary"
-              @click="$emit('click_primary')"
+              @click="$emit('click-primary')"
             >
               {{ btnPrimary }}
             </button>
             <button
               class="secondary"
-              @click="$emit('click_secondary')"
+              @click="$emit('click-secondary')"
             >
               {{ btnSecondary }}
             </button>
