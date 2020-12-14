@@ -27,8 +27,8 @@
     <ln-dialog
       title="确定注销吗"
       :vis="visibility.logoutConfirm"
-      @click_primary="logout"
-      @click_secondary="visibility.logoutConfirm = false"
+      @click-primary="logout"
+      @click-secondary="visibility.logoutConfirm = false"
     />
   </div>
 </template>
