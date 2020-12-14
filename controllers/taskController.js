@@ -13,15 +13,16 @@ exports.getTasks = function(req,res){
 
 exports.create = function (req, res) {
     // 计算每步时长
-    addDur(req.body.actions);
+    addDur(req.body.steps);
     // 去除无效步骤
-    removeInvalidSteps(req.body.actions);
+    removeInvalidSteps(req.body.steps);
 
     let newTask = new Task({
+        owner: req.session.loginUser,
         name: req.body.name,
         description: req.body.description,
         taskId: Date.now().toString(36),
-        steps: req.body.actions,
+        steps: req.body.steps,
     });
     newTask.save(
         function (err, doc) {
@@ -36,13 +37,13 @@ exports.create = function (req, res) {
 exports.updateSteps = function (req, res) {
     console.log("-> 更新任务步骤数据");
     // 计算每步时长
-    addDur(req.body.actions);
+    addDur(req.body.steps);
     // 去除无效步骤
-    removeInvalidSteps(req.body.actions);
+    removeInvalidSteps(req.body.steps);
     Task.findOneAndUpdate({
         "taskId": req.params.taskId
     }, {
-        steps: req.body.actions,
+        steps: req.body.steps,
     }, function (err, taskDoc) {
         if (err) throw err;
         if (taskDoc === null) {
@@ -210,7 +211,7 @@ exports.getDetail = function (req, res) {
 function addDur(actions) {
     // 便于渲染时直接获取时长
     for (let i = 0; i < actions.length - 1; i++) {
-        actions[i].dur = actions[i + 1].time - actions[i].time;
+        actions[i].dur = actions[i + 1].timeStamp - actions[i].timeStamp;
     }
 }
 

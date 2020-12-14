@@ -17,10 +17,10 @@
         </button>
       </div>
       <div v-else-if="state=='finished'">
-        <button @click="save()">
+        <button @click="vis.saveConfirem = true">
           保存
         </button>
-        <button @click="save()">
+        <button>
           取消
         </button>
       </div>
@@ -37,7 +37,14 @@
         v-if="state=='finished'"
         class="right"
       >
-        <p>steps <span style="" @click="redo" class="textBtn">撤销</span></p>
+        <p>
+          steps <span
+            :disabled="redoOrder.length==0"
+            style=""
+            class="textBtn"
+            @click="redo"
+          >撤销</span>
+        </p>
         <ul>
           <li
             v-for="step in steps"
@@ -59,11 +66,61 @@
         </ul>
       </div>
     </div>
+    <LnDialog
+      title="保存任务"
+      :vis="vis.saveConfirem"
+      @click_primary="save"
+      @click_secondary="vis.saveConfirem = false"
+    >
+      <form
+        id="newTask"
+        @submit.prevent="save"
+      >
+        <div>
+          <label for="taskName">任务名称:</label>
+          <input
+            type="text"
+            required
+            v-model="name"
+          >
+        </div>
+        <div>
+          <label for="taskDes">任务描述:</label>
+          <textarea
+            id="taskDes"
+            required
+            v-model="description"
+            name="taskDes"
+            cols="30"
+            rows="5"
+          />
+        </div>
+      </form>
+      <template v-slot:foot-right>
+        <button
+          form="newTask"
+          class="primary"
+          type="submit"
+        >
+          提交
+        </button>
+        <button
+          class="secondary"
+          @click="vis.saveConfirem=false"
+        >
+          取消
+        </button>
+      </template>
+    </LnDialog>
   </div>
 </template>
 
 <script>
+import LnDialog from '../components/Ln-Dialog.vue'
 export default {
+  components: {
+    LnDialog
+  },
   data () {
     return {
       state: 'init',
@@ -71,7 +128,12 @@ export default {
       pttUrl: this.Store.state.pttUrl,
       origin: '',
       steps: [],
-      redoOrder: []
+      redoOrder: [],
+      name: '',
+      description: '',
+      vis: {
+        saveConfirem: false
+      }
     }
   },
   computed: {
@@ -128,7 +190,17 @@ export default {
       this.steps[i].isDel = false
     },
     save: function () {
-
+      this.$http.post('/tasks', {
+        name: this.name,
+        description: this.description,
+        steps: this.steps.filter(item => !item.isDel)
+      }).then(response => {
+        // todo 成功后跳转
+        if (response.status === 201) {
+          console.log('任务创建成功，正在跳转回任务列表')
+          location.href = this.pttUrl
+        }
+      })
     },
     cancel: function () {
 
@@ -174,5 +246,9 @@ html,body,#app{
 }
 .textBtn:hover{
   cursor: pointer;
+}
+.textBtn[disabled]{
+  cursor: default;
+  color: gray
 }
 </style>

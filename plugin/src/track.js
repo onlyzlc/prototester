@@ -16,12 +16,14 @@ const Recorder = function ({type, timeStamp, target:{nodeName, id, innerText, va
     this.action = {
         type: type,
         timeStamp: timeStamp,
-        nodeName: nodeName,
-        id: id,
-        innerText: innerText,
-        value: value,
         pageUrl: location.href,
-        pageTitle: document.title
+        pageTitle: document.title,
+        target: {
+            nodeName: nodeName,
+            id: id,
+            innerText: innerText,
+            value: value
+        }
     }
 }
 // 发送日志

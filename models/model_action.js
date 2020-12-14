@@ -1,14 +1,13 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-const eventTypeEnum = ['load', 'click', 'unload', 'focus'];
 
 var ActionSchema = new Schema({ 
     url: String,
     pageTitle: String,
     eventType : String,
     target : {
-        domId: String,
+        id: String,
         nodeName: {
             type:String,
             lowercase: true,
@@ -16,6 +15,9 @@ var ActionSchema = new Schema({
         innerText: {
             type: String,
             trim: true,
+        },
+        value: {
+            type: String
         }
     },
     time: Number,
