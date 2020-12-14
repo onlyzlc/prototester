@@ -38,34 +38,6 @@ function msgFromOutside (e){
         // 原型位于Sodar框架内, 需反馈已准备好
         clearTimeout(timer1)
         break
-      // case 'loadMonitor':
-      //   // 加载跟踪程序
-      //   let trackjs= document.createElement("script");
-      //   trackjs.type =  "text/javascript";
-      //   trackjs.src = SODAR_HOST + '/js/track.js'
-        
-      //   // 检查 jQuery, 若 jQuery 加载成功则继续加载 插件.
-      //   if (typeof jQuery == 'undefined') {
-      //     let script_jq= document.createElement("script");
-      //     script_jq.type =  "text/javascript";
-      //     script_jq.src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.min.js";
-      //     // script_jq.src = SODAR_HOST + "/js/jquery.js";
-      //     htmlHead.append(script_jq)
-      //     // 等待jquery加载
-      //     let timer = setInterval( ()=> {
-      //         if( typeof jQuery == 'undefined' ) {
-      //             console.log( 'jquery尚未加载完' );
-      //         } else {
-      //             clearInterval(timer)
-      //             console.log( 'jquery已加载' );
-      //             htmlHead.append(trackjs)
-      //         }
-      //     },2000)
-      //   } else {
-      //     htmlHead.append(trackjs)
-      //   }
-      //   break
-
     }
   }
 }
@@ -82,12 +54,12 @@ function timer1Handle(){
   // 任务管理和引导
   // 任务测试报告
   // 任务测试场景
-  if(window.location.search.includes('testid')){
-    var testid = window.location.search.match(/testid=(\w+)/i)[1]
+  if(window.location.search.includes('testing=true')){
+    var taskId = window.location.search.match(/taskId=(\w+)/i)[1]
     // 检查id长度是否正确
     console.info('todo: 获取任务前检查id长度是否正确')
-    console.log('获取测试任务:'+ testid);  
-    sodarFrame.src += 'testing'
+    console.log('获取测试任务:'+ taskId);  
+    sodarFrame.src += ('tasks/' + taskId + '/testing')
   }
 
   // 渲染插件窗口
