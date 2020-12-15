@@ -84,15 +84,22 @@ function timer1Handle(){
   function msgFromInside(e){
     if(e.origin === SODAR_HOST){
       // 消息路由
+      clearInterval(timer2)
       console.log(e.data);
       switch (e.data.cmd) {
         case 'href': 
-        e.source.postMessage({
-          cmd: 'href',
-          content: page
-        }, e.origin)
+          e.source.postMessage({
+            cmd: 'href',
+            content: page
+          }, e.origin)
+          break
+        case 'taskId': 
+          e.source.postMessage({
+            cmd: 'taskId',
+            content: taskId
+          }, e.origin)
+          break
         case 'ready':
-          clearInterval(timer2)
       }
     }
   }

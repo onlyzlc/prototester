@@ -14,7 +14,10 @@
         <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> |
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
-        <a :href="curPage+'/testing?taskid='+task.taskId" target="_blank">开始测试</a> |
+        <a
+          :href="curPage+'/testing?taskid='+task.taskId"
+          target="_blank"
+        >开始测试</a> |
         <button
           class="publish"
           @click="publish(index)"

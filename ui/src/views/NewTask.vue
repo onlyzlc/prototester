@@ -79,17 +79,17 @@
         <div>
           <label for="taskName">任务名称:</label>
           <input
+            v-model="name"
             type="text"
             required
-            v-model="name"
           >
         </div>
         <div>
           <label for="taskDes">任务描述:</label>
           <textarea
             id="taskDes"
-            required
             v-model="description"
+            required
             name="taskDes"
             cols="30"
             rows="5"
