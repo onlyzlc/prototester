@@ -15,7 +15,7 @@
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
         <a
-          :href="curPage+'/testing?taskid='+task.taskId"
+          :href="'/tasks/'+ task.taskId + '/testing'"
           target="_blank"
         >开始测试</a> |
         <button

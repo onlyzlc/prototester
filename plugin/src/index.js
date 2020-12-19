@@ -52,7 +52,6 @@ function timer1Handle(){
   sodarFrame.style.minHeight = '300px'
 
   // 任务管理和引导
-  // 任务测试报告
   // 任务测试场景
   if(window.location.search.includes('testing=true')){
     var taskId = window.location.search.match(/taskId=(\w+)/i)[1]
