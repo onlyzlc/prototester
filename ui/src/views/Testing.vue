@@ -1,38 +1,37 @@
 <template>
-  <div>测试进行中...
+  <div>
+    测试进行中...
+    <button @click="startrec">
+      开始
+    </button>
     <iframe
-          :src="pttUrl"
-          frameborder="0"
-          style="width: 100%; height: 100%"
-        />
+      :src="step_keys[0].url"
+      frameborder="0"
+      style="width: 100%; height: 100%"
+    />
   </div>
-  
 </template>
 
 <script>
 export default {
   data () {
     return {
-      taskId:'',
-      step_first: {},
-      step_end: {},
+      taskId: '',
+      step_keys: [],
       pttHost: ['http://127.0.0.1:8082'],
       pttUrl: ''
     }
   },
   created () {
+    window.addEventListener('message', this.reciveMsg, false)
     // 获取当前任务ID
-    this.taskId = this.$route.taskId
+    this.taskId = this.$route.params.taskId
     // 获取任务数据
     this.$http
       .get(`/tasks/${this.taskId}/startstop`)
-      .then( (res)=> {
-        this.step_first = res[0] 
-        this.step_end = res[1]
-      })
-    this.pttUrl = this.step_first.url
+      .then((res) => (this.step_keys = res.data))
+    // this.pttUrl = this.step_keys[0].url
     // 查看能否在插件框架中
-    window.addEventListener('message', this.reciveMsg, false)
     // this.getSteps()
   },
   methods: {
@@ -45,20 +44,15 @@ export default {
       console.log(e.data)
       try {
         // const [cmd, content] = e.data.split('?')
-        const { cmd, content } = e.data
+        const { cmd } = e.data
         switch (cmd) {
           case 'init': {
-            // 发送原型页面链接命令
+            // 框架加载后,sodar.js会发送init消息来表示已准备好
+            // 这里作为父页面收到后,返回 ready 指令
             e.source.postMessage({
-              cmd: 'taskId'
+              cmd: 'ready'
             }, e.origin)
             // e.source.postMessage('href', e.origin)
-            break
-          }
-          // 接收原型链接
-          case 'taskId': {
-            this.taskId = content
-            this.Store.update({ pttUrl: content })
             break
           }
         }

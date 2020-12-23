@@ -16,7 +16,7 @@ const Recorder = function ({type, timeStamp, target:{nodeName, id, innerText, va
     this.action = {
         type: type,
         timeStamp: timeStamp,
-        pageUrl: location.href,
+        url: location.href,
         pageTitle: document.title,
         target: {
             nodeName: nodeName,

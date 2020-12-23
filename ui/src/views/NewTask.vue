@@ -4,19 +4,19 @@
     <div class="controlbar">
       <button
         v-if="state=='init'"
-        @click="startrec()"
+        @click="state='rec'"
       >
         开始记录
       </button>
       <div v-else-if="state=='rec'">
         <span>{{ steps.length }}</span>
         <button
-          @click="finish()"
+          @click="state='stop'"
         >
           完成
         </button>
       </div>
-      <div v-else-if="state=='finished'">
+      <div v-else-if="state=='stop'">
         <button @click="vis.saveConfirem = true">
           保存
         </button>
@@ -27,14 +27,18 @@
     </div>
     <div class="recpanel">
       <div class="left">
-        <iframe
+        <!-- <iframe
           :src="pttUrl"
           frameborder="0"
           style="width: 100%; height: 100%"
+        /> -->
+        <rec-frame
+          :url="pttUrl"
+          :state="state"
         />
       </div>
       <div
-        v-if="state=='finished'"
+        v-if="state=='stop'"
         class="right"
       >
         <p>
@@ -117,9 +121,11 @@
 
 <script>
 import LnDialog from '../components/Ln-Dialog.vue'
+import RecFrame from '../components/Rec-Frame.vue'
 export default {
   components: {
-    LnDialog
+    LnDialog,
+    RecFrame
   },
   data () {
     return {
@@ -136,9 +142,6 @@ export default {
       }
     }
   },
-  computed: {
-    frame: () => document.querySelector('iframe')
-  },
   created () {
     window.addEventListener('message', (e) => {
       console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
@@ -146,7 +149,7 @@ export default {
       if (!this.pttHost.includes(e.origin)) {
         return false
       }
-      this.origin = e.origin
+      // this.origin = e.origin
       console.log(e.data)
       try {
         const { cmd, content } = e.data
@@ -167,19 +170,19 @@ export default {
     })
   },
   methods: {
-    send: function (msg) {
-      this.frame.contentWindow.postMessage({
-        cmd: msg
-      }, this.origin)
-    },
-    startrec: function () {
-      this.send('rec')
-      this.state = 'rec'
-    },
-    finish: function () {
-      this.send('stop')
-      this.state = 'finished'
-    },
+    // send: function (msg) {
+    //   this.frame.contentWindow.postMessage({
+    //     cmd: msg
+    //   }, this.origin)
+    // },
+    // startrec: function () {
+    //   this.send('rec')
+    //   this.state = 'rec'
+    // },
+    // finish: function () {
+    //   this.send('stop')
+    //   this.state = 'finished'
+    // },
     del: function (t) {
       const i = this.steps.findIndex(item => item.timeStamp === t)
       this.steps[i].isDel = true

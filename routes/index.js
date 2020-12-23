@@ -18,7 +18,7 @@ router.use('/', (req, res, next) => {
   });
 
 router.use('/tasks', require('./tasks'));
-router.use('/userTest', require('./userTests'));
+router.use('/userTests', require('./userTests'));
 
 router.post('/regist', userApi.regist);
 router.post('/login', userApi.login);

@@ -53,13 +53,13 @@ function timer1Handle(){
 
   // 任务管理和引导
   // 任务测试场景
-  if(window.location.search.includes('testing=true')){
-    var taskId = window.location.search.match(/taskId=(\w+)/i)[1]
-    // 检查id长度是否正确
-    console.info('todo: 获取任务前检查id长度是否正确')
-    console.log('获取测试任务:'+ taskId);  
-    sodarFrame.src += ('tasks/' + taskId + '/testing')
-  }
+  // if(window.location.search.includes('testing=true')){
+  //   var taskId = window.location.search.match(/taskId=(\w+)/i)[1]
+  //   // 检查id长度是否正确
+  //   console.info('todo: 获取任务前检查id长度是否正确')
+  //   console.log('获取测试任务:'+ taskId);  
+  //   sodarFrame.src += ('tasks/' + taskId + '/testing')
+  // }
 
   // 渲染插件窗口
   let box = document.createElement('div')
