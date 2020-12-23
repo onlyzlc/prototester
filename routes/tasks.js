@@ -24,6 +24,6 @@ router.get('/:taskId/setting',taskApi.getTaskSettingPage);
 router.get('/:taskId/testing',taskApi.getTestingPage);
 router.patch('/:taskId/testing',taskApi.updateTesting);
 
-router.get('/:taskId/startstop',taskApi.getStartStop);
+router.get('/:taskId/taskNote',taskApi.getTaskNote);
 
 module.exports = router;
