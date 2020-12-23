@@ -125,20 +125,24 @@ exports.getTestingPage = function (req, res) {
     res.json("testing");
 }
 
-exports.getStartStop = function (req, res) {
-    console.log('-> 获取任务起止步骤信息');
+// 返回任务的测试提要,包括任务首尾步骤,任务描述
+exports.getTaskNote = function (req, res) {
+    console.log('-> 获取任务的测试提要');
     Task.findOne({
         "taskId": req.params.taskId
-    }, "steps", function (err, taskDoc) {
+    }, "steps description", function (err, taskDoc) {
         if (err) throw err;
         if (taskDoc === null) {
             noTaskTip(res);
             return;
         }
         if (taskDoc.steps.length > 0) {
-            let steps = taskDoc.steps;
+            let {steps ,description} = taskDoc;
             steps.splice(1, steps.length - 2);
-            res.status(200).json(steps);
+            res.status(200).json({
+                steps: steps,
+                description: description
+            });
         } else {
             res.status(200).end("null");
         }
