@@ -26,7 +26,7 @@ window.addEventListener("message", msgFromOutside);
 function msgFromOutside (e){
   if(e.origin === SODAR_HOST){
     // 消息路由
-    console.log(e.data);
+    console.log('收到 %s 消息: %o',e.origin , e.data);
     switch (e.data.cmd) {
       case 'rec':
         track.monitor(); 
