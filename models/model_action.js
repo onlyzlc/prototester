@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var ActionSchema = new Schema({ 
     url: String,
     pageTitle: String,
-    eventType : String,
+    type : String,
     target : {
         id: String,
         nodeName: {
