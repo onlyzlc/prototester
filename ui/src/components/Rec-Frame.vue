@@ -14,7 +14,7 @@ export default {
       type: String,
       default: ''
     },
-    state: {
+    status: {
       type: String,
       default: 'init'
     }
@@ -23,9 +23,9 @@ export default {
     frame: () => document.querySelector('iframe')
   },
   watch: {
-    state: function (val) {
+    status: function (val) {
       this.send(val)
-      this.state = val
+      this.status = val
     }
   },
   methods: {

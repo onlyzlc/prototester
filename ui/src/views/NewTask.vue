@@ -3,20 +3,20 @@
     <!-- 工具栏 -->
     <div class="controlbar">
       <button
-        v-if="state=='init'"
-        @click="state='rec'"
+        v-if="status=='init'"
+        @click="status='rec'"
       >
         开始记录
       </button>
-      <div v-else-if="state=='rec'">
+      <div v-else-if="status=='rec'">
         <span>{{ steps.length }}</span>
         <button
-          @click="state='stop'"
+          @click="status='stop'"
         >
           完成
         </button>
       </div>
-      <div v-else-if="state=='stop'">
+      <div v-else-if="status=='stop'">
         <button @click="vis.saveConfirem = true">
           保存
         </button>
@@ -34,11 +34,11 @@
         /> -->
         <rec-frame
           :url="pttUrl"
-          :state="state"
+          :status="status"
         />
       </div>
       <div
-        v-if="state=='stop'"
+        v-if="status=='stop'"
         class="right"
       >
         <p>
@@ -129,7 +129,7 @@ export default {
   },
   data () {
     return {
-      state: 'init',
+      status: 'init',
       pttHost: ['http://127.0.0.1:8082'],
       pttUrl: this.Store.state.pttUrl,
       origin: '',
@@ -150,7 +150,7 @@ export default {
         return false
       }
       // this.origin = e.origin
-      console.log(e.data)
+      console.log('收到 %s 消息: %o', e.origin, e.data)
       try {
         const { cmd, content } = e.data
         switch (cmd) {
