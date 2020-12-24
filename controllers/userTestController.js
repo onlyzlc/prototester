@@ -1,5 +1,6 @@
 // var Ptt = require('../models/model_ptt');
 var UserTest = require('../models/model_userTest');
+var Task = require('../models/model_task');
 var cookieOption = {};
 
 function setNextTask(task,index,total,res){
@@ -26,9 +27,9 @@ exports.getNextTask = function (req, res) {
     
     var ptturl = req.query.ptturl;
 
-    Ptt.findOne().byUrl(ptturl).exec(function (err, result) {
+    Ptt.findOne().byUrl(ptturl).exec(function (err, ptt) {
         if (err) throw err;
-        if (result && result.tasks.length) {
+        if (ptt && ptt.tasks.length) {
             // 如果原型及其任务存在
             // 如果Cookie中有任务, 则选择查找并选择下一个任务
             // 如果任务已经完全完成,则清空Cookie
@@ -44,14 +45,14 @@ exports.getNextTask = function (req, res) {
                 }
 
                 // 获取当前任务下标
-                var i = result.tasks.findIndex((item, index) => {
+                var i = ptt.tasks.findIndex((item, index) => {
                     return item.id == currentTask.id;
                 });
 
                 // 下一个任务
                 i++;
 
-                var l = result.tasks.length;
+                var l = ptt.tasks.length;
                 if (i == l) {
                     // 全部任务已完成
                     console.log('任务全部完成');
@@ -62,14 +63,14 @@ exports.getNextTask = function (req, res) {
                     res.status(200).send('finished');
                 }else{
                     // 找到下一个任务
-                    var task = result.tasks[i];
+                    var task = ptt.tasks[i];
                     setNextTask(task,i++,l,res);
                     console.log('已找到下一个任务' + task.id);
                 }
 
             } else {
-                // Cookie中没有存任务, 取第一个任务
-                task = result.tasks[0];
+                // Cookie中没有存任务, 取原型的第一个任务
+                task = ptt.tasks[0];
                 setNextTask(task,0,result.tasks.length,res);
                 console.log('找到第一个任务');
             }
@@ -85,44 +86,41 @@ exports.getNextTask = function (req, res) {
 
 exports.post = function (req, res) {
     console.log('导航到:新增用户测试');
-
-    // 创建用户测试
-    UserTest.create({}, function (err, result) {
-        if (err) throw err;
-        result.task = JSON.parse(req.cookies.task).id;
-        result.save();
-        res.cookie('testId', result.id);
-        res.send(201);
-    })
-
-    // 更新原型的测试次数,累加1
-    var ptturl = req.query.ptturl;
-    Ptt.findOne().byUrl(ptturl).exec(function(err,doc){
-        if(err) throw err;
-        ++doc.userTestCount;
-        doc.save();
-    })
+    // 判断是否已创建测试
+    if (req.cookies.userTest === undefined) {
+        Task.findOne({taskId: req.body.taskId}, function (err,task) {
+            if(err) throw '找不的对应的任务';
+            UserTest.create({task: task.id}, function(err, userTest){
+                // 设置当前测试的id,存入cookie
+                console.log('已创建一条用户测试记录');
+                let id = userTest.id
+                res.cookie('userTestId',id)
+                res.send(200)
+            })
+        })
+    }else{
+        console.log('可能因网络问题, 已存在相同的测试案例, 将覆盖原测试结果');
+    }
 }
 
 exports.patch = function (req, res) {
     console.log('导航到:更新用户测试的日志');
-
-    UserTest.findById(req.cookies.testId, function (err, result) {
+    UserTest.findById(req.cookies.userTestId, function (err, userTest) {
         if (err) throw err;
-        if (result) {
+        if (userTest) {
             var l = req.body.log.length;
-            result.isCompleted = req.body.isCompleted;
+            userTest.isCompleted = req.body.isCompleted;
             for (var i = 0; i < l; i++) {
-                result.log.push(req.body.log[i]);
+                userTest.log.push(req.body.log[i]);
             }
-            result.save(function (err,doc) {
+            if(userTest.isCompleted) res.clearCookie('userTestId');
+            userTest.save(function (err,doc) {
                 res.sendStatus(201);
                 console.log("更新成功,任务完成状态:"+doc.isCompleted);
             });
         } else {
             console.log('找不到此对应测试实例,数据可能被篡改');
-            res.clearCookie('testId');
-            res.clearCookie('task');
+            res.clearCookie('userTestId');
             res.status(410).send('Cookie可能被篡改');
         }
     })
@@ -130,7 +128,7 @@ exports.patch = function (req, res) {
 
 exports.del = function(req,res){
     res.clearCookie('task');
-    res.clearCookie('testId');
+    res.clearCookie('userTestId');
     // res.send(200);
     res.render('finish');
     console.log('Cookie已清除');

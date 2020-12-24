@@ -19,7 +19,7 @@ export default {
     localStorage.setItem('state', JSON.stringify(this.state))
   },
   update: function (newValue) {
-    if (this.debug) console.log('更新用户状态信息:%o', newValue)
+    if (this.debug) console.log('更新存储:%o', newValue)
     // const { isVerified, email } = newValue
     // this.state.isVerified = isVerified
     // this.state.email = email

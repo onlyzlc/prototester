@@ -34,9 +34,10 @@ ax.interceptors.response.use(function (response) {
 // 全局添加登录超时校验
 router.beforeEach((to, from, next) => {
   // 免登录页面
-  const publicPage = /Regist|Login|Testing/
+  // const publicPage = /Regist|Login|Testing/    publicPage.test(to.name)
   const state = Store.state
-  if (publicPage.test(to.name) || state.isVerified) next()
+  // 如果是公共路径,或已登录状态, 则继续, 否则跳转到登录页面
+  if (to.matched.some(record => record.meta.public) || state.isVerified) next()
   else {
     if (Store.debug) console.log('登录超时, 跳转注册页')
     next({ name: 'Regist', props: { to: to.name } })

@@ -8,6 +8,7 @@ import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
 import Testing from '../views/Testing.vue'
 import Setting from '../views/Setting.vue'
+import Bye from '../views/Bye.Vue'
 
 Vue.use(VueRouter)
 
@@ -36,7 +37,11 @@ const routes = [
   {
     path: '/tasks/:taskId/testing',
     name: 'Testing',
-    component: Testing
+    component: Testing,
+    meta: { public: true },
+    child: [
+      {path: '/bye' , component: Bye}
+    ]
   },
   {
     path: '/setting',
@@ -49,7 +54,8 @@ const routes = [
     component: Login,
     props: {
       to: 'Tasks' // 登陆后默认返回的位置.
-    }
+    },
+    meta: { public: true }
   },
   {
     path: '/regist',
@@ -57,7 +63,8 @@ const routes = [
     component: Regist,
     props: {
       to: 'Tasks' // 注册完成后默认返回的位置.
-    }
+    },
+    meta: { public: true }
   }
 ]
 

@@ -29,13 +29,15 @@ export default {
   },
   data () {
     return {
-      taskId: '',
+      taskId: this.$route.params.taskId,
       taskNote: {},
       pttHost: ['http://127.0.0.1:8082'],
       status: 'init',
       pttUrl: '',
       tip: '',
       stop: {},
+      log: [],
+      isCompleted: false,
       vis: {
         tip: true,
         tip_completed: false
@@ -45,7 +47,6 @@ export default {
   created () {
     window.addEventListener('message', this.reciveMsg, false)
     // 获取当前任务ID
-    this.taskId = this.$route.params.taskId
     // 获取任务数据
     this.$http
       .get(`/tasks/${this.taskId}/taskNote`)
@@ -82,8 +83,14 @@ export default {
                 content.target.id === this.stop.target.id &&
                 content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
                 content.target.value === this.stop.target.value) {
+              this.isCompleted = true
+              this.log.push(content)
+              this.sendLog()
               this.status = 'stop'
               this.vis.tip_completed = true
+            } else {
+              this.log.push(content)
+              if (this.log.length >= 10) this.sendLog()
             }
             break
         }
@@ -94,9 +101,17 @@ export default {
     startTest () {
       this.vis.tip = false
       this.status = 'rec'
+      this.$http
+        .post('/userTests', { taskId: this.taskId })
+    },
+    sendLog () {
+      const log = this.log
+      this.log = []
+      this.$http
+        .patch('/userTests', { log: log, isCompleted: this.isCompleted })
     },
     leaveTest () {
-      window.close()
+      // window.close()
     }
   }
 }

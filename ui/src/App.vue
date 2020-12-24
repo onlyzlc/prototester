@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div
-      v-if="false"
+      v-if="true"
       id="nav"
     >
       <div class="links">
