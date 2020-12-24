@@ -49,12 +49,6 @@ router.beforeEach((to, from, next) => {
 Vue.use(VueAxios, ax)
 
 new Vue({
-  beforeCreate () {
-  },
-  created () {
-  },
-  methods: {
-  },
   router: router,
   render: h => h(App)
 }).$mount('#app')
