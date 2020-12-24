@@ -8,7 +8,7 @@ import TaskBoard from '../views/TaskBoard.vue'
 import TestDetail from '../views/TestDetail.vue'
 import Testing from '../views/Testing.vue'
 import Setting from '../views/Setting.vue'
-import Bye from '../views/Bye.Vue'
+import Bye from '../views/Bye.vue'
 
 Vue.use(VueRouter)
 
@@ -38,10 +38,12 @@ const routes = [
     path: '/tasks/:taskId/testing',
     name: 'Testing',
     component: Testing,
-    meta: { public: true },
-    child: [
-      {path: '/bye' , component: Bye}
-    ]
+    meta: { public: true }
+  },
+  {
+    path: '/bye',
+    name: 'Bye',
+    component: Bye
   },
   {
     path: '/setting',

@@ -1,12 +1,11 @@
 <template>
   <div>
-      感谢
+    感谢参与
   </div>
 </template>
 
 <script>
 export default {
-
 }
 </script>
 
