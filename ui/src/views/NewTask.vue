@@ -57,7 +57,7 @@
           >
             <template v-if="!step.isDel">
               <span class="des">
-                {{ step.type }} [{{ step.nodeName }}]  {{ step.innerText || step.value }} at {{ step.timeStamp }}
+                {{ step.type }} [{{ step.target.nodeName }}]  {{ step.target.innerText || step.target.value }} at {{ step.timeStamp }}
               </span>
               <span
                 class="delStep textBtn"
@@ -170,19 +170,6 @@ export default {
     })
   },
   methods: {
-    // send: function (msg) {
-    //   this.frame.contentWindow.postMessage({
-    //     cmd: msg
-    //   }, this.origin)
-    // },
-    // startrec: function () {
-    //   this.send('rec')
-    //   this.state = 'rec'
-    // },
-    // finish: function () {
-    //   this.send('stop')
-    //   this.state = 'finished'
-    // },
     del: function (t) {
       const i = this.steps.findIndex(item => item.timeStamp === t)
       this.steps[i].isDel = true
