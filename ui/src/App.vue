@@ -1,68 +1,10 @@
 <template>
   <div id="app">
-    <div
-      v-if="true"
-      id="nav"
-    >
-      <div class="links">
-        <router-link to="/tasks">
-          测试任务
-        </router-link> |
-        <router-link to="/setting">
-          设置
-        </router-link>
-      </div>
-      <div class="right">
-        <div>
-          {{ Store.state.email }} |
-          <button
-            @click="visibility.logoutConfirm = true"
-          >
-            退出
-          </button>
-        </div>
-      </div>
-    </div>
     <router-view />
-    <ln-dialog
-      title="确定注销吗"
-      :vis="visibility.logoutConfirm"
-      @click-primary="logout"
-      @click-secondary="visibility.logoutConfirm = false"
-    />
   </div>
 </template>
 
 <script>
-import LnDialog from './components/Ln-Dialog.vue'
-export default {
-  components: {
-    LnDialog
-  },
-  data () {
-    return {
-      visibility: {
-        logoutConfirm: false
-      }
-    }
-  },
-  computed: {
-  },
-  methods: {
-    // 注销
-    logout () {
-      this.$http.post('/logout')
-        .then(res => {
-          if (res.status === 200) {
-            this.Store.clear()
-            this.$router.push({ name: 'Login' })
-            this.visibility.logoutConfirm = false
-            if (this.Store.debug) console.log('已注销')
-          }
-        })
-    }
-  }
-}
 </script>
 
 <style>
@@ -74,7 +16,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-
 #nav {
   display: flex;
   height: 40px;

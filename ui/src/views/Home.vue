@@ -1,16 +1,68 @@
 <template>
   <div class="home">
-    这里可以放一些注册入口
+    <div
+      id="nav"
+    >
+      <div class="links">
+        <router-link to="/tasks">
+          测试任务
+        </router-link>
+      </div>
+      <div class="right">
+        <div>
+          <router-link to="/profile">
+          {{ Store.state.email }} |
+        </router-link>
+          <button
+            @click="visibility.logoutConfirm = true"
+          >
+            退出
+          </button>
+        </div>
+      </div>
+    </div>
+    <ln-dialog
+      title="确定注销吗"
+      :vis="visibility.logoutConfirm"
+      @click-primary="logout"
+      @click-secondary="visibility.logoutConfirm = false"
+    />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-
+import LnDialog from '../components/Ln-Dialog.vue'
 export default {
-  name: 'Home',
   components: {
+    LnDialog
+  },
+  data () {
+    return {
+      visibility: {
+        logoutConfirm: false
+      }
+    }
+  },
+  computed: {
+  },
+  methods: {
+    // 注销
+    logout () {
+      this.$http.post('/logout')
+        .then(res => {
+          if (res.status === 200) {
+            this.Store.clear()
+            this.$router.push({ name: 'Login' })
+            this.visibility.logoutConfirm = false
+            if (this.Store.debug) console.log('已注销')
+          }
+        })
+    }
   }
 }
 </script>
+
+<style>
+
+</style>

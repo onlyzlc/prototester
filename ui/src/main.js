@@ -36,14 +36,18 @@ router.beforeEach((to, from, next) => {
   // 免登录页面
   // const publicPage = /Regist|Login|Testing/    publicPage.test(to.name)
   const state = Store.state
-  // 如果是公共路径,或已登录状态, 则继续, 否则跳转到登录页面
-  if (to.matched.some(record => record.meta.public) || state.isVerified) next()
-  else {
-    if (Store.debug) console.log('登录超时, 跳转注册页')
-    next({ name: 'Regist', props: { to: to.name } })
+  // 如果是需要权限的页面,则判断是否已登录
+  // 若已登录则继续
+  // 若未登录则跳转到注册页面
+  if (to.matched.some(record => record.meta.requireAuth)) {
+    if (state.isVerified) next()
+    else {
+      if (Store.debug) console.log('登录超时, 跳转注册页')
+      next({ name: 'Regist', props: { to: to.name } })
+    }
+  } else {
+    next()
   }
-  // if (to.name !== 'Regist' && to.name !== 'Login' && !state.isVerified) {
-  // } else next()
 })
 
 Vue.use(VueAxios, ax)
