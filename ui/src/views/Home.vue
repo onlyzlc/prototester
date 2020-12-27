@@ -11,8 +11,8 @@
       <div class="right">
         <div>
           <router-link to="/profile">
-          {{ Store.state.email }} |
-        </router-link>
+            {{ Store.state.email }} |
+          </router-link>
           <button
             @click="visibility.logoutConfirm = true"
           >
@@ -27,7 +27,7 @@
       @click-primary="logout"
       @click-secondary="visibility.logoutConfirm = false"
     />
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 

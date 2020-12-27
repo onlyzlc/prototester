@@ -1,7 +1,6 @@
 <template>
   <div>
     <a
-      target="_top"
       href="/tasks/new"
     >
       新增测试任务
@@ -15,7 +14,7 @@
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
         <a
-          :href="'/tasks/'+ task.taskId + '/testing'"
+          :href="'/how-do-you/'+ task.taskId "
           target="_blank"
         >开始测试</a> |
         <button

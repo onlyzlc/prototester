@@ -112,7 +112,7 @@ export default {
     },
     leaveTest () {
       // window.close()
-      this.$router.push({ name: 'Bye' })
+      this.$router.push({ name: 'Thanks' })
     }
   }
 }

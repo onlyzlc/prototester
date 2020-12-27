@@ -13,16 +13,16 @@ exports.getTasks = function(req,res){
 
 exports.create = function (req, res) {
     // 计算每步时长
-    addDur(req.body.steps);
+    // addDur(req.body.steps);
     // 去除无效步骤
-    removeInvalidSteps(req.body.steps);
+    // removeInvalidSteps(req.body.steps);
 
     let newTask = new Task({
         owner: req.session.loginUser,
         name: req.body.name,
         description: req.body.description,
         taskId: Date.now().toString(36),
-        steps: req.body.steps,
+        // steps: req.body.steps,
     });
     newTask.save(
         function (err, doc) {

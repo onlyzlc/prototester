@@ -70,14 +70,61 @@
         </ul>
       </div>
     </div>
+    <LnDialog
+      title="保存任务"
+      :vis="vis.saveConfirem"
+      @click_primary="save"
+      @click_secondary="vis.saveConfirem = false"
+    >
+      <form
+        id="newTask"
+        @submit.prevent="save"
+      >
+        <div>
+          <label for="taskName">任务名称:</label>
+          <input
+            v-model="name"
+            type="text"
+            required
+          >
+        </div>
+        <div>
+          <label for="taskDes">任务描述:</label>
+          <textarea
+            id="taskDes"
+            v-model="description"
+            required
+            name="taskDes"
+            cols="30"
+            rows="5"
+          />
+        </div>
+      </form>
+      <template v-slot:foot-right>
+        <button
+          form="newTask"
+          class="primary"
+          type="submit"
+        >
+          提交
+        </button>
+        <button
+          class="secondary"
+          @click="vis.saveConfirem=false"
+        >
+          取消
+        </button>
+      </template>
+    </LnDialog>
   </div>
 </template>
 
 <script>
-// import LnDialog from '../components/Ln-Dialog.vue'
+import LnDialog from '../components/Ln-Dialog.vue'
 import RecFrame from '../components/Rec-Frame.vue'
 export default {
   components: {
+    LnDialog,
     RecFrame
   },
   data () {
@@ -134,6 +181,8 @@ export default {
     },
     save: function () {
       this.$http.post('/tasks', {
+        name: this.name,
+        description: this.description,
         steps: this.steps.filter(item => !item.isDel)
       }).then(response => {
         // todo 成功后跳转
@@ -151,5 +200,45 @@ export default {
 </script>
 
 <style>
-
+html,body,#app{
+  height: 100%
+}
+.controlbar{
+  background-color: antiquewhite;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.recpanel{
+  display: flex;
+  height: calc(100% - 40px);
+}
+.recpanel .left{
+  flex: 1;
+}
+.recpanel .right{
+  font-size: 0.8em;
+  width: 400px;
+  border-left: 1px solid red;
+}
+.recpanel .right ul{
+  padding: 0 10px
+}
+.step{
+  display: flex;
+}
+.step .des{
+  flex: 1
+}
+.textBtn{
+  color: red;
+}
+.textBtn:hover{
+  cursor: pointer;
+}
+.textBtn[disabled]{
+  cursor: default;
+  color: gray
+}
 </style>

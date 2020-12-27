@@ -68,14 +68,12 @@ const routes = [
       {
         path: '/tasks',
         name: 'Tasks',
-        component: Tasks,
-        children: [
-          {
-            path: 'new',
-            name: 'NewTask',
-            component: NewTask
-          },
-        ]
+        component: Tasks
+      },
+      {
+        path: '/tasks/new',
+        name: 'NewTask',
+        component: NewTask
       },
       {
         path: '/tasks/:taskId',
