@@ -6,10 +6,10 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Regist from '../views/Regist.vue'
 import Tasks from '../views/Tasks.vue'
-import NewTask from '../views/NewTask.vue'
-import RecordSteps from '../views/RecordSteps.vue'
-import Steps from '../views/Steps.vue'
+import Task from '../views/Task.vue'
 import TaskBoard from '../views/TaskBoard.vue'
+import NewTask from '../views/NewTask.vue'
+import Steps from '../views/Steps.vue'
 import Testlog from '../views/Testlog.vue'
 import UserTest from '../views/UserTest.vue'
 import Testing from '../views/Testing.vue'
@@ -19,7 +19,6 @@ import Thanks from '../views/Thanks.vue'
 Vue.use(VueRouter)
 
 const routes = [
-
   {
     path: '/about',
     name: 'About',
@@ -62,6 +61,7 @@ const routes = [
   },
   {
     path: '/',
+    redirect: '/tasks',
     component: Home,
     meta: { requireAuth: true },
     children: [
@@ -77,10 +77,15 @@ const routes = [
       },
       {
         path: '/tasks/:taskId',
-        name: 'TaskBoard',
-        component: TaskBoard,
+        alias: '/tasks/:taskId/detail',
         props: true,
+        component: Task,
         children: [
+          {
+            path: '/tasks/:taskId/detail',
+            name: 'TaskBoard',
+            component: TaskBoard
+          },
           {
             path: 'testlog/:yyyy/:mm/:dd/:testnum',
             name: 'Testlog',
@@ -91,11 +96,6 @@ const routes = [
             path: 'steps',
             name: 'Steps',
             component: Steps
-          },
-          {
-            path: 'recordsteps',
-            name: 'RecordSteps',
-            component: RecordSteps
           }
         ]
       },

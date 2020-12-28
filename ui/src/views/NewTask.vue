@@ -29,7 +29,7 @@
     >
       提交
     </button>
-    <button class="secondary">
+    <button class="secondary" @click.prevent="$router.back()">
       取消
     </button>
   </form>
@@ -55,7 +55,7 @@ export default {
           // todo 成功后跳转
           if (res.status === 201) {
             console.log('任务创建成功，正在跳转步骤录制页面')
-            this.$router.push({ path: `/tasks/${res.data}/recordsteps` })
+            this.$router.push({ path: `/tasks/${res.data}/steps` })
           }
         })
     },
