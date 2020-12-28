@@ -20,9 +20,6 @@ export default {
   },
   update: function (newValue) {
     if (this.debug) console.log('更新存储:%o', newValue)
-    // const { isVerified, email } = newValue
-    // this.state.isVerified = isVerified
-    // this.state.email = email
     for (const key in newValue) {
       if (Object.prototype.hasOwnProperty.call(newValue, key) &&
       Object.prototype.hasOwnProperty.call(this.state, key)

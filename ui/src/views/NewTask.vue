@@ -29,7 +29,10 @@
     >
       提交
     </button>
-    <button class="secondary" @click.prevent="$router.back()">
+    <button
+      class="secondary"
+      @click.prevent="$router.back()"
+    >
       取消
     </button>
   </form>

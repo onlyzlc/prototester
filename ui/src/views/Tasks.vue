@@ -10,7 +10,9 @@
         v-for="(task, index) in tasks"
         :key="task.taskId"
       >
-        <router-link :to="{name:'TaskBoard', params:{taskId: task.taskId}}" >{{ task.name }}</router-link> |
+        <router-link :to="{name:'TaskBoard', params:{taskId: task.taskId}}">
+          {{ task.name }}
+        </router-link> |
         <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |

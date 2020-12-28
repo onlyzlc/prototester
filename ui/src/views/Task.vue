@@ -2,7 +2,7 @@
   <div class="container">
     <div class="left">
       <rec-frame
-        :url="pttUrl"
+        :url="task.steps[0].url"
         :status="status"
       />
     </div>
@@ -21,11 +21,43 @@ export default {
   props: ['taskId'],
   data () {
     return {
+      task: this.Store.state.task,
       pttUrl: '',
+      pttHost: ['http://127.0.0.1:8082'],
       status: 'init'
     }
   },
-  created () {},
+  created () {
+    this.$http
+      .get(`/tasks/${this.taskId}`)
+      .then(res => (this.Store.update({ task: res.data })))
+
+    window.addEventListener('message', (e) => {
+      console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+      // 需要通过用户注册的原型地址实现来源限制
+      if (!this.pttHost.includes(e.origin)) {
+        return false
+      }
+      // this.origin = e.origin
+      console.log('收到 %s 消息: %o', e.origin, e.data)
+      try {
+        const { cmd, content } = e.data
+        switch (cmd) {
+          case 'init':
+            e.source.postMessage({
+              cmd: 'ready'
+            }, e.origin)
+            break
+          case 'post':
+            // 接收保存新新动作
+            content.isDel = false
+            this.steps.push(content)
+        }
+      } catch (error) {
+        console.log('出错了')
+      }
+    })
+  },
   methods: {
   }
 }
@@ -48,10 +80,10 @@ body,
   display: flex;
   height: calc(100% - 40px);
 }
-.left {
+.container .left {
   flex: 1;
 }
-.right {
+.container .right {
   font-size: 0.8em;
   width: 400px;
   border-left: 1px solid red;

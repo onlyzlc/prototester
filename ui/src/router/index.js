@@ -9,6 +9,7 @@ import Tasks from '../views/Tasks.vue'
 import Task from '../views/Task.vue'
 import TaskBoard from '../views/TaskBoard.vue'
 import NewTask from '../views/NewTask.vue'
+import RecordSteps from '../views/RecordSteps.vue'
 import Steps from '../views/Steps.vue'
 import Testlog from '../views/Testlog.vue'
 import UserTest from '../views/UserTest.vue'
@@ -98,6 +99,11 @@ const routes = [
             component: Steps
           }
         ]
+      },
+      {
+        path: '/tasks/:taskId/recordsteps',
+        name: 'RecordSteps',
+        component: RecordSteps
       },
       {
         path: '/:userName',

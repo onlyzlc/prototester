@@ -1,13 +1,15 @@
 <template>
   <div>
     TaskBoard
-    
+    <router-link :to="{name: 'Steps'}">
+      {{ task.steps.length }} 个步骤
+    </router-link>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['taskId'],
+  inject: ['task'],
   data () {
     return {
     }
@@ -15,11 +17,6 @@ export default {
   created () {
   },
   methods: {
-    store (taskNote) {
-      this.pttUrl = taskNote.steps[0].url
-      this.tip = taskNote.description
-      this.stop = taskNote.steps[1]
-    }
   }
 }
 </script>
