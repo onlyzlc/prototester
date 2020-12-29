@@ -78,7 +78,7 @@ const routes = [
       },
       {
         path: '/tasks/:taskId',
-        alias: '/tasks/:taskId/detail',
+        redirect: '/tasks/:taskId/detail',
         props: true,
         component: Task,
         children: [

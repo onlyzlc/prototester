@@ -35,10 +35,10 @@
 export default {
   components: {
   },
-  inject: ['task'],
   data () {
     return {
-      steps: [],
+      task: this.Store.state.task,
+      steps: this.Store.state.task.steps,
       redoOrder: []
     }
   },

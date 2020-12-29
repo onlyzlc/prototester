@@ -21,10 +21,16 @@ export default {
   update: function (newValue) {
     if (this.debug) console.log('更新存储:%o', newValue)
     for (const key in newValue) {
-      if (Object.prototype.hasOwnProperty.call(newValue, key) &&
-      Object.prototype.hasOwnProperty.call(this.state, key)
-      ) {
+      if (Object.prototype.hasOwnProperty.call(newValue, key)) {
         const element = newValue[key]
+        // 判断是否已存储了当前属性,若没有则新增该属性
+        if (!Object.prototype.hasOwnProperty.call(this.state, key)) {
+          Object.defineProperty(this.state, key, {
+            writable: true,
+            enumerable: true,
+            configurable: true
+          })
+        }
         this.state[key] = element
       }
     }

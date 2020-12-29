@@ -65,7 +65,7 @@ app.use(session({
   secret: 'Lonnie',
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   cookie: {
-    maxAge: 60 * 60 * 1000 // 1小时登录失效
+    maxAge: 24*60 * 60 * 1000 // 1小时登录失效
   },
   saveUninitialized: false,
   rolling: true,

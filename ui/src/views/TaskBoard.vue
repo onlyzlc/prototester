@@ -9,9 +9,9 @@
 
 <script>
 export default {
-  inject: ['task'],
   data () {
     return {
+      task: this.Store.state.task
     }
   },
   created () {

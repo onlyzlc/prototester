@@ -1,18 +1,23 @@
 <template>
   <div>
-    <a
+    <!-- <a
       href="/tasks/new"
     >
+    </a> -->
+    <router-link :to="{name: 'NewTask'}">
       新增测试任务
-    </a>
+    </router-link>
     <ul>
       <li
         v-for="(task, index) in tasks"
         :key="task.taskId"
       >
-        <router-link :to="{name:'TaskBoard', params:{taskId: task.taskId}}">
+        <a
+          :href="'/tasks/' + task.taskId"
+          target="_blank"
+        >
           {{ task.name }}
-        </router-link> |
+        </a> |
         <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
         <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |

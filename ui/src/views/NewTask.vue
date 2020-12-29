@@ -27,7 +27,7 @@
       class="primary"
       type="submit"
     >
-      提交
+      创建
     </button>
     <button
       class="secondary"
@@ -58,7 +58,8 @@ export default {
           // todo 成功后跳转
           if (res.status === 201) {
             console.log('任务创建成功，正在跳转步骤录制页面')
-            this.$router.push({ path: `/tasks/${res.data}/steps` })
+            window.open(`/tasks/${res.data}/recordsteps`)
+            this.$router.back()
           }
         })
     },
