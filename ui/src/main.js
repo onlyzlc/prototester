@@ -13,7 +13,16 @@ Store.init()
 Vue.prototype.Store = Store
 
 const ax = axios.create({
-  baseURL: '/api'
+  baseURL: '/api',
+  timeout: 20000
+})
+
+ax.interceptors.request.use(function (config) {
+  // 在发送请求之前做些什么
+  return config
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error)
 })
 
 // 添加响应拦截器
@@ -22,6 +31,7 @@ ax.interceptors.response.use(function (response) {
   return response
 }, function (error) {
   if (Store.debug) console.log(error)
+  // 如果登录过期了
   if (error.response.status === 511) {
     sessionStorage.clear('user')
     sessionStorage.setItem('urlReq', error.config.url)

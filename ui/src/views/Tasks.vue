@@ -7,40 +7,48 @@
     <router-link :to="{name: 'NewTask'}">
       新增测试任务
     </router-link>
-    <ul>
-      <li
-        v-for="(task, index) in tasks"
-        :key="task.taskId"
-      >
-        <a
-          :href="'/tasks/' + task.taskId"
-          target="_blank"
+    <load-panel :status="status_taskData">
+      <ul>
+        <li
+          v-for="(task, index) in tasks"
+          :key="task.taskId"
         >
-          {{ task.name }}
-        </a> |
-        <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
-        <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
-        <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
-        <a
-          :href="'/how-do-you/'+ task.taskId "
-          target="_blank"
-        >开始测试</a> |
-        <button
-          class="publish"
-          @click="publish(index)"
-        >
-          {{ (task.status=="unpublished")?("发布"):("撤下") }}
-        </button>
-      </li>
-    </ul>
+          <a
+            :href="'/tasks/' + task.taskId"
+            target="_blank"
+          >
+            {{ task.name }}
+          </a> |
+          <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
+          <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
+          <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
+          <a
+            :href="'/how-do-you/'+ task.taskId "
+            target="_blank"
+          >开始测试</a> |
+          <button
+            class="publish"
+            @click="publish(index)"
+          >
+            {{ (task.status=="unpublished")?("发布"):("撤下") }}
+          </button>
+          <button class="del" @click="">删除</button>
+        </li>
+      </ul> j j
+    </load-panel>
   </div>
 </template>
 
 <script>
+import LoadPanel from '../components/Load-Panel'
 export default {
+  components: {
+    LoadPanel
+  },
   data () {
     return {
       tasks: [],
+      status_taskData: 'loading',
       pttHost: ['http://127.0.0.1:8082'],
       curPage: '',
       newTask: {
@@ -95,14 +103,22 @@ export default {
       }
     },
     fetchData () {
+      this.status_taskData = 'loading'
       this.$http
         .get('/tasks')
         .then(res => {
           if (Array.isArray(res.data)) {
+            this.status_taskData = res.data.length ? '' : 'empty'
             this.tasks = res.data
-          } else if (this.Store.debug) console.error('数据传输类型错误')
+          } else if (this.Store.debug) {
+            this.status_taskData = 'error'
+            console.error('数据错误')
+          }
         })
-        .catch(err => console.error(err))
+        .catch(err => {
+          console.error(err)
+          this.status_taskData = 'error'
+        })
     },
     publish (index) {
       const thisTask = this.tasks[index]

@@ -30,7 +30,7 @@ export default {
   created () {
     this.$http
       .get(`/tasks/${this.taskId}`)
-      .then(res => (this.Store.update({ task: res.data })))
+      .then(res => (this.Store.update({task: res.data}) ))
 
     window.addEventListener('message', (e) => {
       console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
