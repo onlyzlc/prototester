@@ -42,7 +42,14 @@ var TaskSchema = new Schema({
             default: false
         },
         actions: [ActionSchema]
-    }]
+    }],
+    deleted: {
+        type: Boolean,
+        default: false
+    },
+    deleteTime: {
+        type: Date,
+    }
 })
 
 TaskSchema.virtual('url').get(function () {  

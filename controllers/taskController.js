@@ -50,7 +50,7 @@ exports.updateSteps = function (req, res) {
             noTaskTip(res);
             return;
         }
-        res.status(200).end("任务步骤更新成功");
+        res.sendStatus(201);
     })
 }
 
@@ -73,15 +73,18 @@ exports.updateStatus = function (req, res) {
 
 exports.deleteTask = function (req, res) {
     console.log("-> 删除任务");
-    Task.findOneAndDelete({
+    Task.findOneAndUpdate({
         "taskId": req.params.taskId
+    },{
+        deleted: true,
+        deleteTime: Date.now()
     }, function (err, taskDoc) {
         if (err) throw err;
         if (taskDoc === null) {
             noTaskTip(res);
             return;
         }
-        res.status(200).end('任务已删除');
+        res.sendStatus(200);
     })
 }
 
