@@ -27,11 +27,7 @@ export default {
   props: {
     status: {
       type: String,
-      default: 'init',
-      validator: function (value) {
-        // 这个值必须匹配下列字符串中的一个
-        return ['init', 'loading', 'empty', 'error'].indexOf(value) !== -1
-      }
+      default: 'init'
     }
   }
 

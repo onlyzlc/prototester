@@ -1,14 +1,20 @@
 <template>
-  <iframe
-    :src="url"
-    frameborder="0"
-    style="width: 100%; height: 100%"
-  />
+  <load-panel :status="(url === '') ? 'loading': ''">
+    <iframe
+      :src="url"
+      frameborder="0"
+      style="width: 100%; height: 100%"
+    />
+  </load-panel>
 </template>
 
 <script>
+import LoadPanel from './Load-Panel'
 export default {
   name: 'RecFrame',
+  components: {
+    LoadPanel
+  },
   props: {
     url: {
       type: String,
