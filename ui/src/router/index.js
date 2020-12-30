@@ -103,6 +103,7 @@ const routes = [
       {
         path: '/tasks/:taskId/recordsteps',
         name: 'RecordSteps',
+        props: true,
         component: RecordSteps
       },
       {

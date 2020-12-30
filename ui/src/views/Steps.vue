@@ -1,26 +1,33 @@
 <template>
   <div style="height:100%">
     <p>
-      steps <span
+      steps
+      <router-link :to="{name: 'RecordSteps'}">
+        重新录制
+      </router-link>
+      <span
         :disabled="redoOrder.length==0"
         style=""
         class="textBtn"
         @click="redo"
       >撤销</span>
+      <button v-if="redoOrder.length" @click="save">
+        保存
+      </button>
     </p>
     <ul>
       <li
-        v-for="step in task.steps"
-        :key="step.timeStamp"
+        v-for="(step, index) in task.steps"
+        :key="index"
         class="step"
       >
-        <template v-if="!step.isDel">
+        <template v-if="!step.deleted">
           <span class="des">
             {{ step.type }} [{{ step.target.nodeName }}]  {{ step.target.innerText || step.target.value }} at {{ step.timeStamp }}
           </span>
           <span
             class="delStep textBtn"
-            @click="del(step.timeStamp)"
+            @click="del(step)"
           >
             删除
           </span>
@@ -42,51 +49,24 @@ export default {
       redoOrder: []
     }
   },
-  created () {
-    // window.addEventListener('message', (e) => {
-    //   console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
-    //   // 需要通过用户注册的原型地址实现来源限制
-    //   if (!this.pttHost.includes(e.origin)) {
-    //     return false
-    //   }
-    //   // this.origin = e.origin
-    //   console.log('收到 %s 消息: %o', e.origin, e.data)
-    //   try {
-    //     const { cmd, content } = e.data
-    //     switch (cmd) {
-    //       case 'init':
-    //         e.source.postMessage({
-    //           cmd: 'ready'
-    //         }, e.origin)
-    //         break
-    //       case 'post':
-    //         // 接收保存新新动作
-    //         content.isDel = false
-    //         this.steps.push(content)
-    //     }
-    //   } catch (error) {
-    //     console.log('出错了')
-    //   }
-    // })
-  },
   methods: {
-    del: function (t) {
-      const i = this.steps.findIndex(item => item.timeStamp === t)
-      this.steps[i].isDel = true
+    del: function (step) {
+      const i = this.steps.findIndex(item => item === step)
+      // this.steps[i].deleted = true
+      step.deleted = true
       this.redoOrder.push(i)
     },
     redo: function () {
       const i = this.redoOrder.pop()
-      this.steps[i].isDel = false
+      this.steps[i].deleted = false
     },
     save: function () {
-      this.$http.post('/tasks', {
-        steps: this.steps.filter(item => !item.isDel)
-      }).then(response => {
+      this.$http.patch('/tasks/' + this.taskId + '/steps', {
+        steps: this.steps.filter(item => !item.deleted)
+      }).then(res => {
         // todo 成功后跳转
-        if (response.status === 201) {
-          console.log('任务创建成功，正在跳转回任务列表')
-          location.href = this.pttUrl
+        if (res.status === 201) {
+          console.log('任务步骤更新成功，正在跳转回任务列表')
         }
       })
     },

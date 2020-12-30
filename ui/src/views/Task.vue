@@ -2,7 +2,7 @@
   <div class="container">
     <div class="left">
       <rec-frame
-        :url="task.steps[0].url"
+        :url="(task.steps.length) ? task.steps[0].url : ''"
         :status="status"
       />
     </div>
@@ -30,7 +30,7 @@ export default {
   created () {
     this.$http
       .get(`/tasks/${this.taskId}`)
-      .then(res => (this.Store.update({task: res.data}) ))
+      .then(res => (this.Store.update({ task: res.data })))
 
     window.addEventListener('message', (e) => {
       console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)

@@ -11,14 +11,9 @@
       <div v-else-if="status=='rec'">
         <span>{{ steps.length }}</span>
         <button
-          @click="status='stop'"
+          @click="save"
         >
-          完成
-        </button>
-      </div>
-      <div v-else-if="status=='stop'">
-        <button @click="vis.saveConfirem = true">
-          保存
+          结束并保存
         </button>
         <button>
           取消
@@ -26,96 +21,21 @@
       </div>
     </div>
     <div class="recpanel">
-      <div class="left">
-        <!-- <iframe
-          :src="pttUrl"
-          frameborder="0"
-          style="width: 100%; height: 100%"
-        /> -->
-        <rec-frame
-          :url="pttUrl"
-          :status="status"
-        />
-      </div>
-      <div
-        v-if="status=='stop'"
-        class="right"
-      >
-        <p>
-          steps <span
-            :disabled="redoOrder.length==0"
-            style=""
-            class="textBtn"
-            @click="redo"
-          >撤销</span>
-        </p>
-        <ul>
-          <li
-            v-for="step in steps"
-            :key="step.timeStamp"
-            class="step"
-          >
-            <template v-if="!step.isDel">
-              <span class="des">
-                {{ step.type }} [{{ step.target.nodeName }}]  {{ step.target.innerText || step.target.value }} at {{ step.timeStamp }}
-              </span>
-              <span
-                class="delStep textBtn"
-                @click="del(step.timeStamp)"
-              >
-                删除
-              </span>
-            </template>
-          </li>
-        </ul>
-      </div>
+      <rec-frame
+        :url="pttUrl"
+        :status="status"
+      />
     </div>
-    <LnDialog
-      title="保存任务"
-      :vis="vis.saveConfirem"
-      @click_primary="save"
-      @click_secondary="vis.saveConfirem = false"
+    <ln-dialog
+      title="保存成功"
+      :vis="vis.close"
     >
-      <form
-        id="newTask"
-        @submit.prevent="save"
-      >
-        <div>
-          <label for="taskName">任务名称:</label>
-          <input
-            v-model="name"
-            type="text"
-            required
-          >
-        </div>
-        <div>
-          <label for="taskDes">任务描述:</label>
-          <textarea
-            id="taskDes"
-            v-model="description"
-            required
-            name="taskDes"
-            cols="30"
-            rows="5"
-          />
-        </div>
-      </form>
       <template v-slot:foot-right>
-        <button
-          form="newTask"
-          class="primary"
-          type="submit"
-        >
-          提交
-        </button>
-        <button
-          class="secondary"
-          @click="vis.saveConfirem=false"
-        >
-          取消
+        <button @click="leave">
+          离开
         </button>
       </template>
-    </LnDialog>
+    </ln-dialog>
   </div>
 </template>
 
@@ -127,6 +47,7 @@ export default {
     LnDialog,
     RecFrame
   },
+  props: ['taskId'],
   data () {
     return {
       status: 'init',
@@ -134,11 +55,9 @@ export default {
       pttUrl: this.Store.state.pttUrl,
       origin: '',
       steps: [],
-      redoOrder: [],
-      name: '',
-      description: '',
+      saveSuccess: false,
       vis: {
-        saveConfirem: false
+        close: false
       }
     }
   },
@@ -161,7 +80,6 @@ export default {
             break
           case 'post':
             // 接收保存新新动作
-            content.isDel = false
             this.steps.push(content)
         }
       } catch (error) {
@@ -170,30 +88,21 @@ export default {
     })
   },
   methods: {
-    del: function (t) {
-      const i = this.steps.findIndex(item => item.timeStamp === t)
-      this.steps[i].isDel = true
-      this.redoOrder.push(i)
-    },
-    redo: function () {
-      const i = this.redoOrder.pop()
-      this.steps[i].isDel = false
-    },
     save: function () {
-      this.$http.post('/tasks', {
-        name: this.name,
-        description: this.description,
-        steps: this.steps.filter(item => !item.isDel)
-      }).then(response => {
+      this.status = 'stop'
+      this.$http.patch('/tasks/' + this.taskId + '/steps', {
+        steps: this.steps
+      }).then(res => {
         // todo 成功后跳转
-        if (response.status === 201) {
-          console.log('任务创建成功，正在跳转回任务列表')
-          location.href = this.pttUrl
+        if (res.status === 201) {
+          console.log('任务步骤更新成功，正在跳转回任务列表')
+          this.vis.saveConfirem = false
+          this.vis.close = true
         }
       })
     },
-    cancel: function () {
-
+    leave: function () {
+      window.close()
     }
   }
 }

@@ -1,40 +1,43 @@
 <template>
   <div>
-    <!-- <a
-      href="/tasks/new"
-    >
-    </a> -->
     <router-link :to="{name: 'NewTask'}">
       新增测试任务
     </router-link>
     <load-panel :status="status_taskData">
       <ul>
-        <li
-          v-for="(task, index) in tasks"
-          :key="task.taskId"
-        >
-          <a
-            :href="'/tasks/' + task.taskId"
-            target="_blank"
+        <template v-for="(task, index) in tasks">
+          <li
+            v-if="!task.deleted"
+            :key="task.taskId"
           >
-            {{ task.name }}
-          </a> |
-          <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
-          <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
-          <a :href="'/tasks/'+task.taskId+'/setting'">设置步骤</a> |
-          <a
-            :href="'/how-do-you/'+ task.taskId "
-            target="_blank"
-          >开始测试</a> |
-          <button
-            class="publish"
-            @click="publish(index)"
-          >
-            {{ (task.status=="unpublished")?("发布"):("撤下") }}
-          </button>
-          <button class="del" @click="">删除</button>
-        </li>
-      </ul> j j
+            <a
+              :href="'/tasks/' + task.taskId"
+              target="_blank"
+            >
+              {{ task.name }}
+            </a> |
+            <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
+            <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
+            <a :href="'/tasks/'+task.taskId+'/recordsteps'" target="_blank">设置步骤</a> |
+            <a
+              :href="'/how-do-you/'+ task.taskId "
+              target="_blank"
+            >开始测试</a> |
+            <button
+              class="publish"
+              @click="publish(index)"
+            >
+              {{ (task.status=="unpublished")?("发布"):("撤下") }}
+            </button>
+            <button
+              class="del"
+              @click="delTask(task.taskId)"
+            >
+              删除
+            </button>
+          </li>
+        </template>
+      </ul>
     </load-panel>
   </div>
 </template>
@@ -132,6 +135,17 @@ export default {
         .catch(function (error) {
           // handle error
           console.log(error)
+        })
+    },
+    delTask (taskId) {
+      const n = this.tasks.findIndex(item => item.taskId === taskId)
+      this.tasks[n].deleted = true
+      this.$http
+        .delete(`/tasks/${taskId}`)
+        .then(res => {
+          if (res.status === 200) {
+            console.log('删除成功' + taskId)
+          }
         })
     }
   }

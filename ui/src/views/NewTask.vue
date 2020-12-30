@@ -22,6 +22,15 @@
         rows="5"
       />
     </div>
+    <!-- 获取不到原型地址时(此时可能是单独打开了任务管理页面), 显示地址输入框 -->
+    <div v-show="manually">
+      <label for="pttUrl">原型地址:</label>
+      <input
+        v-model="pttUrl"
+        type="text"
+        required
+      >
+    </div>
     <button
       form="newTask"
       class="primary"
@@ -44,11 +53,22 @@ export default {
       pttHost: ['http://127.0.0.1:8082'],
       pttUrl: this.Store.state.pttUrl,
       name: '',
-      description: ''
+      description: '',
+      manually: false
+    }
+  },
+  mounted () {
+    // 获取不到原型地址时(此时可能是单独打开了任务管理页面), 显示地址输入框
+    if (this.pttUrl === '') {
+      this.manually = true
+      this.pttUrl = ''
     }
   },
   methods: {
     save: function () {
+      this.Store.state.update({
+        pttUrl: this.pttUrl
+      })
       this.$http
         .post('/tasks', {
           name: this.name,
