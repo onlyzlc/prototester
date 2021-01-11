@@ -8,7 +8,7 @@
     "devpi": "export NODE_ENV=development1 && node ./bin/www"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "connect-history-api-fallback": "^1.6.0",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "~1.4.4",
