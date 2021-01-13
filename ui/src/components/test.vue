@@ -1,9 +1,18 @@
 <template>
     <div>
-        <ln-popconfirm ></ln-popconfirm>
-        <ln-popconfirm direction='top'></ln-popconfirm>
-        <ln-popconfirm direction='right'></ln-popconfirm>
-        <ln-popconfirm direction='bottom'></ln-popconfirm>
+        <div  style="position:absolute; top:20px; left: 20px">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+        </div>
+        <div style="position:absolute; bottom:20px; left: 20px">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+        </div>
+        <div style="position:absolute; bottom:20px; right: 20px">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+
+        </div>
+        <div style="position:absolute; top:20px; right: 20px">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+        </div>
     </div>
 </template>
 
