@@ -1,9 +1,14 @@
 <template>
-    <div>
-        <ln-popconfirm ></ln-popconfirm>
-        <ln-popconfirm direction='top'></ln-popconfirm>
-        <ln-popconfirm direction='right'></ln-popconfirm>
-        <ln-popconfirm direction='bottom'></ln-popconfirm>
+    <div class="test">
+        <div class="one">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+        </div>
+        <div class="two">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+        </div>
+        <div class="three">
+            <ln-popconfirm direction='auto'></ln-popconfirm>
+        </div>
     </div>
 </template>
 
@@ -17,5 +22,19 @@ export default {
 </script>
 
 <style>
-
+.test>div{
+    position:absolute
+}
+.one{
+    top: 20px;
+    right: 20px;
+}
+.two{
+    top: 20px;
+    left: 20px;
+}
+.three{
+    bottom: 20px;
+    left: 20px;
+}
 </style>
