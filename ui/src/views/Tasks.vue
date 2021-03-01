@@ -18,7 +18,10 @@
             </a> |
             <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
             <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
-            <a :href="'/tasks/'+task.taskId+'/recordsteps'" target="_blank">设置步骤</a> |
+            <a
+              :href="'/tasks/'+task.taskId+'/recordsteps'"
+              target="_blank"
+            >设置步骤</a> |
             <a
               :href="'/how-do-you/'+ task.taskId "
               target="_blank"
