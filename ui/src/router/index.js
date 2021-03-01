@@ -77,42 +77,41 @@ const routes = [
         component: NewTask
       },
       {
-        path: '/tasks/:taskId',
-        redirect: '/tasks/:taskId/detail',
-        props: true,
-        component: Task,
-        children: [
-          {
-            path: '/tasks/:taskId/detail',
-            name: 'TaskBoard',
-            component: TaskBoard
-          },
-          {
-            path: 'testlog/:yyyy/:mm/:dd/:testnum',
-            name: 'Testlog',
-            component: Testlog,
-            props: true
-          },
-          {
-            path: 'steps',
-            name: 'Steps',
-            component: Steps
-          }
-        ]
-      },
-      {
-        path: '/tasks/:taskId/recordsteps',
-        name: 'RecordSteps',
-        props: true,
-        component: RecordSteps
-      },
-      {
-        path: '/:userName',
+        path: '/profile',
         name: 'Profile',
-        component: Profile,
-        props: true
+        component: Profile
       }
     ]
+  },
+  {
+    path: '/tasks/:taskId',
+    redirect: '/tasks/:taskId/detail',
+    props: true,
+    component: Task,
+    children: [
+      {
+        path: '/tasks/:taskId/detail',
+        name: 'TaskBoard',
+        component: TaskBoard
+      },
+      {
+        path: 'testlog/:yyyy/:mm/:dd/:testnum',
+        name: 'Testlog',
+        component: Testlog,
+        props: true
+      },
+      {
+        path: 'steps',
+        name: 'Steps',
+        component: Steps
+      }
+    ]
+  },
+  {
+    path: '/tasks/:taskId/recordsteps',
+    name: 'RecordSteps',
+    props: true,
+    component: RecordSteps
   }
 ]
 // -------
