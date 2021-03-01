@@ -2,13 +2,13 @@
   <div style="height:100%">
     <!-- 工具栏 -->
     <div class="controlbar">
-      <button
+      <!-- <button
         v-if="status=='init'"
         @click="status='rec'"
       >
         开始记录
-      </button>
-      <div v-else-if="status=='rec'">
+      </button> -->
+      <div v-if="status=='rec'">
         <span>{{ steps.length }}</span>
         <button
           @click="save"
@@ -27,8 +27,24 @@
       />
     </div>
     <ln-dialog
+      title="开始录制"
+      :vis="status=='init'"
+    >
+      <p>
+        开始录制的提示
+      </p>
+      <template v-slot:foot-right>
+        <button
+          type="button"
+          @click="status='rec'"
+        >
+          开始录制
+        </button>
+      </template>
+    </ln-dialog>
+    <ln-dialog
       title="保存成功"
-      :vis="vis.close"
+      :vis="vis.dia_finished"
     >
       <template v-slot:foot-right>
         <button @click="leave">
@@ -57,7 +73,8 @@ export default {
       steps: [],
       saveSuccess: false,
       vis: {
-        close: false
+        dia_start: true,
+        dia_finished: false
       }
     }
   },
@@ -96,13 +113,13 @@ export default {
         // todo 成功后跳转
         if (res.status === 201) {
           console.log('任务步骤更新成功，正在跳转回任务列表')
-          this.vis.saveConfirem = false
-          this.vis.close = true
+          this.vis.dia_finished = true
         }
       })
     },
     leave: function () {
-      window.close()
+      // window.close()
+      this.$route.push('')
     }
   }
 }
