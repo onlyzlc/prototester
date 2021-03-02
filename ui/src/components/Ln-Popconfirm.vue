@@ -1,28 +1,27 @@
 <template>
   <div
     class="popConfirm"
-    :style="style_popConfirm"
+    :style="popConfirmStyle"
   >
     <div
-      class="pupup_trigger"
+      class="trigger"
       @click="onClickTrigger"
     >
-      <!-- <slot /> -->
-      删除
+      <slot />
     </div>
     <div
       v-show="showPopup"
       ref="popup"
       class="popup"
-      :style="{visibility:vis_popup}"
+      :style="{visibility:visPopup}"
       @mouseup.stop
     >
-      <p>{{ txt_tip }}</p>
+      <p>{{ txtTip }}</p>
       <p>
-        <button @click="onClickOk">
-          {{ txt_ok }}
-        </button><button @click="onClickCancel">
-          {{ txt_cancel }}
+        <button @click="onClickBtnL">
+          {{ txtBtnL }}
+        </button><button @click="onClickBtnR">
+          {{ txtBtnR }}
         </button>
       </p>
     </div>
@@ -32,7 +31,7 @@
 <script>
 // 显示的象限方位(传入值) <-> flex-direction属性 映射
 // 如果设为 auto, 则会在显示弹框时动态监测弹框是否飘出窗口, 若有则自动切换到合适的方向
-const direction_option = [
+const directionOption = [
   { flexDirection: 'column-reverse', alignItems: ' flex-start ' },
   { flexDirection: 'column-reverse', alignItems: ' flex-end ' },
   { flexDirection: 'column', alignItems: ' flex-end ' },
@@ -41,27 +40,31 @@ const direction_option = [
 
 export default {
   props: {
-    txt_tip: {
+    txtTip: {
       type: String,
       default: '提示'
     },
-    txt_ok: {
+    txtBtnL: {
       type: String,
       default: '确定'
     },
-    txt_cancel: {
+    txtBtnR: {
       type: String,
       default: '取消'
     },
     direction: {
       default: 'auto'
+    },
+    display: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      showPopup: false,
-      style_popConfirm: direction_option[this.direction - 1],
-      vis_popup: 'visible',
+      showPopup: this.display,
+      popConfirmStyle: directionOption[this.direction - 1],
+      visPopup: 'visible',
       popElm: false
     }
   },
@@ -71,22 +74,22 @@ export default {
     },
     onClickTrigger () {
       this.showPopup = true
-      // this.vis_popup = 'hidden'
+      // this.visPopup = 'hidden'
       // 方位自动模式下求最合适的显示方位
       if (this.direction === 'auto') {
         // 逐个方位尝试在当前窗口下是否会溢出,若不会则停止 (边距大于0)
         // 获取方位样式列表
-        // const opt = direction_option.values()
+        // const opt = directionOption.values()
         let ms
         // 按顺序设置方位样式
-        for (const option of direction_option) {
-          this.style_popConfirm = option
+        for (const option of directionOption) {
+          this.popConfirmStyle = option
           // 检查当前方位下四周是否溢出，若有则换下一个方位
           ms = this.getAbsoluteMargin(this.$refs.popup)
           if (ms.every(item => item >= 0)) break
         }
       }
-      this.vis_popup = 'visible'
+      this.visPopup = 'visible'
       // 实现弹框失焦效果, 点击窗口任意区域时触发此事件, 但在弹框区域上, 会事件停止冒泡, 故点击弹框区域事件不会传播到这个监听器
       // 需采用 mouseup , 不能采用 click, 否则在点击时此监听器时会立即响应，虽然才刚刚监听（不知原因为何）
       window.addEventListener('mouseup', this.onBlur, {
@@ -94,13 +97,13 @@ export default {
         capture: false
       })
     },
-    onClickOk () {
+    onClickBtnL () {
       this.showPopup = false
-      this.$emit('onClickOk')
+      this.$emit('clickBtnL')
     },
-    onClickCancel () {
+    onClickBtnR () {
       this.showPopup = false
-      this.$emit('onClickCancel')
+      this.$emit('clickBtnR')
     },
     // 计算元素四边距离窗口边缘的距离
     getAbsoluteMargin (element) {
@@ -110,21 +113,21 @@ export default {
       const h = elm.offsetHeight
       // ({offsetTop: m_top, offsetLeft: m_left} = elm)
       // 递归计算元素上边缘距离页面顶部的距离
-      let m_top = elm.offsetTop
-      let m_left = elm.offsetLeft
+      let mtop = elm.offsetTop
+      let mleft = elm.offsetLeft
       let parent = elm.offsetParent
       while (parent !== null) {
-        m_top += parent.offsetTop
-        m_left += parent.offsetLeft
+        mtop += parent.offsetTop
+        mleft += parent.offsetLeft
         parent = parent.offsetParent
       }
       // 去除页面滚动的距离,算出上侧距离窗口上边缘距离
-      m_top -= document.scrollTop || document.querySelector('body').scrollTop
-      m_left -= document.offsetLeft || document.querySelector('body').offsetLeft
-      const m_bottom = window.innerHeight - m_top - h
-      const m_right = window.innerWidth - m_left - w
+      mtop -= document.scrollTop || document.querySelector('body').scrollTop
+      mleft -= document.offsetLeft || document.querySelector('body').offsetLeft
+      const mbottom = window.innerHeight - mtop - h
+      const mright = window.innerWidth - mleft - w
       // 返回各边距离窗口的距离 [上,右,下, 左]
-      return [m_top, m_right, m_bottom, m_left]
+      return [mtop, mright, mbottom, mleft]
     }
 
   }
@@ -138,7 +141,7 @@ export default {
   flex-direction: column-reverse;
   font-size: 1rem;
 }
-.popConfirm .pupup_trigger {
+.popConfirm .trigger {
   display: inline-block;
 }
 .popConfirm .popup {
