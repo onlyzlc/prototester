@@ -2,12 +2,20 @@
   <div style="height:100%">
     <!-- 工具栏 -->
     <div class="controlbar">
-      <!-- <button
+      <ln-popconfirm
+        v-if="status === 'init'"
+        txt_tip="请先进入到任务开始的页面，准备好后点击此按钮开录制，录制完成时再次点击此按钮结束。"
+        txt-btn-l="知道了"
+        txt-btn-r="了解更多"
+        :display="true"
+      >
+      </ln-popconfirm>
+      <button
         v-if="status=='init'"
         @click="status='rec'"
       >
         开始记录
-      </button> -->
+      </button>
       <div v-if="status=='rec'">
         <span>{{ steps.length }}</span>
         <button
@@ -15,10 +23,10 @@
         >
           结束并保存
         </button>
-        <button>
-          取消
-        </button>
       </div>
+      <button @click="window.close()">
+        取消
+      </button>
     </div>
     <div class="recpanel">
       <rec-frame
@@ -26,22 +34,7 @@
         :status="status"
       />
     </div>
-    <ln-dialog
-      title="开始录制"
-      :vis="status=='init'"
-    >
-      <p>
-        开始录制的提示
-      </p>
-      <template v-slot:foot-right>
-        <button
-          type="button"
-          @click="status='rec'"
-        >
-          开始录制
-        </button>
-      </template>
-    </ln-dialog>
+
     <ln-dialog
       title="保存成功"
       :vis="vis.dia_finished"
@@ -56,10 +49,12 @@
 </template>
 
 <script>
-import LnDialog from '../components/Ln-Dialog.vue'
+import LnPopconfirm from '../components/Ln-Popconfirm.vue'
+import LnDialog from '../components/Ln-Dialog'
 import RecFrame from '../components/Rec-Frame.vue'
 export default {
   components: {
+    LnPopconfirm,
     LnDialog,
     RecFrame
   },
@@ -73,7 +68,6 @@ export default {
       steps: [],
       saveSuccess: false,
       vis: {
-        dia_start: true,
         dia_finished: false
       }
     }
