@@ -1,15 +1,16 @@
 <template>
   <div class="popConfirm" :style="style_popConfirm">
-    <div ref='popup' class="popup" v-show="showPopup" @mouseup.stop>
-      <p>{{ txt_tip }}</p>
-      <p>
+    <div ref='popup' :style="style_popup" class="popup" v-show="showPopup" @mouseup.stop>
+      <p class="popConfirm_tip">{{ txt_tip }}</p>
+      <div class="popConfirm_foot">
         <button @click="onClickOk">{{ txt_ok }}</button
         ><button @click="onClickCancel">{{ txt_cancel }}</button>
-      </p>
+      </div>
     </div>
     <div ref='popup_trigger' class="pupup_trigger" @click="popup">
-      <!-- <slot /> -->
-      删除
+      <slot>
+        Button
+      </slot>
     </div>
   </div>
 </template>
@@ -22,7 +23,7 @@ const  direction_option = new Map([
           flexDirection:'column-reverse',
           alignItems: 'flex-start'
         }],
-        ['tow',{
+        ['two',{
           flexDirection:'column-reverse',
           alignItems: 'flex-end'
         }],
@@ -39,6 +40,14 @@ const  direction_option = new Map([
 
 export default {
   props: {
+    width: {
+      type: Number,
+      default: 200
+    },
+    height: {
+      type: Number,
+      default: 100
+    },
     txt_tip: {
       type: String,
       default: "提示",
@@ -62,28 +71,35 @@ export default {
   data() {
     return {
       showPopup: false,
-      style_popConfirm: direction_option.get(this.direction) ,
       popElm: false,
+      style_popConfirm: direction_option.get(this.direction),
+      style_popup: {
+        width: this.width + 'px',
+        height: this.height + 'px'
+      }
     };
+  },
+  computed: {
   },
   methods: {
     onBlur() {
       this.showPopup = false;
     },
     popup() {
+      this.showPopup = true;
+      // this.$nextTick()
       // 方位自动模式下求最合适的显示方位
       if(this.direction === 'auto'){
         // 获取方位样式列表
         // const opt = direction_option.values()
-        let ms
-        ms = this.getAbsoluteMargin(this.$refs.popup_trigger)
-        // if(ms[0])
-        // 弹框未显示时，如何获取弹框的尺寸?????????????????????
-        // 如果没有合适的方位则取上方位
-        // if (i >= 4) this.style_popConfirm.flexDirection = direction_option.get('one')
+        let ms = this.getAbsoluteMargin(this.$refs.popup_trigger)
+        // 如果按钮右下角有足够空间，则优先显示在右下角
+        if(ms[2] > this.height && ms[1] > this.width) this.style_popConfirm = direction_option.get("four")
+        else if(ms[0]> this.height && ms[1] > this.width) this.style_popConfirm = direction_option.get("one")
+        else if(ms[2]> this.height && ms[3] > this.width) this.style_popConfirm = direction_option.get("three")
+        else if(ms[0]> this.height && ms[3] > this.width) this.style_popConfirm = direction_option.get("two")
       }
-      this.showPopup = true;
-      // 实现弹框失焦效果, 点击窗口任意区域时触发此事件, 但在弹框区域上, 会事件停止冒泡, 故点击弹框区域事件不会传播到这个监听器
+      // 实现弹框失焦效果, 点击窗口任意区域时触发此事件, 但在弹框区域上, 会阻止事件冒泡, 故点击弹框区域事件不会传播到这个监听器
       // 需采用 mouseup , 不能采用 click, 否则在点击时此监听器时会立即响应，虽然才刚刚监听（不知原因为何）
       window.addEventListener("mouseup", this.onBlur, {
         once: true,
@@ -92,11 +108,11 @@ export default {
     },
     onClickOk() {
       this.showPopup = false;
-      this.$emit("onClickOk");
+      this.$emit("clickOk");
     },
     onClickCancel() {
       this.showPopup = false;
-      this.$emit("onClickCancel");
+      this.$emit("clickCancel");
     },
     // 计算元素四边距离窗口边缘的距离
     getAbsoluteMargin(element){
@@ -120,7 +136,17 @@ export default {
       let m_bottom = window.innerHeight - m_top - h
       let m_right = window.innerWidth - m_left
       m_left += w;
-      // 返回各边距离窗口的距离 [上,右,下, 左] (误)
+      // 返回参数对照图
+      //┏━━━━━━━━┯━━━━━━━━━━━━┓
+      //┃      m[0]           ┃
+      //┃        │            ┃
+      //┃        ├─m[1]──────>┃
+      //┃        ┏━━┓         ┃
+      //┃        ┗━━┛         ┃
+      //┃<───m[3]───┤         ┃
+      //┃           │         ┃
+      //┃         m[2]        ┃
+      //┗━━━━━━━━━━━┷━━━━━━━━━┛
       return [m_top,m_right,m_bottom,m_left]
     }
     
@@ -141,12 +167,16 @@ export default {
 .popConfirm .popup {
   position: absolute;
   z-index: 100;
-  height: 100px;
-  width: 200px;
   box-sizing: border-box;
   padding: 10px;
   border: 1px solid #eaeaea;
   border-radius: 4px;
   margin: 2em 0;
+}
+.popConfirm_tip{
+  
+}
+.popConfirm_foot button{
+  margin-right: 1em;
 }
 </style>
