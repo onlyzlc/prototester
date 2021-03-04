@@ -50,15 +50,15 @@ export default {
     },
     txt_tip: {
       type: String,
-      default: "提示",
+      default: '提示'
     },
     txt_ok: {
       type: String,
-      default: "确定",
+      default: '确定'
     },
     txt_cancel: {
       type: String,
-      default: "取消",
+      default: '取消'
     },
     direction: {
       // 传入方位属性校验
@@ -68,7 +68,7 @@ export default {
       default: 'auto'
     }
   },
-  data() {
+  data () {
     return {
       showPopup: false,
       popElm: false,
@@ -82,8 +82,8 @@ export default {
   computed: {
   },
   methods: {
-    onBlur() {
-      this.showPopup = false;
+    onBlur () {
+      this.showPopup = false
     },
     popup() {
       this.showPopup = true;
@@ -101,10 +101,10 @@ export default {
       }
       // 实现弹框失焦效果, 点击窗口任意区域时触发此事件, 但在弹框区域上, 会阻止事件冒泡, 故点击弹框区域事件不会传播到这个监听器
       // 需采用 mouseup , 不能采用 click, 否则在点击时此监听器时会立即响应，虽然才刚刚监听（不知原因为何）
-      window.addEventListener("mouseup", this.onBlur, {
+      window.addEventListener('mouseup', this.onBlur, {
         once: true,
-        capture: false,
-      });
+        capture: false
+      })
     },
     onClickOk() {
       this.showPopup = false;
@@ -115,14 +115,14 @@ export default {
       this.$emit("clickCancel");
     },
     // 计算元素四边距离窗口边缘的距离
-    getAbsoluteMargin(element){
+    getAbsoluteMargin (element) {
       const elm = element
       // ({offsetTop: m_top, offsetLeft: m_left} = elm)
       // 递归计算元素上边缘距离页面顶部的距离
       let m_top = elm.offsetTop
       let m_left = elm.offsetLeft
       let parent = elm.offsetParent
-      while(parent !== null){
+      while (parent !== null) {
         m_top += parent.offsetTop
         m_left += parent.offsetLeft
         parent = parent.offsetParent
@@ -149,9 +149,9 @@ export default {
       //┗━━━━━━━━━━━┷━━━━━━━━━┛
       return [m_top,m_right,m_bottom,m_left]
     }
-    
+
   }
-};
+}
 </script>
 <style>
 .popConfirm {

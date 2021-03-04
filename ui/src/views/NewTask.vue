@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     save: function () {
-      this.Store.state.update({
+      this.Store.update({
         pttUrl: this.pttUrl
       })
       this.$http

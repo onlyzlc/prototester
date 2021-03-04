@@ -11,7 +11,10 @@
         class="textBtn"
         @click="redo"
       >撤销</span>
-      <button v-if="redoOrder.length" @click="save">
+      <button
+        v-if="redoOrder.length"
+        @click="save"
+      >
         保存
       </button>
     </p>
