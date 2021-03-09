@@ -1,46 +1,54 @@
 <template>
-  <div
-    class="popConfirm"
-    :style="popConfirmStyle"
-  >
-    <div
-      class="trigger"
-      @click="onClickTrigger"
-    >
-      <slot />
+  <div class="popConfirm" :style="style_popConfirm">
+    <div ref='popup' :style="style_popup" class="popup" v-show="showPopup" @mouseup.stop>
+      <p class="popConfirm_tip">{{ txt_tip }}</p>
+      <div class="popConfirm_foot">
+        <button @click="onClickOk">{{ txt_ok }}</button
+        ><button @click="onClickCancel">{{ txt_cancel }}</button>
+      </div>
     </div>
-    <div
-      v-show="showPopup"
-      ref="popup"
-      class="popup"
-      :style="{visibility:visPopup}"
-      @mouseup.stop
-    >
-      <p>{{ txtTip }}</p>
-      <p>
-        <button @click="onClickBtnL">
-          {{ txtBtnL }}
-        </button><button @click="onClickBtnR">
-          {{ txtBtnR }}
-        </button>
-      </p>
+    <div ref='popup_trigger' class="pupup_trigger" @click="popup">
+      <slot>
+        Button
+      </slot>
     </div>
   </div>
 </template>
 
 <script>
-// 显示的象限方位(传入值) <-> flex-direction属性 映射
+// 显示的方位(传入值) <-> flex-direction属性 映射
 // 如果设为 auto, 则会在显示弹框时动态监测弹框是否飘出窗口, 若有则自动切换到合适的方向
-const directionOption = [
-  { flexDirection: 'column-reverse', alignItems: ' flex-start ' },
-  { flexDirection: 'column-reverse', alignItems: ' flex-end ' },
-  { flexDirection: 'column', alignItems: ' flex-end ' },
-  { flexDirection: 'column', alignItems: ' flex-start ' }
-]
+const  direction_option = new Map([
+        ['one', {
+          flexDirection:'column-reverse',
+          alignItems: 'flex-start'
+        }],
+        ['two',{
+          flexDirection:'column-reverse',
+          alignItems: 'flex-end'
+        }],
+        ['three', {
+          flexDirection:'column',
+          alignItems: 'flex-end'
+        }],
+        ['four', {
+          flexDirection:'column',
+          alignItems: 'flex-start'
+        }],
+        ['auto',{}]
+      ])
 
 export default {
   props: {
-    txtTip: {
+    width: {
+      type: Number,
+      default: 200
+    },
+    height: {
+      type: Number,
+      default: 100
+    },
+    txt_tip: {
       type: String,
       default: '提示'
     },
@@ -53,6 +61,10 @@ export default {
       default: '取消'
     },
     direction: {
+      // 传入方位属性校验
+      validator: function (value) {
+        return direction_option.has(value)
+      },
       default: 'auto'
     },
     display: {
@@ -62,55 +74,53 @@ export default {
   },
   data () {
     return {
-      showPopup: this.display,
-      popConfirmStyle: directionOption[this.direction - 1],
-      visPopup: 'visible',
-      popElm: false
-    }
+      showPopup: false,
+      popElm: false,
+      style_popConfirm: direction_option.get(this.direction),
+      style_popup: {
+        width: this.width + 'px',
+        height: this.height + 'px'
+      }
+    };
+  },
+  computed: {
   },
   methods: {
     onBlur () {
       this.showPopup = false
     },
-    onClickTrigger () {
-      this.showPopup = true
-      // this.visPopup = 'hidden'
+    popup() {
+      this.showPopup = true;
+      // this.$nextTick()
       // 方位自动模式下求最合适的显示方位
-      if (this.direction === 'auto') {
-        // 逐个方位尝试在当前窗口下是否会溢出,若不会则停止 (边距大于0)
+      if(this.direction === 'auto'){
         // 获取方位样式列表
-        // const opt = directionOption.values()
-        let ms
-        // 按顺序设置方位样式
-        for (const option of directionOption) {
-          this.popConfirmStyle = option
-          // 检查当前方位下四周是否溢出，若有则换下一个方位
-          ms = this.getAbsoluteMargin(this.$refs.popup)
-          if (ms.every(item => item >= 0)) break
-        }
+        // const opt = direction_option.values()
+        let ms = this.getAbsoluteMargin(this.$refs.popup_trigger)
+        // 如果按钮右下角有足够空间，则优先显示在右下角
+        if(ms[2] > this.height && ms[1] > this.width) this.style_popConfirm = direction_option.get("four")
+        else if(ms[0]> this.height && ms[1] > this.width) this.style_popConfirm = direction_option.get("one")
+        else if(ms[2]> this.height && ms[3] > this.width) this.style_popConfirm = direction_option.get("three")
+        else if(ms[0]> this.height && ms[3] > this.width) this.style_popConfirm = direction_option.get("two")
       }
-      this.visPopup = 'visible'
-      // 实现弹框失焦效果, 点击窗口任意区域时触发此事件, 但在弹框区域上, 会事件停止冒泡, 故点击弹框区域事件不会传播到这个监听器
+      // 实现弹框失焦效果, 点击窗口任意区域时触发此事件, 但在弹框区域上, 会阻止事件冒泡, 故点击弹框区域事件不会传播到这个监听器
       // 需采用 mouseup , 不能采用 click, 否则在点击时此监听器时会立即响应，虽然才刚刚监听（不知原因为何）
       window.addEventListener('mouseup', this.onBlur, {
         once: true,
         capture: false
       })
     },
-    onClickBtnL () {
-      this.showPopup = false
-      this.$emit('clickBtnL')
+    onClickOk() {
+      this.showPopup = false;
+      this.$emit("clickOk");
     },
-    onClickBtnR () {
-      this.showPopup = false
-      this.$emit('clickBtnR')
+    onClickCancel() {
+      this.showPopup = false;
+      this.$emit("clickCancel");
     },
     // 计算元素四边距离窗口边缘的距离
     getAbsoluteMargin (element) {
       const elm = element
-      // 元素宽高
-      const w = elm.offsetWidth
-      const h = elm.offsetHeight
       // ({offsetTop: m_top, offsetLeft: m_left} = elm)
       // 递归计算元素上边缘距离页面顶部的距离
       let mtop = elm.offsetTop
@@ -122,12 +132,26 @@ export default {
         parent = parent.offsetParent
       }
       // 去除页面滚动的距离,算出上侧距离窗口上边缘距离
-      mtop -= document.scrollTop || document.querySelector('body').scrollTop
-      mleft -= document.offsetLeft || document.querySelector('body').offsetLeft
-      const mbottom = window.innerHeight - mtop - h
-      const mright = window.innerWidth - mleft - w
-      // 返回各边距离窗口的距离 [上,右,下, 左]
-      return [mtop, mright, mbottom, mleft]
+      m_top -= document.scrollTop || document.querySelector('body').scrollTop
+      m_left -= document.offsetLeft || document.querySelector('body').offsetLeft
+      // 元素宽高
+      const w = elm.offsetWidth
+      const h = elm.offsetHeight
+      let m_bottom = window.innerHeight - m_top - h
+      let m_right = window.innerWidth - m_left
+      m_left += w;
+      // 返回参数对照图
+      //┏━━━━━━━━┯━━━━━━━━━━━━┓
+      //┃      m[0]           ┃
+      //┃        │            ┃
+      //┃        ├─m[1]──────>┃
+      //┃        ┏━━┓         ┃
+      //┃        ┗━━┛         ┃
+      //┃<───m[3]───┤         ┃
+      //┃           │         ┃
+      //┃         m[2]        ┃
+      //┗━━━━━━━━━━━┷━━━━━━━━━┛
+      return [m_top,m_right,m_bottom,m_left]
     }
 
   }
@@ -138,7 +162,7 @@ export default {
   position: relative;
   display: inline-flex;
   align-items: flex-start;
-  flex-direction: column-reverse;
+  flex-direction: column;
   font-size: 1rem;
 }
 .popConfirm .trigger {
@@ -147,12 +171,16 @@ export default {
 .popConfirm .popup {
   position: absolute;
   z-index: 100;
-  height: 100px;
-  width: 200px;
   box-sizing: border-box;
   padding: 10px;
   border: 1px solid #eaeaea;
   border-radius: 4px;
-  margin: 2em 0em;
+  margin: 2em 0;
+}
+.popConfirm_tip{
+  
+}
+.popConfirm_foot button{
+  margin-right: 1em;
 }
 </style>
