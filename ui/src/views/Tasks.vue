@@ -23,7 +23,7 @@
               target="_blank"
             >设置步骤</a> |
             <a
-              :href="'/how-do-you/'+ task.taskId "
+              :href="'/testing/'+ task.taskId "
               target="_blank"
             >开始测试</a> |
             <button

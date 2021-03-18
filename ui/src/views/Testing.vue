@@ -7,12 +7,19 @@
       {{ tip }}
     </ln-dialog>
     <ln-dialog
+      :vis="isPublished"
+      @click-primary="leave"
+    >
+      {{ tip }}
+    </ln-dialog>
+    <ln-dialog
       :vis="vis.tip_completed"
       @click-primary="leaveTest"
     >
       啊妹惊, 您完成了这个不可能的任务!!!
     </ln-dialog>
     <rec-frame
+      v-if='isPublished'
       :url="pttUrl"
       :status="status"
     />
@@ -38,9 +45,10 @@ export default {
       stop: {},
       log: [],
       isCompleted: false,
+      isPublished: true,
       vis: {
         tip: true,
-        tip_completed: false
+        tip_completed: false,
       }
     }
   },
@@ -50,7 +58,19 @@ export default {
     // 获取任务数据
     this.$http
       .get(`/tasks/${this.taskId}/taskNote`)
-      .then(res => (this.store(res.data)))
+      .then(function (res) {
+        switch (res.status) {
+          case 200:
+            this.store(res.data)
+            break
+          case 204:
+            this.isPublished = false
+            break
+          default:
+            this.$router.push('Error')
+            break
+        }
+      })
   },
   methods: {
     store (taskNote) {
@@ -113,7 +133,8 @@ export default {
     leaveTest () {
       // window.close()
       this.$router.push({ name: 'Thanks' })
-    }
+    },
+    leave () 
   }
 }
 </script>

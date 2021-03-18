@@ -2,12 +2,12 @@
   <div style="height:100%">
     <!-- 工具栏 -->
     <div class="controlbar">
-      <!-- <button
+      <button
         v-if="status=='init'"
         @click="status='rec'"
       >
         开始记录
-      </button> -->
+      </button>
       <div v-if="status=='rec'">
         <span>{{ steps.length }}</span>
         <button
@@ -26,22 +26,6 @@
         :status="status"
       />
     </div>
-    <ln-dialog
-      title="开始录制"
-      :vis="status=='init'"
-    >
-      <p>
-        开始录制的提示
-      </p>
-      <template v-slot:foot-right>
-        <button
-          type="button"
-          @click="status='rec'"
-        >
-          开始录制
-        </button>
-      </template>
-    </ln-dialog>
     <ln-dialog
       title="保存成功"
       :vis="vis.dia_finished"
@@ -118,8 +102,8 @@ export default {
       })
     },
     leave: function () {
-      // window.close()
-      this.$route.push('')
+      self.opener = null
+      self.close()
     }
   }
 }

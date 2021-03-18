@@ -16,6 +16,7 @@ import UserTest from '../views/UserTest.vue'
 import Testing from '../views/Testing.vue'
 import Profile from '../views/Profile.vue'
 import Thanks from '../views/Thanks.vue'
+import Error from '../views/Error.vue'
 
 Vue.use(VueRouter)
 
@@ -44,7 +45,7 @@ const routes = [
     ]
   },
   {
-    path: '/how-do-you',
+    path: '/testing',
     component: UserTest,
     children: [
       {
@@ -112,6 +113,11 @@ const routes = [
     name: 'RecordSteps',
     props: true,
     component: RecordSteps
+  },
+  {
+    path: '*',
+    name: 'Error',
+    component: Error
   }
 ]
 // -------
