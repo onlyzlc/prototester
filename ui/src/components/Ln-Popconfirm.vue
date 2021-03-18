@@ -52,11 +52,11 @@ export default {
       type: String,
       default: '提示'
     },
-    txt_ok: {
+    txtBtnL: {
       type: String,
       default: '确定'
     },
-    txt_cancel: {
+    txtBtnR: {
       type: String,
       default: '取消'
     },
@@ -66,6 +66,10 @@ export default {
         return direction_option.has(value)
       },
       default: 'auto'
+    },
+    display: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -119,12 +123,12 @@ export default {
       const elm = element
       // ({offsetTop: m_top, offsetLeft: m_left} = elm)
       // 递归计算元素上边缘距离页面顶部的距离
-      let m_top = elm.offsetTop
-      let m_left = elm.offsetLeft
+      let mtop = elm.offsetTop
+      let mleft = elm.offsetLeft
       let parent = elm.offsetParent
       while (parent !== null) {
-        m_top += parent.offsetTop
-        m_left += parent.offsetLeft
+        mtop += parent.offsetTop
+        mleft += parent.offsetLeft
         parent = parent.offsetParent
       }
       // 去除页面滚动的距离,算出上侧距离窗口上边缘距离
@@ -161,7 +165,7 @@ export default {
   flex-direction: column;
   font-size: 1rem;
 }
-.popConfirm .pupup_trigger {
+.popConfirm .trigger {
   display: inline-block;
 }
 .popConfirm .popup {

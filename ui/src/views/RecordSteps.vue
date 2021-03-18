@@ -1,25 +1,37 @@
 <template>
   <div style="height:100%">
     <!-- 工具栏 -->
-    <div class="controlbar">
-      <button
-        v-if="status=='init'"
-        @click="status='rec'"
-      >
-        开始记录
-      </button>
-      <div v-if="status=='rec'">
-        <span>{{ steps.length }}</span>
+    <header>
+      <div class="title">
+        <div id="logo">
+          Sodar
+        </div>
+        <h4>录制任务步骤</h4>
+      </div>
+      <div class="control">
         <button
-          @click="save"
+          v-if="status=='init'"
+          @click="status='rec'"
         >
-          结束并保存
+          开始记录
         </button>
-        <button>
+        <div v-if="status=='rec'">
+          <span>{{ steps.length }}</span>
+          <button
+            :disabled="steps.length == 0"
+            @click="save"
+          >
+            结束并保存
+          </button>
+        </div>
+        <button @click="close">
           取消
         </button>
       </div>
-    </div>
+      <div class="info" >
+        <p v-show="status=='rec'">已记录 {{steps.length}} 个步骤</p>
+      </div>
+    </header>
     <div class="recpanel">
       <rec-frame
         :url="pttUrl"
@@ -31,8 +43,8 @@
       :vis="vis.dia_finished"
     >
       <template v-slot:foot-right>
-        <button @click="leave">
-          离开
+        <button @click="close">
+          关闭
         </button>
       </template>
     </ln-dialog>
@@ -40,10 +52,12 @@
 </template>
 
 <script>
-import LnDialog from '../components/Ln-Dialog.vue'
+// import LnPopconfirm from '../components/Ln-Popconfirm.vue'
+import LnDialog from '../components/Ln-Dialog'
 import RecFrame from '../components/Rec-Frame.vue'
 export default {
   components: {
+    // LnPopconfirm,
     LnDialog,
     RecFrame
   },
@@ -57,7 +71,6 @@ export default {
       steps: [],
       saveSuccess: false,
       vis: {
-        dia_start: true,
         dia_finished: false
       }
     }
@@ -101,7 +114,10 @@ export default {
         }
       })
     },
-    leave: function () {
+    close: function () {
+      // window.close()
+      // this.$route.push('')
+      // 关闭当前窗口
       self.opener = null
       self.close()
     }
@@ -113,12 +129,23 @@ export default {
 html,body,#app{
   height: 100%
 }
-.controlbar{
+header{
   background-color: antiquewhite;
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+}
+.title>*{
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+#logo{
+  background-image: url();
+  width: 54px;
+  height: 20px;
+  font-weight: 700;
 }
 .recpanel{
   display: flex;
