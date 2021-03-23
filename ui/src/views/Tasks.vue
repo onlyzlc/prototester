@@ -12,7 +12,6 @@
           >
             <a
               :href="'/tasks/' + task.taskId"
-              target="_blank"
             >
               {{ task.name }}
             </a> |

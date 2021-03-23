@@ -21,17 +21,22 @@ export default {
   props: ['taskId'],
   data () {
     return {
-      task: this.Store.state.task,
+      task: {},
       pttUrl: '',
       pttHost: ['http://127.0.0.1:8082'],
       status: 'init'
     }
   },
+  watch: {
+    task: function () {
+      console.log('task已更新')
+      this.Store.update(this.task)
+    }
+  },
   created () {
     this.$http
       .get(`/tasks/${this.taskId}`)
-      .then(res => (this.Store.update({ task: res.data })))
-
+      .then(res => (this.task = res.data))
     window.addEventListener('message', (e) => {
       console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
       // 需要通过用户注册的原型地址实现来源限制

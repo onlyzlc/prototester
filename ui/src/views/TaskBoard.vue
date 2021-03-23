@@ -2,7 +2,7 @@
   <div>
     TaskBoard
     <router-link :to="{name: 'Steps'}">
-      {{ task.steps.length }} 个步骤
+      {{ steps.length }} 个步骤
     </router-link>
   </div>
 </template>
