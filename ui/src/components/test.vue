@@ -1,21 +1,26 @@
 <template>
   <div class="test">
     <div class="one">
-      <ln-popconfirm direction="auto"></ln-popconfirm>
+      <ln-popconfirm direction="auto" />
     </div>
     <div class="two">
-      <ln-popconfirm direction="auto"></ln-popconfirm>
+      <ln-popconfirm direction="auto" />
     </div>
     <div class="three">
-      <ln-popconfirm 
-        direction="auto" 
-        txt_tip="确定提交吗？" 
-        txt_ok="提交">
+      <ln-popconfirm
+        direction="auto"
+        txt_tip="确定提交吗？"
+        txt_ok="提交"
+      >
         <button>提交</button>
       </ln-popconfirm>
     </div>
     <div class="four">
-      <ln-popconfirm direction="auto" :width=300 :height=200>
+      <ln-popconfirm
+        direction="auto"
+        :width="300"
+        :height="200"
+      >
         删除
       </ln-popconfirm>
     </div>
@@ -23,12 +28,12 @@
 </template>
 
 <script>
-import LnPopconfirm from "./Ln-Popconfirm";
+import LnPopconfirm from './Ln-Popconfirm'
 export default {
   components: {
-    LnPopconfirm,
-  },
-};
+    LnPopconfirm
+  }
+}
 </script>
 
 <style>

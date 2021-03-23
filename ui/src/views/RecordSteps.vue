@@ -28,8 +28,10 @@
           取消
         </button>
       </div>
-      <div class="info" >
-        <p v-show="status=='rec'">已记录 {{steps.length}} 个步骤</p>
+      <div class="info">
+        <p v-show="status=='rec'">
+          已记录 {{ steps.length }} 个步骤
+        </p>
       </div>
     </header>
     <div class="recpanel">
