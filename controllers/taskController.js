@@ -146,8 +146,11 @@ exports.getTaskNote = function (req, res) {
                 steps: steps,
                 description: description
             });
-        } else {
-            res.status(200).end("null");
+        } else if( taskDoc.status === 'unpublished'){
+            // 任务未发布
+            res.sendStatus(204)
+        }else {
+            res.sendStatus(404)
         }
     })
 }
