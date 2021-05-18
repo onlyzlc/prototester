@@ -1,25 +1,31 @@
 <template>
   <div>
     <ln-dialog
-      :vis="vis.tip"
-      @click-primary="startTest"
+      title="欢迎参与体验"
+      :vis="popup_start.vis"
     >
-      {{ tip }}
+      {{ popup_start.tip }}
+      <template v-slot:foot-right>
+        <button @click="startTest">开始</button>
+      </template>
     </ln-dialog>
     <ln-dialog
-      :vis="isPublished"
-      @click-primary="leave"
-    >
-      {{ tip }}
-    </ln-dialog>
-    <ln-dialog
-      :vis="vis.tip_completed"
-      @click-primary="leaveTest"
+      title="任务完成"
+      :vis="isCompleted"
+      @click-primary="NavToThk"
     >
       啊妹惊, 您完成了这个不可能的任务!!!
     </ln-dialog>
+    <ln-dialog
+      :vis="unpublished"
+      title="任务已下架"
+    >
+      感谢参与
+      <template v-slot:foot-right>
+        <div></div>
+      </template>
+    </ln-dialog>
     <rec-frame
-      v-if='isPublished'
       :url="pttUrl"
       :status="status"
     />
@@ -45,10 +51,10 @@ export default {
       stop: {},
       log: [],
       isCompleted: false,
-      isPublished: true,
-      vis: {
-        tip: true,
-        tip_completed: false,
+      unpublished: false,
+      popup_start: {
+        vis: false,
+        tip: ''
       }
     }
   },
@@ -58,13 +64,14 @@ export default {
     // 获取任务数据
     this.$http
       .get(`/tasks/${this.taskId}/taskNote`)
-      .then(function (res) {
+      .then((res) => {
         switch (res.status) {
           case 200:
             this.store(res.data)
             break
           case 204:
-            this.isPublished = false
+            // 任务未发布
+            this.unpublished = true
             break
           default:
             this.$router.push('Error')
@@ -75,7 +82,8 @@ export default {
   methods: {
     store (taskNote) {
       this.pttUrl = taskNote.steps[0].url
-      this.tip = taskNote.description
+      this.popup_start.tip = taskNote.description
+      this.popup_start.vis = true
       this.stop = taskNote.steps[1]
     },
     reciveMsg (e) {
@@ -98,7 +106,7 @@ export default {
             // e.source.postMessage('href', e.origin)
             break
           case 'post':
-            // 判断是否触发最后一步;
+            // 判断是否触发最后一步,到达最后一步时自动结束测试;
             if (content.type === this.stop.type &&
                 content.target.id === this.stop.target.id &&
                 content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
@@ -107,19 +115,22 @@ export default {
               this.log.push(content)
               this.sendLog()
               this.status = 'stop'
-              this.vis.tip_completed = true
             } else {
+              // 未到达最后一步时
               this.log.push(content)
-              if (this.log.length >= 10) this.sendLog()
+              // 暂存日志超过一定条数时上传到服务器
+              if (this.log.length >= 5) {
+                this.sendLog()
+              }
             }
             break
         }
       } catch (error) {
-        console.log('出错了')
+        console.log('出错了: %o', error)
       }
     },
     startTest () {
-      this.vis.tip = false
+      this.popup_start.vis = false
       this.status = 'rec'
       this.$http
         .post('/userTests', { taskId: this.taskId })
@@ -130,11 +141,10 @@ export default {
       this.$http
         .patch('/userTests', { log: log, isCompleted: this.isCompleted })
     },
-    leaveTest () {
+    NavToThk () {
       // window.close()
       this.$router.push({ name: 'Thanks' })
-    },
-    leave () 
+    }
   }
 }
 </script>
