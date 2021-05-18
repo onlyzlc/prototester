@@ -133,23 +133,25 @@ exports.getTaskNote = function (req, res) {
     console.log('-> 获取任务的测试提要');
     Task.findOne({
         "taskId": req.params.taskId
-    }, "steps description", function (err, taskDoc) {
+    }, "steps description status", function (err, taskDoc) {
         if (err) throw err;
         if (taskDoc === null) {
             noTaskTip(res);
             return;
         }
-        if (taskDoc.steps.length > 0) {
+
+        if( taskDoc.status === 'unpublished'){
+            // 任务未发布
+            res.sendStatus(204)
+        }
+        else if (taskDoc.steps.length > 0) {
             let {steps ,description} = taskDoc;
             steps.splice(1, steps.length - 2);
             res.status(200).json({
                 steps: steps,
                 description: description
             });
-        } else if( taskDoc.status === 'unpublished'){
-            // 任务未发布
-            res.sendStatus(204)
-        }else {
+        } else {
             res.sendStatus(404)
         }
     })
@@ -206,11 +208,6 @@ exports.getDetail = function (req, res) {
         if (err) throw err;
         if (taskDoc === null) {
             noTaskTip(res);
-            return;
-        }
-        if (taskDoc.testCount == 0) {
-            // todo 还未进行测试时，需显示一个提示
-            res.json(taskDoc);
             return;
         }
         res.json(taskDoc);
