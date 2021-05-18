@@ -91,7 +91,7 @@ const routes = [
     component: Task,
     children: [
       {
-        path: '/tasks/:taskId/detail',
+        path: 'detail',
         name: 'TaskBoard',
         component: TaskBoard
       },
