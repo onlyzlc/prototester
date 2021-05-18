@@ -24,6 +24,7 @@
             <a
               :href="'/testing/'+ task.taskId "
               target="_blank"
+              v-if="task.status=='published'"
             >开始测试</a> |
             <button
               class="publish"
@@ -99,7 +100,7 @@ export default {
           }
           case 'href': {
             this.curPage = content
-            this.Store.update({ pttUrl: content })
+            this.Store.update({ pttUrl: content }, 'ptt')
             break
           }
         }

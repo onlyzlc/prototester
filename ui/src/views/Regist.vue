@@ -92,7 +92,7 @@ export default {
         // 注册成功,跳转到原页面
         case 0: {
           this.user.isVerified = true
-          this.Store.update(this.user)
+          this.Store.update(this.user, 'user')
           this.$router.push({ name: this.to })
           break
         }

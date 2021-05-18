@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
   // 若已登录则继续
   // 若未登录则跳转到注册页面
   if (to.matched.some(record => record.meta.requireAuth)) {
-    if (state.isVerified) next()
+    if (state.user.isVerified) next()
     else {
       if (Store.debug) console.log('登录超时, 跳转注册页')
       next({ name: 'Regist', props: { to: to.name } })

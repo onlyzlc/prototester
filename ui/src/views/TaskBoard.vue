@@ -2,7 +2,7 @@
   <div>
     TaskBoard
     <router-link :to="{name: 'Steps'}">
-      {{ steps.length }} 个步骤
+      {{ task.steps.length }} 个步骤
     </router-link>
   </div>
 </template>
@@ -14,7 +14,11 @@ export default {
       task: this.Store.state.task
     }
   },
+  beforeCreate () {
+    console.log('Task board 前')
+  },
   created () {
+    console.log('已创建 Task board')
   },
   methods: {
   }

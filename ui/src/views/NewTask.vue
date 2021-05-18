@@ -51,7 +51,7 @@ export default {
   data () {
     return {
       pttHost: ['http://127.0.0.1:8082'],
-      pttUrl: this.Store.state.pttUrl,
+      pttUrl: this.Store.state.ptt.pttUrl,
       name: '',
       description: '',
       manually: false
@@ -68,7 +68,7 @@ export default {
     save: function () {
       this.Store.update({
         pttUrl: this.pttUrl
-      })
+      }, 'ptt')
       this.$http
         .post('/tasks', {
           name: this.name,
