@@ -13,15 +13,21 @@ const sayHi = {
   content: 'DoDoDo!!! Penny? ~DoDoDo!!! Penny? ~DoDoDo!!! Penny?'
 }
 
-// 启动定时器:等待 SODAR_HOST 发送消息, 若超时没收到, 则代表当前原型不在 SODAR_HOST 页面框架内
-const timer1 = setTimeout(timer1Handle,2000)
-if(window.top !== window){
-  // window.top.postMessage('Knock! Knock! Knock!', SODAR_HOST)
-  // window.top.postMessage('Penny?', SODAR_HOST)
+let timer1 
+// 判断原型页面是否在SODAR_HOST页面框架内
+// 是则直接载入插件
+// 否则尝试与顶层窗口握手, 并设定时器防止超时:
+// --若在超时时间内收到回复指令 "ready"则表示身份正确, 停止定时器;
+// --若超时未收到 "ready", 则表示原型没有在SODAR_HOST页面框架内, 载入插件.
+
+if (window.top == window) {
+  loadPlugin()
+} else {
+  timer1 = setTimeout(loadPlugin,2000)
   window.top.postMessage(sayHi, SODAR_HOST)
+  window.addEventListener("message", msgFromOutside);
 }
 
-window.addEventListener("message", msgFromOutside);
 
 // 若在超时之前收到顶层窗口的正确指令,则表示原型位于 SODAR_HOST 页面框架内,处于
 function msgFromOutside (e){
@@ -37,7 +43,12 @@ function msgFromOutside (e){
         break   
       case 'disable':
         // 使原型无法交互
-        window.addEventListener("*",function(){return false},true)
+        window.addEventListener("click",function(e){
+          // 禁止默认行为
+          e.preventDefault()
+          // 停止向下传播
+          e.stopPropagation()
+        },true)
       case 'ready': 
         // 原型位于Sodar框架内, 需反馈已准备好
         clearTimeout(timer1)
@@ -46,8 +57,8 @@ function msgFromOutside (e){
   }
 }
 
-// 超市未收到消息，则表示原型是裸露状态，此时加载插件窗口。
-function timer1Handle(){
+// 超市未收到消息，则加载插件窗口。
+function loadPlugin(){
   window.removeEventListener('message', msgFromOutside);
   // 插入框架加载 Sodar
   let sodarFrame = document.createElement('iframe')
