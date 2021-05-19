@@ -98,9 +98,7 @@ export default {
         const { cmd, content } = e.data
         switch (cmd) {
           case 'init':
-            e.source.postMessage({
-              cmd: 'ready'
-            }, e.origin)
+            this.status = 'ready'
             break
           case 'post':
             // 接收保存新新动作

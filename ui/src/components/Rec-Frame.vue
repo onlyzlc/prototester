@@ -31,7 +31,6 @@ export default {
   watch: {
     status: function (val) {
       this.send(val)
-      this.status = val
     }
   },
   methods: {
