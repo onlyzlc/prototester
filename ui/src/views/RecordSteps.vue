@@ -68,12 +68,20 @@ export default {
     return {
       status: 'init',
       pttHost: ['http://127.0.0.1:8082'],
-      pttUrl: this.Store.state.ptt.pttUrl,
       origin: '',
       steps: [],
       saveSuccess: false,
       vis: {
         dia_finished: false
+      }
+    }
+  },
+  computed: {
+    pttUrl: function () {
+      if (this.steps.length) {
+        return this.steps[0].url
+      } else {
+        return ''
       }
     }
   },
