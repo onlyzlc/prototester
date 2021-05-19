@@ -22,7 +22,8 @@ if(window.top !== window){
 }
 
 window.addEventListener("message", msgFromOutside);
-// 若收到消息,则表示原型位于 SODAR_HOST 页面框架内,处于
+
+// 若在超时之前收到顶层窗口的正确指令,则表示原型位于 SODAR_HOST 页面框架内,处于
 function msgFromOutside (e){
   if(e.origin === SODAR_HOST){
     // 消息路由
@@ -34,6 +35,9 @@ function msgFromOutside (e){
       case 'stop':
         track.monitorOff(); 
         break   
+      case 'disable':
+        // 使原型无法交互
+        window.addEventListener("*",function(){return false},true)
       case 'ready': 
         // 原型位于Sodar框架内, 需反馈已准备好
         clearTimeout(timer1)
@@ -42,6 +46,7 @@ function msgFromOutside (e){
   }
 }
 
+// 超市未收到消息，则表示原型是裸露状态，此时加载插件窗口。
 function timer1Handle(){
   window.removeEventListener('message', msgFromOutside);
   // 插入框架加载 Sodar
