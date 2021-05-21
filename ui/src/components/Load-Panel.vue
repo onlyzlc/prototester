@@ -19,6 +19,11 @@
     >
       载入错误
     </div>
+    <div
+      v-else-if="status == 'disabled'"
+      class="mask disabled"
+    >
+    </div>
   </div>
 </template>
 
@@ -47,7 +52,19 @@ export default {
     z-index: 10;
     width: 100%;
     height: 100%;
-    color: gray;
+    color: #000;
+    font-size: 1.5em;
+    text-align: center;
+    vertical-align: middle;
     background-color: #ffffff00;
+}
+.loadpanel .loading{
+  background-color: #ffffff75;
+}
+.loadpanel .disabled{
+  background-color: #ffffff00;
+}
+.loadpanel .disabled:hover{
+  background-color: #ffffff75;
 }
 </style>

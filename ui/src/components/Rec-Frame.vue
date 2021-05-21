@@ -1,5 +1,5 @@
 <template>
-  <load-panel :status="(url === '') ? 'loading': ''">
+  <load-panel :status="maskStatus">
     <iframe
       :src="url"
       frameborder="0"
@@ -26,7 +26,12 @@ export default {
     }
   },
   computed: {
-    frame: () => document.querySelector('iframe')
+    frame: () => document.querySelector('iframe'),
+    maskStatus: function () {
+      if (this.url === '' || this.status === 'init') return 'loading'
+      else if (this.status === 'disabled') return 'disabled'
+      else return ''
+    }
   },
   watch: {
     status: function (val) {

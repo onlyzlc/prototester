@@ -41,7 +41,7 @@ function msgFromOutside (e){
       case 'stop':
         track.monitorOff(); 
         break   
-      case 'disable':
+      case 'disabled':
         // 使原型无法交互
         window.addEventListener("click",function(e){
           // 禁止默认行为
