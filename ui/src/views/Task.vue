@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="left">
+      <router-view />
+    </div>
+    <div class="right">
       <rec-frame
         :url="(task.steps.length) ? task.steps[0].url : ''"
         :status="status"
       />
-    </div>
-    <div class="right">
-      <router-view />
     </div>
   </div>
 </template>
@@ -45,7 +45,7 @@ export default {
         const { cmd, content } = e.data
         switch (cmd) {
           case 'init':
-            this.status = 'disable'
+            this.status = 'disabled'
             break
           case 'post':
             // 接收保存新新动作
@@ -90,12 +90,12 @@ body,
   height: calc(100% - 40px);
 }
 .container .left {
-  flex: 1;
-}
-.container .right {
   font-size: 0.8em;
   width: 400px;
   border-left: 1px solid red;
+}
+.container .right {
+  flex: 1;
 }
 .right ul {
   padding: 0 10px;
