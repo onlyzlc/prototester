@@ -88,6 +88,7 @@ const routes = [
     path: '/tasks/:taskId',
     redirect: '/tasks/:taskId/detail',
     props: true,
+    meta: { requireAuth: true },
     component: Task,
     children: [
       {
@@ -109,9 +110,10 @@ const routes = [
     ]
   },
   {
-    path: '/tasks/:taskId/recordsteps',
+    path: '/recordsteps/:taskId/',
     name: 'RecordSteps',
     props: true,
+    meta: { requireAuth: true },
     component: RecordSteps
   },
   {

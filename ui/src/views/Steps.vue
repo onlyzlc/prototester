@@ -2,7 +2,7 @@
   <div style="height:100%">
     <p>
       steps
-      <router-link :to="{name: 'RecordSteps'}">
+      <router-link :to="{name: 'RecordSteps',params: {taskId: task.taskId}}">
         重新录制
       </router-link>
       <span
