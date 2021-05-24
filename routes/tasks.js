@@ -15,14 +15,8 @@ router.post('/',taskApi.create);
 
 router.get('/:taskId',taskApi.getDetail);
 router.delete('/:taskId',taskApi.deleteTask);
-router.get('/:taskId/steps', taskApi.getSteps);
 router.patch('/:taskId/steps',taskApi.updateSteps);
 router.patch('/:taskId/status',taskApi.updateStatus);
-
-router.get('/:taskId/setting',taskApi.getTaskSettingPage);
-
-router.get('/:taskId/testing',taskApi.getTestingPage);
-router.patch('/:taskId/testing',taskApi.updateTesting);
 
 router.get('/:taskId/taskNote',taskApi.getTaskNote);
 

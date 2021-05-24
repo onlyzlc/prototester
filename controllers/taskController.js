@@ -88,46 +88,6 @@ exports.deleteTask = function (req, res) {
     })
 }
 
-exports.getTaskSettingPage = function (req, res) {
-    console.log('-> 任务设置页面');
-    Task.findOne({
-        "taskId": req.params.taskId
-    }, "name steps", function (err, taskDoc) {
-        if (err) throw err;
-        if (taskDoc === null) {
-            noTaskTip(res);
-            return;
-        }
-        res.json({
-            steps: taskDoc.steps,
-            name: taskDoc.name
-        })
-    })
-}
-
-exports.getSteps = function (req, res) {
-    console.log('-> 获取未完成设置的步骤数据');
-    Task.findOne({
-        "taskId": req.params.taskId
-    }, "steps", function (err, taskDoc) {
-        if (err) throw err;
-        if (taskDoc === null) {
-            noTaskTip(res);
-            return;
-        }
-        if (taskDoc.steps.length > 0) {
-            res.status(200).json(taskDoc.steps);
-        } else {
-            res.status(200).end("null");
-        }
-    })
-}
-
-exports.getTestingPage = function (req, res) {
-    console.log('-> 进入测试页');
-    res.json("testing");
-}
-
 // 返回任务的测试提要,包括任务首尾步骤,任务描述
 exports.getTaskNote = function (req, res) {
     console.log('-> 获取任务的测试提要');
@@ -154,49 +114,6 @@ exports.getTaskNote = function (req, res) {
         } else {
             res.sendStatus(404)
         }
-    })
-}
-
-exports.updateTesting = function (req, res) {
-    console.log('-> 更新任务测试数据');
-    Task.findOne({
-        "taskId": req.params.taskId
-    }, function (err, taskDoc) {
-        if (err) throw err;
-        if (taskDoc === null) {
-            noTaskTip(res);
-            return;
-        }
-        req.body.ip = req.ip;
-
-        // 添加行为间隔时长
-        addDur(req.body.actions);
-        // 移除无效行为
-        removeInvalidSteps(req.body.actions);
-
-        const steps = taskDoc.steps;
-        // 遍历所有步骤，查找并标记匹配步骤的行为
-        for (let i = 0; i < steps.length; i++) {
-            let step = steps[i];
-            // 匹配条件
-            let isMatched = function (action) {
-                return action.eventType == step.eventType &&
-                    action.target.domId == step.target.domId &&
-                    action.target.nodeName == step.target.nodeName &&
-                    action.target.innerText == step.target.innerText
-            }
-            // 找到与当前步骤相同的行为，并在行为上记录下匹配的步骤序号
-            let matchingIndex = req.body.actions.findIndex(isMatched);
-            if (matchingIndex >= 0) {
-                req.body.actions[matchingIndex].matchingStep = i;
-            }
-        }
-
-        taskDoc.testing.push(req.body);
-        taskDoc.save(function (err) {
-            if (err) throw err;
-            res.sendStatus(200);
-        })
     })
 }
 
