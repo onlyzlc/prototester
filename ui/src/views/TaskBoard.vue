@@ -1,9 +1,20 @@
 <template>
   <div>
-    TaskBoard
-    <router-link :to="{name: 'Steps'}">
-      {{ task.steps.length }} 个步骤
-    </router-link>
+    <section>
+      <label for="">任务名称</label>
+      <p>{{ task.name }}</p>
+      <label for="">任务描述</label>
+      <p>{{ task.description }}</p>
+      <label for="">步骤</label>
+      <router-link :to="{name: 'Steps'}">
+        {{ task.steps.length }} 个步骤
+      </router-link>
+    </section>
+    <section>
+      <ul v-for="t in task.testing" :key="t.ip">
+        <li></li>
+      </ul>
+    </section>
   </div>
 </template>
 
