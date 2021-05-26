@@ -12,6 +12,7 @@
           >
             <a
               :href="'/tasks/' + task.taskId"
+              target="_top"
             >
               {{ task.name }}
             </a> |
@@ -85,7 +86,7 @@ export default {
       if (!this.pttHost.includes(e.origin)) {
         return false
       }
-      console.log(e.data)
+      console.log('收到%s的消息: %o', e.origin, e.data)
       try {
         // const [cmd, content] = e.data.split('?')
         const { cmd, content } = e.data
@@ -95,12 +96,12 @@ export default {
             e.source.postMessage({
               cmd: 'href'
             }, e.origin)
-            // e.source.postMessage('href', e.origin)
+            e.source.postMessage('href', e.origin)
             break
           }
           case 'href': {
             this.curPage = content
-            this.Store.update({ pttUrl: content }, 'ptt')
+            this.Store.update({ url: content }, 'ptt')
             break
           }
         }

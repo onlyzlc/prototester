@@ -80,6 +80,8 @@ export default {
     pttUrl: function () {
       if (this.steps.length) {
         return this.steps[0].url
+      } else if (this.Store.state.ptt.url) {
+        return this.Store.state.ptt.url
       } else {
         return ''
       }
@@ -93,7 +95,7 @@ export default {
         return false
       }
       // this.origin = e.origin
-      console.log('收到 %s 消息: %o', e.origin, e.data)
+      console.log('收到%s的消息: %o', e.origin, e.data)
       try {
         const { cmd, content } = e.data
         switch (cmd) {

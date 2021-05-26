@@ -6,7 +6,7 @@ export default {
       email: ''
     },
     ptt: {
-      pttUrl: ''
+      url: ''
     },
     task: {
       steps: []
@@ -73,7 +73,7 @@ export default {
     if (this.debug) console.log('清除存储信息')
     this.state.user.isVerified = false
     this.state.user.email = ''
-    this.state.ptt.pttUrl = ''
+    this.state.ptt.url = ''
     this.save()
   }
 }

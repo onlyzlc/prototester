@@ -40,7 +40,7 @@ export default {
         return false
       }
       // this.origin = e.origin
-      console.log('收到 %s 消息: %o', e.origin, e.data)
+      console.log('收到%s的消息: %o', e.origin, e.data)
       try {
         const { cmd, content } = e.data
         switch (cmd) {

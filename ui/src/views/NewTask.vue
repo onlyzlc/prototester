@@ -23,7 +23,7 @@
       />
     </div>
     <!-- 获取不到原型地址时(此时可能是单独打开了任务管理页面), 显示地址输入框 -->
-    <div v-show="manually">
+    <div>
       <label for="pttUrl">原型地址:</label>
       <input
         v-model="pttUrl"
@@ -51,34 +51,32 @@ export default {
   data () {
     return {
       pttHost: ['http://127.0.0.1:8082'],
-      pttUrl: this.Store.state.ptt.pttUrl,
+      pttUrl: '',
       name: '',
-      description: '',
-      manually: false
+      description: ''
     }
   },
-  mounted () {
-    // 获取不到原型地址时(此时可能是单独打开了任务管理页面), 显示地址输入框
-    if (this.pttUrl === '') {
-      this.manually = true
-      this.pttUrl = ''
+  created () {
+    if (this.Store.state.ptt.url) {
+      this.pttUrl = this.Store.state.ptt.url
     }
   },
   methods: {
     save: function () {
       this.Store.update({
-        pttUrl: this.pttUrl
+        url: this.pttUrl
       }, 'ptt')
       this.$http
         .post('/tasks', {
           name: this.name,
-          description: this.description
+          description: this.description,
+          pttUrl: this.pttUrl
         })
         .then((res) => {
           // todo 成功后跳转
           if (res.status === 201) {
             console.log('任务创建成功，正在跳转步骤录制页面')
-            window.open(`/tasks/${res.data}/recordsteps`)
+            window.open(`/recordsteps/${res.data}`)
             this.$router.back()
           }
         })
