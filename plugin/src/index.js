@@ -33,7 +33,7 @@ if (window.top == window) {
 function msgFromOutside (e){
   if(e.origin === SODAR_HOST){
     // 消息路由
-    console.log('收到 %s 消息: %o',e.origin , e.data);
+    console.log('收到 %s 的消息: %s',e.origin , e.data);
     switch (e.data.cmd) {
       case 'rec':
         track.monitor(); 
@@ -57,7 +57,7 @@ function msgFromOutside (e){
   }
 }
 
-// 超市未收到消息，则加载插件窗口。
+// 超时未收到消息，则加载插件窗口。
 function loadPlugin(){
   window.removeEventListener('message', msgFromOutside);
   // 插入框架加载 Sodar
@@ -66,16 +66,6 @@ function loadPlugin(){
   sodarFrame.style.border = 'none'
   sodarFrame.style.width = '100%'
   sodarFrame.style.minHeight = '300px'
-
-  // 任务管理和引导
-  // 任务测试场景
-  // if(window.location.search.includes('testing=true')){
-  //   var taskId = window.location.search.match(/taskId=(\w+)/i)[1]
-  //   // 检查id长度是否正确
-  //   console.info('todo: 获取任务前检查id长度是否正确')
-  //   console.log('获取测试任务:'+ taskId);  
-  //   sodarFrame.src += ('tasks/' + taskId + '/testing')
-  // }
 
   // 渲染插件窗口
   let box = document.createElement('div')
@@ -100,18 +90,12 @@ function loadPlugin(){
     if(e.origin === SODAR_HOST){
       // 消息路由
       clearInterval(timer2)
-      console.log(e.data);
+      console.log("收到%s的消息: %o",e.origin,e.data);
       switch (e.data.cmd) {
         case 'href': 
           e.source.postMessage({
             cmd: 'href',
             content: page
-          }, e.origin)
-          break
-        case 'taskId': 
-          e.source.postMessage({
-            cmd: 'taskId',
-            content: taskId
           }, e.origin)
           break
         case 'ready':
