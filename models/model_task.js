@@ -31,9 +31,11 @@ var TaskSchema = new Schema({
     steps:[ActionSchema],
     
     ptt:{
-        type: String,
-        trim: true,
-        default: ""
+        url:{
+            type: String,
+            trim: true,
+            default: ""
+        }
     },
     testing: [{
         ip: String,

@@ -4,13 +4,14 @@ const Task = require('../models/model_task')
 const User = require('../models/model_user');
 var path = require('path');
 
+// 获取任务列表
 exports.getTasks = function(req,res){
     Task.find({owner:req.session.loginUser},function(err,tasks){
         if (err) throw err;
         res.json(tasks);
     }) 
 }
-
+// 创建任务
 exports.create = function (req, res) {
     // 计算每步时长
     // addDur(req.body.steps);
@@ -22,6 +23,9 @@ exports.create = function (req, res) {
         name: req.body.name,
         description: req.body.description,
         taskId: Date.now().toString(36),
+        ptt:{
+            url: req.body.pttUrl
+        }
         // steps: req.body.steps,
     });
     newTask.save(
@@ -33,7 +37,7 @@ exports.create = function (req, res) {
     )
 }
 
-// 更新任务步骤/更新任务状态
+// 更新任务步骤
 exports.updateSteps = function (req, res) {
     console.log("-> 更新任务步骤数据");
     // 计算每步时长
@@ -53,7 +57,7 @@ exports.updateSteps = function (req, res) {
         res.sendStatus(201);
     })
 }
-
+// 更新任务状态
 exports.updateStatus = function (req, res) {
     console.log("-> 更新任务状态未为 %s",req.body.status);
    
@@ -70,7 +74,7 @@ exports.updateStatus = function (req, res) {
         res.sendStatus(200);
     })
 }
-
+// 删除任务
 exports.deleteTask = function (req, res) {
     console.log("-> 删除任务");
     Task.findOneAndUpdate({
@@ -88,7 +92,7 @@ exports.deleteTask = function (req, res) {
     })
 }
 
-// 返回任务的测试提要,包括任务首尾步骤,任务描述
+// 返回任务测试提要,包括任务步骤,描述
 exports.getTaskNote = function (req, res) {
     console.log('-> 获取任务的测试提要');
     Task.findOne({
@@ -116,7 +120,7 @@ exports.getTaskNote = function (req, res) {
         }
     })
 }
-
+// 获取任务
 exports.getDetail = function (req, res) {
     console.log("-> 获取任务详情");
     Task.findOne({
@@ -131,6 +135,7 @@ exports.getDetail = function (req, res) {
     })
 }
 
+// 工具
 // 计算两个行为间的时长，最后一个行为不计算，默认值0
 function addDur(actions) {
     // 便于渲染时直接获取时长
