@@ -135,6 +135,20 @@ exports.getDetail = function (req, res) {
     })
 }
 
+exports.getTestReport = function (req, res) {
+    console.log("-> 获取任务测试报告");
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
+        res.json(taskDoc.testings);
+    })
+}
+
 // 工具
 // 计算两个行为间的时长，最后一个行为不计算，默认值0
 function addDur(actions) {

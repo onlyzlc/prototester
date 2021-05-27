@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var ActionSchema = require('./model_action');
+const UserTest = require('../models/model_userTest')
 var Schema = mongoose.Schema;
 
 var TaskSchema = new Schema({
@@ -37,14 +38,14 @@ var TaskSchema = new Schema({
             default: ""
         }
     },
-    testing: [{
-        ip: String,
-        isCompleted: {
-            type:Boolean,
-            default: false
-        },
-        actions: [ActionSchema]
-    }],
+    // testing: [{
+    //     ip: String,
+    //     isCompleted: {
+    //         type:Boolean,
+    //         default: false
+    //     },
+    //     actions: [ActionSchema]
+    // }],
     deleted: {
         type: Boolean,
         default: false
@@ -63,6 +64,11 @@ TaskSchema.virtual('url').get(function () {
 })
 
 // 测试情况统计数据
+TaskSchema.virtual('testings').get(function () {
+    UserTest.find({task: this.id}, function(err, testings){
+        return testings
+    });
+})
 // 测试次数
 TaskSchema.virtual("testCount").get(function () {  
     return this.testing.length;

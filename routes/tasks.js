@@ -20,4 +20,6 @@ router.patch('/:taskId/status',taskApi.updateStatus);
 
 router.get('/:taskId/taskNote',taskApi.getTaskNote);
 
+router.get('/:taskId/testReport', taskApi.getTestReport);
+
 module.exports = router;

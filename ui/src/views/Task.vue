@@ -5,7 +5,7 @@
     </div>
     <div class="right">
       <rec-frame
-        :url="(task.steps.length) ? task.steps[0].url : ''"
+        :url="(task.steps.length) ? task.steps[0].url : task.ptt.url"
         :status="status"
       />
     </div>
@@ -22,7 +22,6 @@ export default {
   data () {
     return {
       task: this.Store.state.task,
-      pttUrl: '',
       pttHost: ['http://127.0.0.1:8082'],
       status: 'init'
     }

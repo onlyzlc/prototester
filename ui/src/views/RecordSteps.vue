@@ -10,7 +10,7 @@
       </div>
       <div class="control">
         <button
-          v-if="status=='init'"
+          v-if="status=='ready'"
           @click="status='rec'"
         >
           开始记录
@@ -81,7 +81,7 @@ export default {
       if (this.steps.length) {
         return this.steps[0].url
       } else if (this.Store.state.ptt.url) {
-        return this.Store.state.ptt.url
+        return this.Store.state.task.ptt.url
       } else {
         return ''
       }

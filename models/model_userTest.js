@@ -45,11 +45,6 @@ UserTestSchema.virtual('totalDuration').get(function(){
     return n;
 })
 
-UserTestSchema.query.byTaskId = function(taskId){
-    return this.where({task:taskId});
-}
-
-
 // 虚拟属性
 // • 开始时间(步骤1页面刷新后更新)
 // • 各步骤时长[]
