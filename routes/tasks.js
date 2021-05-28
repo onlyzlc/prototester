@@ -14,12 +14,12 @@ router.get('/newTask', function(req,res){
 router.post('/',taskApi.create);
 
 router.get('/:taskId',taskApi.getDetail);
-router.delete('/:taskId',taskApi.deleteTask);
-router.patch('/:taskId/steps',taskApi.updateSteps);
-router.patch('/:taskId/status',taskApi.updateStatus);
-
 router.get('/:taskId/taskNote',taskApi.getTaskNote);
-
 router.get('/:taskId/testReport', taskApi.getTestReport);
+router.get('/:taskId/pttUrl', taskApi.getPttUrl);
+router.patch('/:taskId/status',taskApi.updateStatus);
+router.patch('/:taskId/steps',taskApi.updateSteps);
+router.delete('/:taskId',taskApi.deleteTask);
+
 
 module.exports = router;

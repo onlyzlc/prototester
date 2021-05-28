@@ -47,8 +47,8 @@ export default {
   },
   data () {
     return {
-      task: this.Store.state.task,
-      steps: this.Store.state.task.steps,
+      task: this.Store.taskState,
+      steps: this.Store.taskState.steps,
       redoOrder: []
     }
   },

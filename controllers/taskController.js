@@ -135,8 +135,22 @@ exports.getDetail = function (req, res) {
     })
 }
 
+exports.getPttUrl = function (req, res) {
+    console.log("-> 获取任务原型链接...");
+    Task.findOne({
+        "taskId": req.params.taskId
+    }, function (err, taskDoc) {
+        if (err) throw err;
+        if (taskDoc === null) {
+            noTaskTip(res);
+            return;
+        }
+        res.json(taskDoc.ptt.url);
+    })
+}
+
 exports.getTestReport = function (req, res) {
-    console.log("-> 获取任务测试报告");
+    console.log("-> 获取任务测试报告...");
     Task.findOne({
         "taskId": req.params.taskId
     }, function (err, taskDoc) {

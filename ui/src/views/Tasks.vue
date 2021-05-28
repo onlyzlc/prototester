@@ -19,7 +19,7 @@
             <!-- <a :href="'/tasks/'+task.taskId">{{ task.name }}</a> | -->
             <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span> |
             <a
-              :href="'/tasks/'+task.taskId+'/recordsteps'"
+              :href="'/recordsteps/'+task.taskId"
               target="_blank"
             >设置步骤</a> |
             <a

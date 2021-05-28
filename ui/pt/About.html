@@ -3,24 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProtoPage-Home</title>
+    <title>ProtoPage-About</title>
     <script src="http://127.0.0.1:8080/js/sodar.js" defer></script>
 </head>
 <body>
-    <form action="/About">
-        <label for="name">名称</label>
-        <input type="text" id='name'>
-        <button type="submit">提交</button>
+        <button type="button"">发送</button>
         <div class="ax_default" style="width: 100px; height: 40px; background-color: bisque;">
             外面的
             <div class="ax_default">
                 里面的
             </div>
         </div>
-    </form>
     <script>
-        document.querySelector("form").onsubmit = function (e) {
-            // document.querySelector(".ax_default").style.display = 'none'
+        document.querySelector("button").onclick = function (e) {
         }
     </script>
 </body>

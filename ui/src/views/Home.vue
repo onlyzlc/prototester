@@ -11,7 +11,7 @@
       <div class="right">
         <div>
           <router-link to="/profile">
-            {{ Store.state.user.email }} |
+            {{ Store.userState.email }} |
           </router-link>
           <button
             @click="visibility.logoutConfirm = true"

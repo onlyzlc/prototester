@@ -22,7 +22,7 @@
 export default {
   data () {
     return {
-      task: this.Store.state.task
+      task: this.Store.taskState
     }
   },
   beforeCreate () {

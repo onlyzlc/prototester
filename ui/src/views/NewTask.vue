@@ -57,8 +57,8 @@ export default {
     }
   },
   created () {
-    if (this.Store.state.ptt.url) {
-      this.pttUrl = this.Store.state.ptt.url
+    if (this.Store.taskState.pttUrl) {
+      this.pttUrl = this.Store.taskState.pttUrl
     }
   },
   methods: {

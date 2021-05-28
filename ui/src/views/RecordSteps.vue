@@ -46,7 +46,7 @@
     >
       <template v-slot:foot-right>
         <button @click="close">
-          关闭
+          返回
         </button>
       </template>
     </ln-dialog>
@@ -68,7 +68,7 @@ export default {
     return {
       status: 'init',
       pttHost: ['http://127.0.0.1:8082'],
-      origin: '',
+      pttUrl: '',
       steps: [],
       saveSuccess: false,
       vis: {
@@ -76,30 +76,24 @@ export default {
       }
     }
   },
-  computed: {
-    pttUrl: function () {
-      if (this.steps.length) {
-        return this.steps[0].url
-      } else if (this.Store.state.ptt.url) {
-        return this.Store.state.task.ptt.url
-      } else {
-        return ''
-      }
-    }
-  },
   created () {
-    window.addEventListener('message', (e) => {
-      console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+    this.$http.get('/tasks/' + this.taskId + '/pttUrl')
+      .then(result => { this.pttUrl = result.data })
+    window.addEventListener('message', this.reciveMsg)
+  },
+  methods: {
+    reciveMsg: function (e) {
+      // console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
       // 需要通过用户注册的原型地址实现来源限制
       if (!this.pttHost.includes(e.origin)) {
         return false
       }
-      // this.origin = e.origin
       console.log('收到%s的消息: %o', e.origin, e.data)
       try {
         const { cmd, content } = e.data
         switch (cmd) {
           case 'init':
+            if (this.status === 'rec') return
             this.status = 'ready'
             break
           case 'post':
@@ -109,27 +103,21 @@ export default {
       } catch (error) {
         console.log('出错了')
       }
-    })
-  },
-  methods: {
+    },
     save: function () {
       this.status = 'stop'
       this.$http.patch('/tasks/' + this.taskId + '/steps', {
         steps: this.steps
-      }).then(res => {
+      }).then(result => {
         // todo 成功后跳转
-        if (res.status === 201) {
+        if (result.status === 201) {
           console.log('任务步骤更新成功，正在跳转回任务列表')
           this.vis.dia_finished = true
         }
       })
     },
     close: function () {
-      // window.close()
-      // this.$route.push('')
-      // 关闭当前窗口
-      self.opener = null
-      self.close()
+      this.$router.push({ name: 'Steps', params: { taskId: this.taskId } })
     }
   }
 }

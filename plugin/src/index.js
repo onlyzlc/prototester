@@ -23,7 +23,7 @@ let timer1
 if (window.top == window) {
   loadPlugin()
 } else {
-  timer1 = setTimeout(loadPlugin,2000)
+  timer1 = setTimeout(loadPlugin,5000)
   window.top.postMessage(sayHi, SODAR_HOST)
   window.addEventListener("message", msgFromOutside);
 }
@@ -31,30 +31,33 @@ if (window.top == window) {
 
 // 若在超时之前收到顶层窗口的正确指令,则表示原型位于 SODAR_HOST 页面框架内,处于
 function msgFromOutside (e){
-  if(e.origin === SODAR_HOST){
-    // 消息路由
-    console.log('收到 %s 的消息: %s',e.origin , e.data);
-    switch (e.data.cmd) {
-      case 'rec':
-        track.monitor(); 
-        break   
-      case 'stop':
-        track.monitorOff(); 
-        break   
-      case 'disabled':
-        // 使原型无法交互
-        window.addEventListener("click",function(e){
-          // 禁止默认行为
-          e.preventDefault()
-          // 停止向下传播
-          e.stopPropagation()
-        },true)
-      case 'ready': 
-        // 原型位于Sodar框架内, 需反馈已准备好
-        clearTimeout(timer1)
-        break
-    }
+  // 非主机来源信息不处理
+  if(e.origin !== SODAR_HOST) return
+
+  console.log('收到 %s 的消息: %o',e.origin , e.data);
+  switch (e.data.cmd) {
+    case 'rec':
+      track.monitor(); 
+      break   
+    case 'stop':
+      track.monitorOff(); 
+      break   
+    case 'disabled':
+      // 使原型无法交互
+      window.addEventListener("click",function(e){
+        // 禁止默认行为
+        e.preventDefault()
+        // 停止向下传播
+        e.stopPropagation()
+      },true)
+      break
+    case 'ready': 
+      break
+    default :
+      console.log('无效指令：%s', e.data.cmd);
+      return
   }
+  clearTimeout(timer1)
 }
 
 // 超时未收到消息，则加载插件窗口。

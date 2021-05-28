@@ -1,6 +1,6 @@
 <template>
   <div>
-    任务已下架
+    错误
   </div>
 </template>
 

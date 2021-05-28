@@ -5,7 +5,7 @@
     </div>
     <div class="right">
       <rec-frame
-        :url="(task.steps.length) ? task.steps[0].url : task.ptt.url"
+        :url="pttUrl"
         :status="status"
       />
     </div>
@@ -21,8 +21,9 @@ export default {
   props: ['taskId'],
   data () {
     return {
-      task: this.Store.state.task,
+      task: this.Store.taskState,
       pttHost: ['http://127.0.0.1:8082'],
+      pttUrl: '',
       status: 'init'
     }
   },
@@ -61,9 +62,10 @@ export default {
       // 获取数据
       this.$http
         .get(`/tasks/${this.taskId}`)
-        .then((res, vm = this) => {
-          vm.Store.update(res.data, 'task')
-          // this.task = res.data
+        .then((result, vm = this) => {
+          const task = result.data
+          vm.Store.update(task, 'task')
+          this.pttUrl = (task.steps.length) ? task.steps[0].url : task.ptt.url
         })
       if (next) next()
     }
