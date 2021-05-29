@@ -57,15 +57,15 @@ export default {
     }
   },
   created () {
-    if (this.Store.taskState.pttUrl) {
-      this.pttUrl = this.Store.taskState.pttUrl
+    if (this.Store.state.task.pttUrl) {
+      this.pttUrl = this.Store.state.task.pttUrl
     }
   },
   methods: {
     save: function () {
-      this.Store.update({
-        url: this.pttUrl
-      }, 'ptt')
+      this.Store.update('task', {
+        pttUrl: this.pttUrl
+      })
       this.$http
         .post('/tasks', {
           name: this.name,

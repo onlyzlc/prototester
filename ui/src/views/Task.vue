@@ -21,7 +21,7 @@ export default {
   props: ['taskId'],
   data () {
     return {
-      task: this.Store.taskState,
+      task: this.Store.state.task,
       pttHost: ['http://127.0.0.1:8082'],
       pttUrl: '',
       status: 'init'
@@ -64,7 +64,7 @@ export default {
         .get(`/tasks/${this.taskId}`)
         .then((result, vm = this) => {
           const task = result.data
-          vm.Store.update(task, 'task')
+          vm.Store.update('task', task)
           this.pttUrl = (task.steps.length) ? task.steps[0].url : task.ptt.url
         })
       if (next) next()

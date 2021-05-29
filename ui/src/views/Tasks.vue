@@ -101,7 +101,7 @@ export default {
           }
           case 'href': {
             this.curPage = content
-            this.Store.update({ url: content }, 'ptt')
+            this.Store.update('task', { pttUrl: content })
             break
           }
         }
