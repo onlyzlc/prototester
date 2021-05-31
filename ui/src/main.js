@@ -31,10 +31,10 @@ ax.interceptors.response.use(function (response) {
   return response
 }, function (error) {
   if (Store.debug) console.log(error)
-  // 如果登录过期了
   if (error.response.status === 511) {
-    sessionStorage.clear('user')
-    sessionStorage.setItem('urlReq', error.config.url)
+    // 如果登录过期了
+    // sessionStorage.clear('user')
+    // sessionStorage.setItem('urlReq', error.config.url)
     Store.clear()
     router.push({ name: 'Login' })
   }

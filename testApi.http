@@ -34,4 +34,7 @@ POST http://localhost:8081/api/tasks/
 GET http://localhost:8081/user/ptts
 
 ### 获取测试报告
-GET http://localhost:8081/api/tasks/klzxaidl/testReport
+GET http://localhost:8081/api/tasks/kp6kt47g/testReport
+
+### 获取测试原型链接
+GET http://localhost:8081/api/tasks/kp6kt47g/pttUrl

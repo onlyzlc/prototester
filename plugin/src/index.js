@@ -13,6 +13,9 @@ const sayHi = {
   content: 'DoDoDo!!! Penny? ~DoDoDo!!! Penny? ~DoDoDo!!! Penny?'
 }
 
+const state = localStorage.getItem ('state')
+console.log('获取状态: %o', state);
+
 let timer1 
 // 判断原型页面是否在SODAR_HOST页面框架内
 // 是则直接载入插件
