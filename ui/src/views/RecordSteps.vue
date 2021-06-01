@@ -38,6 +38,7 @@
       <rec-frame
         :url="pttUrl"
         :status="status"
+        @reciveCmd="processCmd"
       />
     </div>
     <ln-dialog
@@ -79,31 +80,42 @@ export default {
   created () {
     this.$http.get('/tasks/' + this.taskId + '/pttUrl')
       .then(result => { this.pttUrl = result.data })
-    window.addEventListener('message', this.reciveMsg)
+    // window.addEventListener('message', this.reciveMsg)
   },
   methods: {
-    reciveMsg: function (e) {
-      // console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
-      // 需要通过用户注册的原型地址实现来源限制
-      if (!this.pttHost.includes(e.origin)) {
-        return false
-      }
-      console.log('收到%s的消息: %o', e.origin, e.data)
-      try {
-        const { cmd, content } = e.data
-        switch (cmd) {
-          case 'init':
-            if (this.status === 'rec') return
-            this.status = 'ready'
-            break
-          case 'post':
-            // 接收保存新新动作
-            this.steps.push(content)
-        }
-      } catch (error) {
-        console.log('出错了')
+    processCmd: function (cmd, content) {
+      switch (cmd) {
+        case 'init':
+          if (this.status === 'rec') return
+          this.status = 'ready'
+          break
+        case 'post':
+          // 接收保存新新动作
+          this.steps.push(content)
       }
     },
+    // reciveMsg: function (e) {
+    //   // console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+    //   // 需要通过用户注册的原型地址实现来源限制
+    //   if (!this.pttHost.includes(e.origin)) {
+    //     return false
+    //   }
+    //   console.log('收到%s的消息: %o', e.origin, e.data)
+    //   try {
+    //     const { cmd, content } = e.data
+    //     switch (cmd) {
+    //       case 'init':
+    //         if (this.status === 'rec') return
+    //         this.status = 'ready'
+    //         break
+    //       case 'post':
+    //         // 接收保存新新动作
+    //         this.steps.push(content)
+    //     }
+    //   } catch (error) {
+    //     console.log('出错了')
+    //   }
+    // },
     save: function () {
       this.status = 'stop'
       this.$http.patch('/tasks/' + this.taskId + '/steps', {

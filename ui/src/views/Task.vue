@@ -7,6 +7,7 @@
       <rec-frame
         :url="pttUrl"
         :status="status"
+        @reciveCmd="processCmd"
       />
     </div>
   </div>
@@ -22,42 +23,42 @@ export default {
   data () {
     return {
       task: this.Store.state.task,
-      pttHost: ['http://127.0.0.1:8082'],
+      // pttHost: ['http://127.0.0.1:8082'],
       pttUrl: '',
-      status: 'init'
+      status: 'disabled'
     }
   },
-  // beforeRouteUpdate  (to, from, next) {
-  //   // this.fetchTask(next)
-  // },
   created () {
     console.log('task已创建')
     this.fetchTask()
-    window.addEventListener('message', (e) => {
-      console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
-      // 需要通过用户注册的原型地址实现来源限制
-      if (!this.pttHost.includes(e.origin)) {
-        return false
-      }
-      // this.origin = e.origin
-      console.log('收到%s的消息: %o', e.origin, e.data)
-      try {
-        const { cmd, content } = e.data
-        switch (cmd) {
-          case 'init':
-            this.status = 'disabled'
-            break
-          case 'post':
-            // 接收保存新新动作
-            content.isDel = false
-            this.steps.push(content)
-        }
-      } catch (error) {
-        console.log('出错了')
-      }
-    })
+    // window.addEventListener('message', (e) => {
+    //   console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
+    //   // 需要通过用户注册的原型地址实现来源限制
+    //   if (!this.pttHost.includes(e.origin)) {
+    //     return false
+    //   }
+    //   // this.origin = e.origin
+    //   console.log('收到%s的消息: %o', e.origin, e.data)
+    //   try {
+    //     const { cmd, content } = e.data
+    //     switch (cmd) {
+    //       case 'init':
+    //         // this.status = 'disabled'
+    //         break
+    //       case 'post':
+    //         // 接收保存新新动作
+    //         content.isDel = false
+    //         this.steps.push(content)
+    //     }
+    //   } catch (error) {
+    //     console.log('出错了')
+    //   }
+    // })
   },
   methods: {
+    processCmd: function (cmd, content) {
+      console.log('组件已收到recframe传递的消息 %s', cmd)
+    },
     fetchTask (next) {
       // 获取数据
       this.$http
