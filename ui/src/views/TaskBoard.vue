@@ -11,8 +11,11 @@
       </router-link>
     </section>
     <section>
-      <ul v-for="t in task.testing" :key="t.ip">
-        <li></li>
+      <ul
+        v-for="t in task.testing"
+        :key="t.ip"
+      >
+        <li />
       </ul>
     </section>
   </div>

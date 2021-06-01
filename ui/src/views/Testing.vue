@@ -6,7 +6,9 @@
     >
       {{ popup_start.tip }}
       <template v-slot:foot-right>
-        <button @click="startTest">开始</button>
+        <button @click="startTest">
+          开始
+        </button>
       </template>
     </ln-dialog>
     <ln-dialog
@@ -22,7 +24,7 @@
     >
       感谢参与
       <template v-slot:foot-right>
-        <div></div>
+        <div />
       </template>
     </ln-dialog>
     <rec-frame

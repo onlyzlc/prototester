@@ -22,8 +22,7 @@
     <div
       v-else-if="status == 'disabled'"
       class="mask disabled"
-    >
-    </div>
+    />
   </div>
 </template>
 

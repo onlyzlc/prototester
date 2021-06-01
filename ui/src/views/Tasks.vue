@@ -23,9 +23,9 @@
               target="_blank"
             >设置步骤</a> |
             <a
+              v-if="task.status=='published'"
               :href="'/testing/'+ task.taskId "
               target="_blank"
-              v-if="task.status=='published'"
             >开始测试</a> |
             <button
               class="publish"
