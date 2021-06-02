@@ -35,7 +35,7 @@ export default {
     localStorage.setItem('state', JSON.stringify(this.state))
   },
   update: function (target = '', newBody) {
-    if (this.debug) console.log('%s状态更新为：%o', newBody)
+    if (this.debug) console.log('%s状态更新为：%o', target, newBody)
     for (const key in newBody) {
       if (Object.prototype.hasOwnProperty.call(newBody, key)) {
         // 判断是否已存储了当前属性,若没有则新增该属性

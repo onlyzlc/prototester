@@ -39,12 +39,18 @@ export default {
     }
   },
   watch: {
-    // status: function (val) {
-    //   this.send(val)
-    // }
+    status: function (val) {
+      this.send(val)
+    }
   },
   created () {
+    console.log('load rec frame')
     window.addEventListener('message', this.reciveMsg)
+  },
+  destroyed () {
+    // 必须, 路由中跳转时, window 是不变的, 而每导航到一个页面, created 时都会给 同一个 window 添加一个监听器.
+    // 为避免上述情况, 需在组件销毁时手动移除 window 上的监听器, 否在会不断重复设置监听器
+    window.removeEventListener('message', this.reciveMsg)
   },
   methods: {
     reciveMsg: function (e) {

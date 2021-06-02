@@ -55,6 +55,7 @@ function msgFromOutside (e){
       },true)
       break
     case 'ready': 
+    case 'init': 
       break
     default :
       console.log('无效指令：%s', e.data.cmd);
