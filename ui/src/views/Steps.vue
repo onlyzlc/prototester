@@ -5,14 +5,7 @@
       <router-link :to="{name: 'RecordSteps',params: {taskId: task.taskId}}">
         重新录制
       </router-link>
-      <span
-        :disabled="redoOrder.length==0"
-        style=""
-        class="textBtn"
-        @click="redo"
-      >撤销</span>
       <button
-        v-if="redoOrder.length"
         @click="save"
       >
         保存
@@ -23,18 +16,25 @@
         v-for="(step, index) in task.steps"
         :key="index"
         class="step"
+        :class="{ deleted:step.deleted }"
       >
-        <template v-if="!step.deleted">
-          <span class="des">
-            {{ step.type }} [{{ step.target.nodeName }}]  {{ step.target.innerText || step.target.value }} at {{ step.timeStamp }}
-          </span>
-          <span
-            class="delStep textBtn"
-            @click="del(step)"
-          >
-            删除
-          </span>
-        </template>
+        <span class="des">
+          {{ step.type }} [{{ step.target.nodeName }}]  {{ step.target.innerText || step.target.value }} at {{ step.timeStamp }}
+        </span>
+        <span
+          v-if="!step.deleted"
+          class="delStep textBtn"
+          @click="del(index)"
+        >
+          删除
+        </span>
+        <span
+          v-else
+          class="delStep textBtn"
+          @click="restore(index)"
+        >
+          撤销
+        </span>
       </li>
     </ul>
   </div>
@@ -48,19 +48,18 @@ export default {
   data () {
     return {
       task: this.Store.state.task,
-      steps: this.Store.state.task.steps,
-      redoOrder: []
+      steps: this.Store.state.task.steps
     }
   },
   methods: {
-    del: function (step) {
-      const i = this.steps.findIndex(item => item === step)
+    del: function (i) {
+      // const i = this.steps.findIndex(item => item === step)
       // this.steps[i].deleted = true
-      step.deleted = true
-      this.redoOrder.push(i)
+      this.steps[i].deleted = true
+      // this.redoOrder.push(step)
     },
-    redo: function () {
-      const i = this.redoOrder.pop()
+    restore: function (i) {
+      // const i = this.redoOrder.pop()
       this.steps[i].deleted = false
     },
     save: function () {
@@ -81,5 +80,7 @@ export default {
 </script>
 
 <style>
-
+.deleted{
+  text-decoration: line-through;
+}
 </style>

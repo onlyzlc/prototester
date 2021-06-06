@@ -1,6 +1,12 @@
 <template>
   <div class="container">
     <div class="left">
+      <div>
+        任务：
+        <router-link :to="{ name: 'TaskBoard', params: { taskId: taskId }}">
+          {{task.name}}
+        </router-link>
+      </div>
       <router-view />
     </div>
     <div class="right">
