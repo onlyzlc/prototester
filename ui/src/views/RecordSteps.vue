@@ -91,7 +91,6 @@ export default {
           break
         case 'post':
           // 接收保存新新动作
-          content.deleted = false
           this.steps.push(content)
       }
     },

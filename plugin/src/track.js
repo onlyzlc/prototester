@@ -38,27 +38,25 @@ Recorder.prototype.post = function () {
 }
 // 事件记录和发送
 function record(e) {
+    let rec = new Recorder(e);
+    rec.post();
     // 阻止事件冒泡，对于Axure中的动态面板的多层ax_default有效————只截取最底层的那个元素事件
-    if(e.target){
-        if(e.target.matches(elmSelector)){
-            let rec = new Recorder(e);
-            rec.post();
-        }
-    }
+    // if( typeof(e.target) === 'Element' && e.target.matches(elmSelector)){
+    // } else if ( typeof(e.target) === 'Document' )
 };
  
 // 启用跟踪, 绑定事件
 export function monitor() {
     console.log('开始记录');
     for (const type of eventTypes) {
-        window.addEventListener(type, record, false);
+        window.addEventListener(type, record, true);
     }
 }
 
 // 关闭跟踪
 export function monitorOff() {
     for (const type of eventTypes) {
-        window.removeEventListener(type, record, false);
+        window.removeEventListener(type, record, true);
     }
 }
 

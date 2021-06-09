@@ -13,7 +13,7 @@
     </p>
     <ul>
       <li
-        v-for="(step, index) in task.steps"
+        v-for="(step, index) in stepsCopy"
         :key="index"
         class="step"
         :class="{ deleted:step.deleted }"
@@ -48,23 +48,29 @@ export default {
   data () {
     return {
       task: this.Store.state.task,
-      steps: this.Store.state.task.steps
+      stepsCopy: []
     }
+  },
+  created () {
+    this.stepsCopy = this.task.steps.map(item => {
+      item.deleted = false
+      return item
+    })
   },
   methods: {
     del: function (i) {
       // const i = this.steps.findIndex(item => item === step)
       // this.steps[i].deleted = true
-      this.steps[i].deleted = true
+      this.stepsCopy[i].deleted = true
       // this.redoOrder.push(step)
     },
     restore: function (i) {
       // const i = this.redoOrder.pop()
-      this.steps[i].deleted = false
+      this.stepsCopy[i].deleted = false
     },
     save: function () {
       this.$http.patch('/tasks/' + this.taskId + '/steps', {
-        steps: this.steps.filter(item => !item.deleted)
+        steps: this.stepsCopy.filter(item => !item.deleted)
       }).then(res => {
         // todo 成功后跳转
         if (res.status === 201) {
