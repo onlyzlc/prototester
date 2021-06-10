@@ -13,16 +13,16 @@
     </p>
     <ul>
       <li
-        v-for="(step, index) in stepsCopy"
+        v-for="(step, index) in task.steps"
         :key="index"
         class="step"
-        :class="{ deleted:step.deleted }"
+        :class="{ deleted: dels.includes(index) }"
       >
         <span class="des">
           {{ step.type }} [{{ step.target.nodeName }}]  {{ step.target.innerText || step.target.value }} at {{ step.timeStamp }}
         </span>
         <span
-          v-if="!step.deleted"
+          v-if="!dels.includes(index)"
           class="delStep textBtn"
           @click="del(index)"
         >
@@ -48,29 +48,23 @@ export default {
   data () {
     return {
       task: this.Store.state.task,
-      stepsCopy: []
+      stepsCopy: [],
+      dels: []
     }
   },
-  created () {
-    this.stepsCopy = this.task.steps.map(item => {
-      item.deleted = false
-      return item
-    })
-  },
   methods: {
-    del: function (i) {
-      // const i = this.steps.findIndex(item => item === step)
-      // this.steps[i].deleted = true
-      this.stepsCopy[i].deleted = true
-      // this.redoOrder.push(step)
+    del: function (num) {
+      this.dels.push(num)
     },
-    restore: function (i) {
-      // const i = this.redoOrder.pop()
-      this.stepsCopy[i].deleted = false
+    restore: function (num) {
+      this.dels.splice(this.dels.indexOf(num), 1)
     },
     save: function () {
+      for (const num of this.dels) {
+        this.task.steps.splice(num, 1)
+      }
       this.$http.patch('/tasks/' + this.taskId + '/steps', {
-        steps: this.stepsCopy.filter(item => !item.deleted)
+        steps: this.task.steps
       }).then(res => {
         // todo 成功后跳转
         if (res.status === 201) {
@@ -86,7 +80,7 @@ export default {
 </script>
 
 <style>
-.deleted{
+.deleted .des{
   text-decoration: line-through;
 }
 </style>
