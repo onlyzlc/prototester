@@ -6,6 +6,7 @@ var ActionSchema = new Schema({
     url: String,
     pageTitle: String,
     type : String,
+    timeStamp: Number,
     target : {
         id: String,
         nodeName: {
