@@ -6,6 +6,20 @@
         <router-link :to="{ name: 'TaskBoard', params: { taskId: taskId }}">
           {{ task.name }}
         </router-link>
+        <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span>
+        <router-link
+          v-if="task.status=='published'"
+          :to="{ name: 'Testing', params: { taskId: taskId }}"
+          target="_blank"
+        >
+          开始测试
+        </router-link>
+        <button
+          class="publish"
+          @click="publish"
+        >
+          {{ (task.status=="unpublished")?("发布"):("撤下") }}
+        </button>
       </div>
       <router-view />
     </div>
@@ -37,29 +51,6 @@ export default {
   created () {
     console.log('task已创建')
     this.fetchTask()
-    // window.addEventListener('message', (e) => {
-    //   console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
-    //   // 需要通过用户注册的原型地址实现来源限制
-    //   if (!this.pttHost.includes(e.origin)) {
-    //     return false
-    //   }
-    //   // this.origin = e.origin
-    //   console.log('收到%s的消息: %o', e.origin, e.data)
-    //   try {
-    //     const { cmd, content } = e.data
-    //     switch (cmd) {
-    //       case 'init':
-    //         // this.status = 'disabled'
-    //         break
-    //       case 'post':
-    //         // 接收保存新新动作
-    //         content.isDel = false
-    //         this.steps.push(content)
-    //     }
-    //   } catch (error) {
-    //     console.log('出错了')
-    //   }
-    // })
   },
   methods: {
     processCmd: function (cmd, content) {
@@ -75,6 +66,19 @@ export default {
           this.pttUrl = (task.steps.length) ? task.steps[0].url : task.ptt.url
         })
       if (next) next()
+    },
+    publish () {
+      const newStatus =
+        this.task.status === 'published' ? 'unpublished' : 'published'
+      this.$http
+        .patch('/tasks/' + this.task.taskId + '/status', { status: newStatus })
+        .then(() => {
+          this.task.status = newStatus
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error)
+        })
     }
   }
 }

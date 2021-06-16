@@ -6,16 +6,25 @@
       <label for="">任务描述</label>
       <p>{{ task.description }}</p>
       <label for="">步骤</label>
-      <router-link :to="{name: 'Steps'}">
-        {{ task.steps.length }} 个步骤
-      </router-link>
+      <p>
+        <router-link :to="{name: 'Steps'}">
+          {{ task.steps.length }} 个步骤
+        </router-link>
+      </p>
+      <label for="">测试报告</label>
+      <p>
+        共 {{ testings.length }} 次测试  |
+        <span v-if="testings.length">{{ finished.length }} 次完成</span>
+      </p>
     </section>
-    <section>
+    <section v-if="testings.length > 0">
       <ul
-        v-for="t in task.testing"
+        v-for="t in testings"
         :key="t.ip"
       >
-        <li />
+        <li>
+          用户: {{t.ip}} {{ t.isCompleted ? "完成测试" : "没有完成测试"}}
+        </li>
       </ul>
     </section>
   </div>
@@ -25,20 +34,31 @@
 export default {
   data () {
     return {
-      task: this.Store.state.task
+      task: this.Store.state.task,
+      testings: []
+    }
+  },
+  computed: {
+    finished: function () {
+      return this.testings.filter(item => item.isCompleted)
     }
   },
   beforeCreate () {
     console.log('Task board 前')
   },
   created () {
+    this.fetchTesting()
     console.log('已创建 Task board')
   },
   methods: {
+    fetchTesting: function () {
+      this.$http
+        .get(`tasks/${this.task.taskId}/testReport`)
+        .then(result => { this.testings = result.data.slice() })
+    }
   }
 }
 </script>
-
 <style>
 html,body,#app{
   height: 100%
