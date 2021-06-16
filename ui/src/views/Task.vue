@@ -4,7 +4,7 @@
       <div>
         任务：
         <router-link :to="{ name: 'TaskBoard', params: { taskId: taskId }}">
-          {{task.name}}
+          {{ task.name }}
         </router-link>
       </div>
       <router-view />

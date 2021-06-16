@@ -63,7 +63,8 @@ export default {
       for (const num of this.dels) {
         this.task.steps.splice(num, 1)
       }
-      this.$http.patch('/tasks/' + this.taskId + '/steps', {
+      this.dels = []
+      this.$http.patch('/tasks/' + this.task.taskId + '/steps', {
         steps: this.task.steps
       }).then(res => {
         // todo 成功后跳转
