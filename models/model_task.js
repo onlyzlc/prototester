@@ -64,11 +64,9 @@ TaskSchema.virtual('url').get(function () {
 })
 
 // 测试情况统计数据
-TaskSchema.virtual('testings').get(function () {
-    UserTest.find({task: this.id}, function(err, testings){
-        return testings
-    });
-})
+TaskSchema.methods.findTestings = function (cb) {
+    return UserTest.find({task: this.id}, cb);``
+}
 // 测试次数
 TaskSchema.virtual("testCount").get(function () {  
     return this.testing.length;

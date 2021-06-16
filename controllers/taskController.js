@@ -103,7 +103,6 @@ exports.getTaskNote = function (req, res) {
             noTaskTip(res);
             return;
         }
-
         if( taskDoc.status === 'unpublished'){
             // 任务未发布
             res.sendStatus(204)
@@ -159,7 +158,10 @@ exports.getTestReport = function (req, res) {
             noTaskTip(res);
             return;
         }
-        res.json(taskDoc.testings);
+        taskDoc.findTestings(function(err, testings) {
+            if (err) throw err
+            res.json(testings);
+        })
     })
 }
 
