@@ -145,7 +145,7 @@ export default {
     },
     NavToThk () {
       // window.close()
-      this.$router.push({ name: 'Thanks' })
+      this.$router.replace({ name: 'Thanks' })
     }
   }
 }
