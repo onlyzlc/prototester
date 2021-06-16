@@ -86,7 +86,7 @@ export default {
       this.pttUrl = taskNote.steps[0].url
       this.popup_start.tip = taskNote.description
       this.popup_start.vis = true
-      this.stop = taskNote.steps[1]
+      this.stop = taskNote.steps[1] || taskNote.steps[0]
     },
     reciveMsg (e) {
       console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
