@@ -110,6 +110,7 @@ exports.patch = function (req, res) {
         if (userTest) {
             var l = req.body.log.length;
             userTest.isCompleted = req.body.isCompleted;
+            userTest.ip = req.ip.split(":")[3]
             for (var i = 0; i < l; i++) {
                 userTest.log.push(req.body.log[i]);
             }
