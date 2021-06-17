@@ -24,7 +24,7 @@
       <router-view />
     </div>
     <div class="right">
-      <rec-frame
+      <ptt-frame
         :url="pttUrl"
         :status="status"
         @reciveCmd="processCmd"
@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import RecFrame from '../components/Rec-Frame.vue'
+import PttFrame from '../components/Ptt-Frame.vue'
 export default {
   components: {
-    RecFrame
+    PttFrame
   },
   props: ['taskId'],
   data () {
@@ -54,7 +54,6 @@ export default {
   },
   methods: {
     processCmd: function (cmd, content) {
-      console.log('组件已收到recframe传递的消息 %s', cmd)
     },
     fetchTask (next) {
       // 获取数据

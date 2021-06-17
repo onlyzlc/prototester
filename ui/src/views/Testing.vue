@@ -27,7 +27,7 @@
         <div />
       </template>
     </ln-dialog>
-    <rec-frame
+    <ptt-frame
       :url="pttUrl"
       :status="status"
     />
@@ -36,10 +36,10 @@
 
 <script>
 import LnDialog from '../components/Ln-Dialog.vue'
-import RecFrame from '../components/Rec-Frame.vue'
+import PttFrame from '../components/Ptt-Frame.vue'
 export default {
   components: {
-    RecFrame,
+    PttFrame,
     LnDialog
   },
   data () {

@@ -11,7 +11,7 @@
 <script>
 import LoadPanel from './Load-Panel'
 export default {
-  name: 'RecFrame',
+  name: 'PttFrame',
   components: {
     LoadPanel
   },
@@ -23,7 +23,8 @@ export default {
     status: {
       type: String,
       default: 'init'
-    }
+    },
+    msg: {}
   },
   data () {
     return {
@@ -39,12 +40,14 @@ export default {
     }
   },
   watch: {
-    status: function (val) {
-      this.send(val)
+    status: function () {
+      this.send()
+    },
+    msg: function () {
+      this.send()
     }
   },
   created () {
-    console.log('load rec frame')
     window.addEventListener('message', this.reciveMsg)
   },
   destroyed () {
@@ -63,16 +66,17 @@ export default {
       try {
         const { cmd, content } = e.data
         if (cmd === 'init') {
-          this.send(this.status)
+          this.send()
         }
         this.$emit('reciveCmd', cmd, content)
       } catch (error) {
         console.log('出错了')
       }
     },
-    send: function (msg) {
+    send: function () {
       this.frame.contentWindow.postMessage({
-        cmd: msg
+        cmd: this.status,
+        msg: this.msg
       }, this.url)
     }
   }

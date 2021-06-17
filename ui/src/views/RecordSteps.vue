@@ -35,7 +35,7 @@
       </div>
     </header>
     <div class="recpanel">
-      <rec-frame
+      <ptt-frame
         :url="pttUrl"
         :status="status"
         @reciveCmd="processCmd"
@@ -57,12 +57,12 @@
 <script>
 // import LnPopconfirm from '../components/Ln-Popconfirm.vue'
 import LnDialog from '../components/Ln-Dialog'
-import RecFrame from '../components/Rec-Frame.vue'
+import PttFrame from '../components/Ptt-Frame.vue'
 export default {
   components: {
     // LnPopconfirm,
     LnDialog,
-    RecFrame
+    PttFrame
   },
   props: ['taskId'],
   data () {

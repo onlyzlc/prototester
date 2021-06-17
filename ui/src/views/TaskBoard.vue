@@ -23,7 +23,8 @@
         :key="t.ip"
       >
         <li>
-          用户: {{t.ip}} {{ t.isCompleted ? "完成测试" : "没有完成测试"}}
+          用户: {{t.ip}} <span> {{ t.isCompleted ? "完成测试" : "没有完成测试"}} </span>
+          总计耗时: <span> {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
         </li>
       </ul>
     </section>
