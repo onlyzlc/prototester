@@ -73,7 +73,8 @@ export default {
       this.$http
         .patch('/tasks/' + this.task.taskId + '/status', { status: newStatus })
         .then(() => {
-          this.task.status = newStatus
+          // this.task.status = newStatus
+          this.Store.update('task', { status: newStatus })
         })
         .catch(function (error) {
           // handle error
