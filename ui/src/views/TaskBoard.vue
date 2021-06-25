@@ -19,12 +19,12 @@
     </section>
     <section v-if="testings.length > 0">
       <ul
-        v-for="t in testings"
-        :key="t.ip"
+        v-for="(t, index) in testings"
+        :key="index"
       >
         <li>
-          用户: {{t.ip}} <span> {{ t.isCompleted ? "完成测试" : "没有完成测试"}} </span>
-          总计耗时: <span> {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
+          用户: {{ t.ip }} <span> {{ t.isCompleted ? "完成测试" : "没有完成测试" }} </span>
+          <span v-if="t.isCompleted"> 耗时: {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
         </li>
       </ul>
     </section>
