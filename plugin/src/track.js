@@ -12,10 +12,10 @@ if (pttType === 'Axure') elmSelector += ',.ax_default'
 const eventTypes = ['click','change']
 
 // 记录event对象的某些属性,采用解构赋值传入
-const Recorder = function ({type, timeStamp, target:{nodeName, id, innerText, value} }) {
+const Recorder = function ({type, target:{nodeName, id, innerText, value} }) {
     this.action = {
         type: type,
-        timeStamp: timeStamp,
+        timeStamp: Date.now(),
         url: location.href,
         pageTitle: document.title,
         target: {

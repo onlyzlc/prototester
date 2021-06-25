@@ -19,6 +19,15 @@
       啊妹惊, 您完成了这个不可能的任务!!!
     </ln-dialog>
     <ln-dialog
+      title="不知如何继续了吗?"
+      :vis="popup_lost.vis"
+      btnPrimary="提交"
+      @click-primary="feedback"
+    >
+      <p>请说出您的疑惑:</p>
+      <textarea name="" id="" cols="80" rows="5"></textarea>
+    </ln-dialog>
+    <ln-dialog
       :vis="unpublished"
       title="任务已下架"
     >
@@ -30,6 +39,8 @@
     <ptt-frame
       :url="pttUrl"
       :status="status"
+      :msg="msg"
+      @reciveCmd="processCmd"
     />
   </div>
 </template>
@@ -47,21 +58,26 @@ export default {
       taskId: this.$route.params.taskId,
       taskNote: {},
       pttHost: ['http://127.0.0.1:8082'],
-      status: 'init',
+      status: 'ready',
+      msg: {},
       pttUrl: '',
       tip: '',
       stop: {},
       log: [],
       isCompleted: false,
+      lostTime: 30000,
       unpublished: false,
       popup_start: {
         vis: false,
         tip: ''
+      },
+      popup_lost: {
+        vis: false
       }
     }
   },
   created () {
-    window.addEventListener('message', this.reciveMsg, false)
+    // window.addEventListener('message', this.reciveMsg, false)
     // 获取当前任务ID
     // 获取任务数据
     this.$http
@@ -88,52 +104,33 @@ export default {
       this.popup_start.vis = true
       this.stop = taskNote.steps[1] || taskNote.steps[0]
     },
-    reciveMsg (e) {
-      console.info('需要通过用户注册的原型地址实现来源限制, 当前来源:' + e.origin)
-      // 需要通过用户注册的原型地址实现来源限制
-      if (!this.pttHost.includes(e.origin)) {
-        return false
-      }
-      console.log('收到 %s 消息: %o', e.origin, e.data)
-      try {
-        // const [cmd, content] = e.data.split('?')
-        const { cmd, content } = e.data
-        switch (cmd) {
-          case 'init':
-            // 框架加载后,sodar.js会发送init消息来表示已准备好
-            // 这里作为父页面收到后,返回 ready 指令
-            e.source.postMessage({
-              cmd: 'ready'
-            }, e.origin)
-            // e.source.postMessage('href', e.origin)
-            break
-          case 'post':
-            // 判断是否触发最后一步,到达最后一步时自动结束测试;
-            if (content.type === this.stop.type &&
-                content.target.id === this.stop.target.id &&
-                content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
-                content.target.value === this.stop.target.value) {
-              this.isCompleted = true
-              this.log.push(content)
-              this.sendLog()
-              this.status = 'stop'
-            } else {
-              // 未到达最后一步时
-              this.log.push(content)
-              // 暂存日志超过一定条数时上传到服务器
-              if (this.log.length >= 5) {
-                this.sendLog()
-              }
-            }
-            break
+    processCmd (cmd, content) {
+      if (cmd === 'post') {
+        clearTimeout(this.timer)
+        this.timer = setTimeout(this.lost, this.lostTime)
+        // 判断是否触发最后一步,到达最后一步时自动结束测试;
+        if (content.type === this.stop.type &&
+            content.target.id === this.stop.target.id &&
+            content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
+            content.target.value === this.stop.target.value) {
+          this.isCompleted = true
+          this.log.push(content)
+          this.sendLog()
+          this.status = 'stop'
+        } else {
+          // 未到达最后一步时
+          this.log.push(content)
+          // 暂存日志超过一定条数时上传到服务器
+          if (this.log.length >= 5) {
+            this.sendLog()
+          }
         }
-      } catch (error) {
-        console.log('出错了: %o', error)
       }
     },
     startTest () {
       this.popup_start.vis = false
       this.status = 'rec'
+      this.timer = setTimeout(this.lost, this.lostTime)
       this.$http
         .post('/userTests', { taskId: this.taskId })
     },
@@ -142,6 +139,16 @@ export default {
       this.log = []
       this.$http
         .patch('/userTests', { log: log, isCompleted: this.isCompleted })
+    },
+    lost () {
+      // 如果超过一定时间没有动作, 则结束测试并显示反馈对话框
+      if (this.log.length) this.sendLog()
+      this.status = 'stop'
+      this.popup_lost.vis = true
+    },
+    feedback () {
+      // todo: 提交反馈
+      this.NavToThk()
     },
     NavToThk () {
       // window.close()
