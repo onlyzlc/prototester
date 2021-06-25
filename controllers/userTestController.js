@@ -90,7 +90,10 @@ exports.post = function (req, res) {
     if (req.cookies.userTest === undefined) {
         Task.findOne({taskId: req.body.taskId}, function (err,task) {
             if(err) throw '找不的对应的任务';
-            UserTest.create({task: task.id}, function(err, userTest){
+            UserTest.create({
+                task: task.id,
+                ip: req.ip.split(":")[3]
+            }, function(err, userTest){
                 // 设置当前测试的id,存入cookie
                 console.log('已创建一条用户测试记录');
                 let id = userTest.id
@@ -110,7 +113,6 @@ exports.patch = function (req, res) {
         if (userTest) {
             var l = req.body.log.length;
             userTest.isCompleted = req.body.isCompleted;
-            userTest.ip = req.ip.split(":")[3]
             for (var i = 0; i < l; i++) {
                 userTest.log.push(req.body.log[i]);
             }
