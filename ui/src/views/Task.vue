@@ -2,7 +2,10 @@
   <div class="container">
     <div class="left">
       <div>
-        任务：
+        <router-link :to="{ name: 'Tasks'}">
+          测试任务
+        </router-link>
+        /
         <router-link :to="{ name: 'TaskBoard', params: { taskId: taskId }}">
           {{ task.name }}
         </router-link>

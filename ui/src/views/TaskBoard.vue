@@ -33,6 +33,7 @@
 
 <script>
 export default {
+  props: ['taskId'],
   data () {
     return {
       task: this.Store.state.task,
@@ -54,7 +55,7 @@ export default {
   methods: {
     fetchTesting: function () {
       this.$http
-        .get(`tasks/${this.task.taskId}/testReport`)
+        .get(`tasks/${this.taskId}/testReport`)
         .then(result => { this.testings = result.data.slice() })
     }
   }

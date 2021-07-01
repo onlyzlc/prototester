@@ -94,6 +94,7 @@ const routes = [
       {
         path: 'detail',
         name: 'TaskBoard',
+        props: true,
         component: TaskBoard
       },
       {
