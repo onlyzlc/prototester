@@ -65,7 +65,7 @@ TaskSchema.virtual('url').get(function () {
 
 // 测试情况统计数据
 TaskSchema.methods.findTestings = function (cb) {
-    return UserTest.find({task: this.id}, cb);``
+    return UserTest.find({task: this._id}, cb);``
 }
 // 测试次数
 TaskSchema.virtual("testCount").get(function () {  

@@ -91,7 +91,7 @@ exports.post = function (req, res) {
         Task.findOne({taskId: req.body.taskId}, function (err,task) {
             if(err) throw '找不的对应的任务';
             UserTest.create({
-                task: task.id,
+                task: task._id,
                 ip: req.ip.split(":")[3]
             }, function(err, userTest){
                 // 设置当前测试的id,存入cookie
