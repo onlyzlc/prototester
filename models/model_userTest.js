@@ -19,6 +19,15 @@ var UserTestSchema = new Schema({
         type:Boolean,
         default: false
     },
+    subjectiveFeelings: {
+        isCompleted: {
+            type: Boolean,
+            default: false
+        },
+        difficulty: [{
+            type: String
+        }]
+    }
 })
 
 UserTestSchema.virtual('testSign').get(function(){
