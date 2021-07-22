@@ -19,7 +19,7 @@ var UserTestSchema = new Schema({
         type:Boolean,
         default: false
     },
-    subjectiveFeelings: {
+    feeling: {
         isCompleted: {
             type: Boolean,
             default: false
