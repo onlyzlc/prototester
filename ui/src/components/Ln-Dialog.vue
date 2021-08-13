@@ -23,12 +23,14 @@
             <button
               class="primary"
               @click="$emit('click-primary')"
+              v-show="btnPrimary"
             >
               {{ btnPrimary }}
             </button>
             <button
               class="secondary"
               @click="$emit('click-secondary')"
+              v-show="btnSecondary"
             >
               {{ btnSecondary }}
             </button>
