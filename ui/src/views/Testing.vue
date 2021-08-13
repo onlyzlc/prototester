@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 弹框:测试引导 -->
     <ln-dialog
       title="欢迎参与体验"
       :vis="popup_start.vis"
@@ -11,6 +12,7 @@
         </button>
       </template>
     </ln-dialog>
+    <!-- 弹框：自动判断用户完成已任务时的提示 -->
     <!-- <ln-dialog
       title="任务完成"
       :vis="isCompleted"
@@ -18,17 +20,55 @@
     >
       啊妹惊, 您完成了这个不可能的任务!!!
     </ln-dialog> -->
+    <!-- 弹框：用户点击<已完成>后 -->
     <ln-dialog
-      title="遇到困难了吗?"
-      :vis="popup_lost.vis"
-      btnPrimary="提交"
-      btnSecondary="没什么,继续"
-      @click-primary="feedback"
-      @click-secondary="popup_lost.vis=false"
+      :vis = 'popup_researchRequest.vis'
+      title = ''
+      btnPrimary=""
+      btnSecondary="离开"
+      @click-secondary="NavToThk"
     >
-      <p>请说出您的疑惑:</p>
-      <textarea name="" id="" cols="80" rows="5"></textarea>
+      非常感谢，若不介意请再回答几个小问题以便我们更了解您刚才的感受。
     </ln-dialog>
+    <!-- 弹框:用户点击<有困难>后 -->
+    <ln-dialog
+      :title="popup_difficulty.tittle"
+      :vis="popup_difficulty.vis"
+      btnPrimary="提交"
+      btnSecondary="取消"
+      @click-primary="submitDifficulty"
+      @click-secondary="popup_difficulty.vis = false"
+    >
+        <section>
+          <p>
+            <input type="checkbox" value="不知道应该点哪" id="difficulty1" v-model="difficulty">
+            <label for="difficulty1">
+              不知道应该点哪
+            </label>
+          </p>
+          <p>
+            <input type="checkbox" value="看不懂某些文字" id="difficulty2" v-model="difficulty">
+            <label  for="difficulty2">
+              看不懂某些文字
+            </label>
+          </p>
+        </section>
+        <section>
+          <label>其他:</label>
+          <textarea name="" id="" cols="80" rows="5"></textarea>
+        </section>
+    </ln-dialog>
+    <!-- 弹框：询问用户是否继续测试 -->
+    <ln-dialog
+      title="能否再试试?"
+      :vis="popup_continue.vis"
+      btnPrimary="再试试"
+      btnSecondary="离开"
+      @click-primary="popup_continue.vis=false"
+      @click-secondary="NavToThk"
+    >
+    </ln-dialog>
+    <!-- 弹框:用户打开任务链接时，任务已下架的提示 -->
     <ln-dialog
       :vis="unpublished"
       title="任务已下架"
@@ -47,12 +87,12 @@
       </div>
       <div class="control">
         <button
-          @click="NavToThk"
+          @click="clickDone"
         >
           已完成
         </button>
-        <button @click="popup_lost.vis = true">
-          放弃
+        <button @click="clickDiff">
+          有困难
         </button>
       </div>
       <div class="info">
@@ -88,6 +128,7 @@ export default {
       tip: '',
       stop: {},
       log: [],
+      mouseTrack: [],
       isCompleted: false,
       lostTime: 30000,
       unpublished: false,
@@ -95,9 +136,17 @@ export default {
         vis: false,
         tip: ''
       },
-      popup_lost: {
+      popup_difficulty: {
+        tittle: '',
         vis: false
-      }
+      },
+      popup_continue: {
+        vis: false
+      },
+      popup_researchRequest: {
+        vis: false
+      },
+      difficulty: []
     }
   },
   created () {
@@ -131,26 +180,27 @@ export default {
         clearTimeout(this.timer)
         this.timer = setTimeout(this.lost, this.lostTime)
         // 判断是否触发最后一步,到达最后一步时自动结束测试;
-        if (content.url === this.stop.url &&
-            content.type === this.stop.type &&
-            content.target.id === this.stop.target.id &&
-            content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
-            content.target.innerText === this.stop.target.innerText &&
-            content.target.value === this.stop.target.value) {
-          this.isCompleted = true
-          this.log.push(content)
+        // if (content.url === this.stop.url &&
+        //     content.type === this.stop.type &&
+        //     content.target.id === this.stop.target.id &&
+        //     content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
+        //     content.target.innerText === this.stop.target.innerText &&
+        //     content.target.value === this.stop.target.value) {
+        //   this.isCompleted = true
+        //   this.log.push(content)
+        //   this.sendLog()
+        //   // this.status = 'stop'
+        // } else {
+        //   }
+        // 未到达最后一步时
+        this.log.push(content)
+        // 暂存日志超过一定条数时上传到服务器
+        if (this.log.length >= 5) {
           this.sendLog()
-          this.status = 'stop'
-        } else {
-          // 未到达最后一步时
-          this.log.push(content)
-          // 暂存日志超过一定条数时上传到服务器
-          if (this.log.length >= 5) {
-            this.sendLog()
-          }
         }
       }
     },
+    // 开始测试
     startTest () {
       this.popup_start.vis = false
       this.status = 'rec'
@@ -158,21 +208,50 @@ export default {
       this.$http
         .post('/userTests', { taskId: this.taskId })
     },
-    sendLog () {
+    // 发送日志
+    sendLog (isCompleted = false) {
+      if (this.log.length === 0 && !isCompleted) return
       const log = this.log
       this.log = []
       this.$http
-        .patch('/userTests', { log: log, isCompleted: this.isCompleted })
+        .patch('/userTests', {
+          log: log,
+          subjective_isCompleted: isCompleted,
+          mouseTrack: this.mouseTrack
+        })
     },
+    // 点击<有困难>
+    clickDiff () {
+      clearTimeout(this.timer)
+      this.sendLog()
+      this.popup_difficulty.tittle = '可否说说您现在的情况?'
+      this.popup_difficulty.vis = true
+    },
+    // 点击<已完成>
+    clickDone () {
+      clearTimeout(this.timer)
+      this.sendLog(true)
+      this.popup_researchRequest.vis = true
+      // todo: 问卷
+      // this.NavToThk()
+    },
+    // 用户无动作
     lost () {
       // 如果超过一定时间没有动作, 则结束测试并显示反馈对话框
-      if (this.log.length) this.sendLog()
-      this.popup_lost.vis = true
+      this.sendLog()
+      this.popup_difficulty.tittle = '您已经许久没有操作, 是否遇到了困难, 可否说说？'
+      this.popup_difficulty.vis = true
     },
-    feedback () {
-      // todo: 提交反馈
-      this.status = 'stop'
-      this.NavToThk()
+    // 提交困难
+    submitDifficulty () {
+      this.$http
+        .patch('/userTests', {
+          difficulty: this.difficulty
+        })
+        .then(() => {
+          this.popup_difficulty.vis = false
+          this.popup_continue.vis = true
+        })
     },
     NavToThk () {
       // window.close()
