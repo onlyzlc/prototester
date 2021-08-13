@@ -15,19 +15,18 @@ var UserTestSchema = new Schema({
     },
     ip: String,
     log:[UserActionSchema],
+    mouseTrack: [],
     isCompleted:{
         type:Boolean,
         default: false
     },
-    feeling: {
-        isCompleted: {
-            type: Boolean,
-            default: false
-        },
-        difficulty: [{
-            type: String
-        }]
-    }
+    subjective_isCompleted: {
+        type: Boolean,
+        default: false
+    },
+    difficulty: [{
+        type: String
+    }]
 })
 
 UserTestSchema.virtual('testSign').get(function(){
