@@ -111,15 +111,29 @@ exports.patch = function (req, res) {
     UserTest.findById(req.cookies.userTestId, function (err, userTest) {
         if (err) throw err;
         if (userTest) {
-            var l = req.body.log.length;
-            userTest.isCompleted = req.body.isCompleted;
-            for (var i = 0; i < l; i++) {
-                userTest.log.push(req.body.log[i]);
-            }
-            if(userTest.isCompleted) res.clearCookie('userTestId');
+            // if (req.body.log) {
+            //     var l = req.body.log.length;
+            //     for (var i = 0; i < l; i++) {
+            //         userTest.log.push(req.body.log[i]);
+            //     }
+            // } else if (req.body.hasOwnProperty(isCompleted)) {
+            //     userTest.isCompleted = req.body.isCompleted;
+            // } 
+            for (const key in req.body) {
+                if (req.body.hasOwnProperty(key)) {
+                    const element = req.body[key]
+                    console.log('更新%s:%s', key, element);
+                  if (Array.isArray(element)) {
+                    userTest[key] = element.slice()
+                  } else {
+                    userTest[key] = element
+                  }
+                }
+              }
+            // if(userTest.isCompleted) res.clearCookie('userTestId');
             userTest.save(function (err,doc) {
                 res.sendStatus(201);
-                console.log("更新成功,任务完成状态:"+doc.isCompleted);
+                // console.log("更新成功,任务完成状态:"+doc.isCompleted);
             });
         } else {
             console.log('找不到此对应测试实例,数据可能被篡改');
