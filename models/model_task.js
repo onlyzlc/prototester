@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var ActionSchema = require('./model_action');
 const UserTest = require('../models/model_userTest')
-const Questionnaire = require('../models/model_questionnaire')
 var Schema = mongoose.Schema;
 
 var TaskSchema = new Schema({
@@ -42,7 +41,7 @@ var TaskSchema = new Schema({
     questionnaire: {
         type: Schema.Types.ObjectId,
         ref: 'Questionnaire'
-    }
+    },
     // testing: [{
     //     ip: String,
     //     isCompleted: {

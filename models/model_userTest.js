@@ -20,7 +20,7 @@ var UserTestSchema = new Schema({
         type:Boolean,
         default: false
     },
-    subjective_isCompleted: {
+    thinkDone: {
         type: Boolean,
         default: false
     },

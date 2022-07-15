@@ -8,8 +8,7 @@ const options = ['非常同意','比较同意','一般','反对','强烈反对']
 
 var TopicSchema = new Schema({
     type: {
-        type: String,
-        
+        type: String
     },
     question: String,
 })
