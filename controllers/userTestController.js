@@ -111,17 +111,10 @@ exports.patch = function (req, res) {
     UserTest.findById(req.cookies.userTestId, function (err, userTest) {
         if (err) throw err;
         if (userTest) {
-            // if (req.body.log) {
-            //     var l = req.body.log.length;
-            //     for (var i = 0; i < l; i++) {
-            //         userTest.log.push(req.body.log[i]);
-            //     }
-            // } else if (req.body.hasOwnProperty(isCompleted)) {
-            //     userTest.isCompleted = req.body.isCompleted;
-            // } 
-            for (const key in req.body) {
-                if (req.body.hasOwnProperty(key)) {
-                    const element = req.body[key]
+            const data = req.body
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const element = data[key]
                     console.log('更新%s:%s', key, element);
                   if (Array.isArray(element)) {
                     userTest[key] = element.slice()
@@ -131,6 +124,22 @@ exports.patch = function (req, res) {
                 }
               }
             // if(userTest.isCompleted) res.clearCookie('userTestId');
+            // // 分析实际是否已完成任务
+            // // 判断是否触发最后一步,到达最后一步时自动结束测试;
+            // if (data.hasOwnProperty('log') && data.log.length > 0){
+            //     const log = data.log
+            //     for (const action of log) {
+            //         if (action.url === this.stop.url &&
+            //             action.type === this.stop.type &&
+            //             action.target.id === this.stop.target.id &&
+            //             action.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
+            //             action.target.innerText === this.stop.target.innerText &&
+            //             action.target.value === this.stop.target.value) {
+            //             userTest.isCompleted = true
+            //             break
+            //         }
+            //     }
+            // }
             userTest.save(function (err,doc) {
                 res.sendStatus(201);
                 // console.log("更新成功,任务完成状态:"+doc.isCompleted);
