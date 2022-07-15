@@ -22,10 +22,10 @@
     </ln-dialog> -->
     <!-- 弹框：用户点击<已完成>后 -->
     <ln-dialog
-      :vis = 'popup_researchRequest.vis'
-      title = ''
-      btnPrimary=""
-      btnSecondary="离开"
+      :vis="popup_researchRequest.vis"
+      title=""
+      btn-primary=""
+      btn-secondary="离开"
       @click-secondary="NavToThk"
     >
       非常感谢，若不介意请再回答几个小问题以便我们更了解您刚才的感受。
@@ -34,40 +34,55 @@
     <ln-dialog
       :title="popup_difficulty.tittle"
       :vis="popup_difficulty.vis"
-      btnPrimary="提交"
-      btnSecondary="取消"
+      btn-primary="提交"
+      btn-secondary="取消"
       @click-primary="submitDifficulty"
       @click-secondary="popup_difficulty.vis = false"
     >
-        <section>
-          <p>
-            <input type="checkbox" value="不知道应该点哪" id="difficulty1" v-model="difficulty">
-            <label for="difficulty1">
-              不知道应该点哪
-            </label>
-          </p>
-          <p>
-            <input type="checkbox" value="看不懂某些文字" id="difficulty2" v-model="difficulty">
-            <label  for="difficulty2">
-              看不懂某些文字
-            </label>
-          </p>
-        </section>
-        <section>
-          <label>其他:</label>
-          <textarea name="" id="" cols="80" rows="5"></textarea>
-        </section>
+      <section>
+        <p>
+          <input
+            id="difficulty1"
+            v-model="difficulty"
+            type="checkbox"
+            value="不知道应该点哪"
+          >
+          <label for="difficulty1">
+            不知道应该点哪
+          </label>
+        </p>
+        <p>
+          <input
+            id="difficulty2"
+            v-model="difficulty"
+            type="checkbox"
+            value="看不懂某些文字"
+          >
+          <label for="difficulty2">
+            看不懂某些文字
+          </label>
+        </p>
+      </section>
+      <section>
+        <label>其他:</label>
+        <textarea
+          id=""
+          v-model="otherDifficulty"
+          name=""
+          cols="80"
+          rows="5"
+        />
+      </section>
     </ln-dialog>
     <!-- 弹框：询问用户是否继续测试 -->
     <ln-dialog
       title="能否再试试?"
       :vis="popup_continue.vis"
-      btnPrimary="再试试"
-      btnSecondary="离开"
+      btn-primary="再试试"
+      btn-secondary="离开"
       @click-primary="popup_continue.vis=false"
       @click-secondary="NavToThk"
-    >
-    </ln-dialog>
+    />
     <!-- 弹框:用户打开任务链接时，任务已下架的提示 -->
     <ln-dialog
       :vis="unpublished"
@@ -83,7 +98,7 @@
         <div id="logo">
           Sodar
         </div>
-        <h4>目标: {{taskNote.description}}</h4>
+        <h4>目标: {{ taskNote.description }}</h4>
       </div>
       <div class="control">
         <button
@@ -146,7 +161,8 @@ export default {
       popup_researchRequest: {
         vis: false
       },
-      difficulty: []
+      difficulty: [],
+      otherDifficulty: ''
     }
   },
   created () {
@@ -179,20 +195,14 @@ export default {
       if (cmd === 'post') {
         clearTimeout(this.timer)
         this.timer = setTimeout(this.lost, this.lostTime)
-        // 判断是否触发最后一步,到达最后一步时自动结束测试;
-        // if (content.url === this.stop.url &&
-        //     content.type === this.stop.type &&
-        //     content.target.id === this.stop.target.id &&
-        //     content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
-        //     content.target.innerText === this.stop.target.innerText &&
-        //     content.target.value === this.stop.target.value) {
-        //   this.isCompleted = true
-        //   this.log.push(content)
-        //   this.sendLog()
-        //   // this.status = 'stop'
-        // } else {
-        //   }
-        // 未到达最后一步时
+        if (content.url === this.stop.url &&
+            content.type === this.stop.type &&
+            content.target.id === this.stop.target.id &&
+            content.target.nodeName.toLowerCase() === this.stop.target.nodeName &&
+            content.target.innerText === this.stop.target.innerText &&
+            content.target.value === this.stop.target.value) {
+          this.isCompleted = true
+        }
         this.log.push(content)
         // 暂存日志超过一定条数时上传到服务器
         if (this.log.length >= 5) {
@@ -209,14 +219,15 @@ export default {
         .post('/userTests', { taskId: this.taskId })
     },
     // 发送日志
-    sendLog (isCompleted = false) {
-      if (this.log.length === 0 && !isCompleted) return
+    sendLog (thinkDone = false) {
+      if (this.log.length === 0 && !thinkDone) return
       const log = this.log
       this.log = []
       this.$http
         .patch('/userTests', {
           log: log,
-          subjective_isCompleted: isCompleted,
+          isCompleted: this.isCompleted,
+          thinkDone: thinkDone,
           mouseTrack: this.mouseTrack
         })
     },
@@ -244,9 +255,11 @@ export default {
     },
     // 提交困难
     submitDifficulty () {
+      const d = this.difficulty
+      if (this.otherDifficulty.trim()) d.push(this.otherDifficulty)
       this.$http
         .patch('/userTests', {
-          difficulty: this.difficulty
+          difficulty: d
         })
         .then(() => {
           this.popup_difficulty.vis = false
