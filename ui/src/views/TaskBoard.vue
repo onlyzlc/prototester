@@ -17,14 +17,36 @@
         <span v-if="testings.length">{{ finished.length }} 次完成</span>
       </p>
     </section>
-    <section v-if="testings.length > 0">
+    <section>
       <ul
-        v-for="(t, index) in testings"
-        :key="index"
+        v-for="(t) in testings"
+        :key="t._id"
       >
         <li>
-          用户: {{ t.ip }} <span> {{ t.isCompleted ? "完成测试" : "没有完成测试" }} </span>
-          <span v-if="t.isCompleted"> 耗时: {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
+          <ln-folder>
+            <template
+              v-slot:
+              label
+            >
+              用户: {{ t.ip }}
+              <span>自认为{{ t.thinkDone ? "完成任务" : "没有完成任务" }} </span>,
+              <span>实际{{ t.isCompleted ? "完成任务" : "没有完成任务" }} </span>
+            </template>
+            <template
+              v-slot:
+              panel
+            >
+              <span v-if="t.isCompleted"> 耗时: {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
+              <template v-if="t.difficulty.length">
+                <ul
+                  v-for="(point, index) in t.difficulty"
+                  :key="index"
+                >
+                  <li>{{ point }}</li>
+                </ul>
+              </template>
+            </template>
+          </ln-folder>
         </li>
       </ul>
     </section>
@@ -32,12 +54,24 @@
 </template>
 
 <script>
+import LnFolder from '../components/Ln-Folder.vue'
 export default {
-  props: ['taskId'],
+  components: { LnFolder },
+  props: {
+    taskId: String
+  },
   data () {
     return {
       task: this.Store.state.task,
-      testings: []
+      testings: [{
+        difficulty: [],
+        ip: '10.10.10.1',
+        isCompleted: false,
+        log: [],
+        mouseTrack: [],
+        task: '',
+        thinkDone: true
+      }]
     }
   },
   computed: {
@@ -56,7 +90,12 @@ export default {
     fetchTesting: function () {
       this.$http
         .get(`tasks/${this.taskId}/testReport`)
-        .then(result => { this.testings = result.data.slice() })
+        .then(result => {
+          // this.testings = result.data.slice()
+          result.data.forEach(testing => {
+            this.testings.push(testing)
+          })
+        })
     }
   }
 }
