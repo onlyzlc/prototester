@@ -122,16 +122,17 @@ exports.getTaskNote = function (req, res) {
 // 获取任务
 exports.getDetail = function (req, res) {
     console.log("-> 获取任务详情");
-    Task.findOne({
-        "taskId": req.params.taskId
-    }, function (err, taskDoc) {
-        if (err) throw err;
-        if (taskDoc === null) {
-            noTaskTip(res);
-            return;
-        }
-        res.json(taskDoc);
-    })
+    Task.
+        findOne({taskId: req.params.taskId }).
+        populate('testings').
+        exec(function (err, task) {
+            if (err) throw err;
+            if (task === null) {
+                noTaskTip(res);
+                return;
+            }
+            res.json(task)
+        })
 }
 
 exports.getPttUrl = function (req, res) {
@@ -145,23 +146,6 @@ exports.getPttUrl = function (req, res) {
             return;
         }
         res.json(taskDoc.ptt.url);
-    })
-}
-
-exports.getTestReport = function (req, res) {
-    console.log("-> 获取任务测试报告...");
-    Task.findOne({
-        "taskId": req.params.taskId
-    }, function (err, taskDoc) {
-        if (err) throw err;
-        if (taskDoc === null) {
-            noTaskTip(res);
-            return;
-        }
-        taskDoc.findTestings(function(err, testings) {
-            if (err) throw err
-            res.json(testings);
-        })
     })
 }
 

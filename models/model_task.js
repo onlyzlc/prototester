@@ -42,21 +42,14 @@ var TaskSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Questionnaire'
     },
-    // testing: [{
-    //     ip: String,
-    //     isCompleted: {
-    //         type:Boolean,
-    //         default: false
-    //     },
-    //     actions: [ActionSchema]
-    // }],
     deleted: {
         type: Boolean,
         default: false
     },
     deleteTime: {
         type: Date,
-    }
+    },
+    testings: [{type: Schema.Types.ObjectId, ref: 'UserTest'}]
 })
 
 TaskSchema.virtual('url').get(function () {  
@@ -67,40 +60,36 @@ TaskSchema.virtual('url').get(function () {
     }
 })
 
-// 测试情况统计数据
-TaskSchema.methods.findTestings = function (cb) {
-    return UserTest.find({task: this._id}, cb);``
-}
 // 测试次数
-TaskSchema.virtual("testCount").get(function () {  
-    return this.testing.length;
-})
+// TaskSchema.virtual("testCount").get(function () {  
+//     return this.testing.length;
+// })
 // 实际完成的测试结果集合
-TaskSchema.virtual("completedTestings").get(function () {  
-    return this.testing.filter(item => item.isCompleted);
-})
+// TaskSchema.virtual("completedTestings").get(function () {  
+//     return this.testing.filter(item => item.isCompleted);
+// })
 // 测试完成率
-TaskSchema.virtual("completedRatio").get(function () {  
-    if(this.testCount){
-        return Math.round((this.completedTestings.length/this.testCount)*100);
-    }else{
-        return 0;
-    }
-})
+// TaskSchema.virtual("completedRatio").get(function () {  
+//     if(this.testCount){
+//         return Math.round((this.completedTestings.length/this.testCount)*100);
+//     }else{
+//         return 0;
+//     }
+// })
 // 平均完成时间：每次完成测试的总时长/完成
-TaskSchema.virtual("avgOfDuration").get(function () {
-    // 获取各次测试的完成时间求平均值
-    let ct = this.completedTestings;
-    if(ct.length){
-        let sumOfDuration = 0;
-        for (const testing of ct ) {
-            sumOfDuration += (testing.actions[testing.actions.length-1].time - testing.actions[0].time);
-        }
-        return (sumOfDuration / ct.length / 1000).toFixed(2) ;
-    }else{
-        return 0;
-    }
-})
+// TaskSchema.virtual("avgOfDuration").get(function () {
+//     // 获取各次测试的完成时间求平均值
+//     let ct = this.completedTestings;
+//     if(ct.length){
+//         let sumOfDuration = 0;
+//         for (const testing of ct ) {
+//             sumOfDuration += (testing.actions[testing.actions.length-1].time - testing.actions[0].time);
+//         }
+//         return (sumOfDuration / ct.length / 1000).toFixed(2) ;
+//     }else{
+//         return 0;
+//     }
+// })
 TaskSchema.virtual("maxDuration").get(function () {
     // 求各次测试中时间最长的
 

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var UserActionSchema = require('./model_action');
+var ActionSchema = require('./model_action');
 var Schema = mongoose.Schema;
 
 // 让 mongoose 使用全局 Promise 库
@@ -9,12 +9,8 @@ mongoose.Promise = global.Promise;
 // 为用户的一次任务执行过程, 当用户从第一个步骤开始时, 新建此对象
 // 将objectId传给cookie
 var UserTestSchema = new Schema({
-    task: {
-        ref: 'Task',
-        type: Schema.Types.ObjectId,
-    },
     ip: String,
-    log:[UserActionSchema],
+    log:[ActionSchema],
     mouseTrack: [],
     isCompleted:{
         type:Boolean,
