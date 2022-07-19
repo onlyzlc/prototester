@@ -13,40 +13,38 @@
       </p>
       <label for="">测试报告</label>
       <p>
-        共 {{ testings.length }} 次测试  |
-        <span v-if="testings.length">{{ finished.length }} 次完成</span>
+        共 {{ task.testings.length }} 次测试  |
+        <span v-if="task.testings.length">{{ finished.length }} 次完成</span>
       </p>
     </section>
     <section>
-      <ul
-        v-for="(t) in testings"
-        :key="t._id"
-      >
-        <li>
-          <ln-folder>
+      <ul>
+        <li
+          v-for="(t) in task.testings"
+          :key="t._id"
+        >
+          <!-- <ln-folder>
             <template
-              v-slot:
-              label
+              v-slot:label
             >
               用户: {{ t.ip }}
               <span>自认为{{ t.thinkDone ? "完成任务" : "没有完成任务" }} </span>,
               <span>实际{{ t.isCompleted ? "完成任务" : "没有完成任务" }} </span>
             </template>
             <template
-              v-slot:
-              panel
+              v-slot:dropDownBox
             >
               <span v-if="t.isCompleted"> 耗时: {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
-              <template v-if="t.difficulty.length">
-                <ul
+              <ul>
+                <li
                   v-for="(point, index) in t.difficulty"
                   :key="index"
                 >
-                  <li>{{ point }}</li>
-                </ul>
-              </template>
+                  {{ point }}
+                </li>
+              </ul>
             </template>
-          </ln-folder>
+          </ln-folder> -->
         </li>
       </ul>
     </section>
@@ -54,49 +52,26 @@
 </template>
 
 <script>
-import LnFolder from '../components/Ln-Folder.vue'
+// import LnFolder from '../components/Ln-Folder.vue'
 export default {
-  components: { LnFolder },
+  // components: { LnFolder },
   props: {
-    taskId: String
   },
   data () {
     return {
-      task: this.Store.state.task,
-      testings: [{
-        difficulty: [],
-        ip: '10.10.10.1',
-        isCompleted: false,
-        log: [],
-        mouseTrack: [],
-        task: '',
-        thinkDone: true
-      }]
+      task: this.Store.state.task
     }
   },
   computed: {
     finished: function () {
-      return this.testings.filter(item => item.isCompleted)
+      return this.task.testings.filter(item => item.isCompleted)
     }
   },
   beforeCreate () {
     console.log('Task board 前')
   },
   created () {
-    this.fetchTesting()
     console.log('已创建 Task board')
-  },
-  methods: {
-    fetchTesting: function () {
-      this.$http
-        .get(`tasks/${this.taskId}/testReport`)
-        .then(result => {
-          // this.testings = result.data.slice()
-          result.data.forEach(testing => {
-            this.testings.push(testing)
-          })
-        })
-    }
   }
 }
 </script>

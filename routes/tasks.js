@@ -15,7 +15,7 @@ router.post('/',taskApi.create);
 
 router.get('/:taskId',taskApi.getDetail);
 router.get('/:taskId/taskNote',taskApi.getTaskNote);
-router.get('/:taskId/testReport', taskApi.getTestReport);
+// router.get('/:taskId/testReport', taskApi.getTestReport);
 router.get('/:taskId/pttUrl', taskApi.getPttUrl);
 router.patch('/:taskId/status',taskApi.updateStatus);
 router.patch('/:taskId/steps',taskApi.updateSteps);

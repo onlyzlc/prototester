@@ -5,7 +5,8 @@ const State = function () {
   }
   this.task = {
     pttUrl: '',
-    steps: []
+    steps: [],
+    testings: []
   }
 }
 

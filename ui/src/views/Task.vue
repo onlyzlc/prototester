@@ -6,7 +6,7 @@
           测试任务
         </router-link>
         /
-        <router-link :to="{ name: 'TaskBoard', params: { taskId: taskId }}">
+        <router-link :to="{ name: 'TaskBoard'}">
           {{ task.name }}
         </router-link>
         <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span>
@@ -107,7 +107,8 @@ body,
 .container .left {
   font-size: 0.8em;
   width: 400px;
-  border-left: 1px solid red;
+  padding: 1em;
+  border-right: 1px solid #c4c4c4;
 }
 .container .right {
   flex: 1;
