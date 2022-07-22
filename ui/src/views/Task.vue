@@ -1,38 +1,38 @@
 <template>
-  <div class="container">
-    <div class="left">
-      <div>
-        <router-link :to="{ name: 'Tasks'}">
-          测试任务
-        </router-link>
-        /
-        <router-link :to="{ name: 'TaskBoard'}">
-          {{ task.name }}
-        </router-link>
-        <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span>
-        <router-link
-          v-if="task.status=='published'"
-          :to="{ name: 'Testing', params: { taskId: taskId }}"
-          target="_blank"
-        >
-          开始测试
-        </router-link>
-        <button
-          class="publish"
-          @click="publish"
-        >
-          {{ (task.status=="unpublished")?("发布"):("撤下") }}
-        </button>
-      </div>
-      <router-view />
-    </div>
-    <div class="right">
+  <div :class="layout" class="container">
+    <section style="flex: none;" class="sidebar">
+      <router-link :to="{ name: 'Tasks'}">
+        测试任务
+      </router-link>
+      /
+      <router-link :to="{ name: 'TaskBoard'}">
+        {{ task.name }}
+      </router-link>
+      <span class="status">{{ (task.status=="unpublished")?("已撤下"):("已发布") }}</span>
+      <router-link
+        v-if="task.status=='published'"
+        :to="{ name: 'Testing', params: { taskId: taskId }}"
+        target="_blank"
+      >
+        开始测试
+      </router-link>
+      <button
+        class="publish"
+        @click="publish"
+      >
+        {{ (task.status=="unpublished")?("发布"):("撤下") }}
+      </button>
+    </section>
+    <section  style="flex: auto;">
       <ptt-frame
         :url="pttUrl"
         :status="status"
         @reciveCmd="processCmd"
       />
-    </div>
+    </section>
+    <section  style="flex: none;"  class="sidebar">
+      <router-view />
+    </section>
   </div>
 </template>
 
@@ -48,7 +48,8 @@ export default {
       task: this.Store.state.task,
       // pttHost: ['http://127.0.0.1:8082'],
       pttUrl: '',
-      status: 'disabled'
+      status: 'disabled',
+      layout: 'vertical'
     }
   },
   created () {
@@ -102,16 +103,14 @@ body,
 }
 .container {
   display: flex;
-  height: calc(100% - 40px);
+  height: 100%;
+  flex-flow: column nowrap;
 }
-.container .left {
-  font-size: 0.8em;
-  width: 400px;
-  padding: 1em;
-  border-right: 1px solid #c4c4c4;
+.container.vertical{
+  /* display: flex; */
 }
-.container .right {
-  flex: 1;
+.sidebar{
+  background-color: #f2f2f2;
 }
 .right ul {
   padding: 0 10px;

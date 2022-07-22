@@ -3,7 +3,10 @@
     /* 决策按钮排列顺序 */
     /* --btn-: */
 }
-
+ul{
+    padding: 0;
+    margin: 0;
+}
 li{
     list-style: none;
 }

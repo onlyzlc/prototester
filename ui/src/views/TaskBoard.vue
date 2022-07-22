@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <section>
+  <div style="display:flex;flex-flow:row nowrap">
+    <section style="flex:none">
       <label for="">任务名称</label>
       <p>{{ task.name }}</p>
       <label for="">任务描述</label>
@@ -17,12 +17,29 @@
         <span v-if="task.testings.length">{{ finished.length }} 次完成</span>
       </p>
     </section>
-    <section>
+    <section  class="timeline"  style="flex:auto">
+      <div class="axis">
+        <ul>
+          <li
+          ></li>
+        </ul>
+      </div>
       <ul>
         <li
-          v-for="(t) in task.testings"
-          :key="t._id"
+          v-for="(test) in task.testings"
+          :key="test._id"
+           class="row"
         >
+            <div
+              class="eventFlag"
+              v-for = "(action,index) in test.log"
+              :key = "action._id"
+              v-bind:style="{left: ((action.timeStamp-test.log[0].timeStamp)*pxPreMS) +'px' }"
+              >
+                <span>
+                  {{index}}
+                </span>
+          </div>
           <!-- <ln-folder>
             <template
               v-slot:label
@@ -59,16 +76,16 @@ export default {
   },
   data () {
     return {
-      task: this.Store.state.task
+      task: this.Store.state.task,
+      // 每像素等价多少秒
+      pxPreMS: 0.1
     }
   },
   computed: {
+    testings: function () { return this.task.testings },
     finished: function () {
       return this.task.testings.filter(item => item.isCompleted)
     }
-  },
-  beforeCreate () {
-    console.log('Task board 前')
   },
   created () {
     console.log('已创建 Task board')
@@ -76,6 +93,34 @@ export default {
 }
 </script>
 <style>
+.timeline{
+  overflow: auto;
+  background-color: rgb(241, 231, 231);
+}
+.timeline ul{
+  border-top: 1px #ccc solid;
+}
+.row{
+  position: relative;
+  height: 32px;
+  padding: 8px 0px;
+  border-bottom: 1px #ccc solid;
+}
+.eventFlag{
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 1px #ccc solid;
+  background-color: rgb(228, 243, 23);
+  font-size: 10px;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 14px;
+}
+.eventFlag span{
+  /* display: none; */
+  font-size: 12px;
+}
 html,body,#app{
   height: 100%
 }
