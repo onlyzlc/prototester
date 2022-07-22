@@ -10,7 +10,7 @@
       v-if="!folded"
       class="panel"
     >
-      <slot name="panel">
+      <slot name="dropDownBox">
         下拉面板
       </slot>
     </div>
