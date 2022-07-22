@@ -9,7 +9,7 @@ const pttType = 'Axure'
 const elmTypes = "input,select,textarea,label,[type=submit]"
 let elmSelector = elmTypes
 if (pttType === 'Axure') elmSelector += ',.ax_default'
-const eventTypes = ['click','change']
+const eventTypes = ['click','change', 'load']
 
 // 记录event对象的某些属性,采用解构赋值传入
 const Recorder = function ({type, target:{nodeName, id, innerText, value} }) {
