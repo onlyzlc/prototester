@@ -19,12 +19,23 @@
     </section>
     <section  class="timeline"  style="flex:auto">
       <div class="axis">
-        <ul>
-          <li
-          ></li>
-        </ul>
+        <svg version="1.1"
+            baseProfile="full"
+            :width="timeLineWidth" height="20"
+            xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" :x2="timeLineWidth" y1="0" y2="0" stroke="green" stroke-width="1"/>
+            <path :d="path_d" stroke-width="1" stroke="gray"/>
+            <text
+              v-for = "label in axisLabel"
+              :key = "label"
+              :x="label*1000*pxPreMS"
+              y="18"
+              font-size="11">
+              {{label}}
+              </text>
+        </svg>
       </div>
-      <ul>
+      <ul v-bind:style="{width:timeLineWidth+'px'}">
         <li
           v-for="(test) in task.testings"
           :key="test._id"
@@ -40,28 +51,6 @@
                   {{index}}
                 </span>
           </div>
-          <!-- <ln-folder>
-            <template
-              v-slot:label
-            >
-              用户: {{ t.ip }}
-              <span>自认为{{ t.thinkDone ? "完成任务" : "没有完成任务" }} </span>,
-              <span>实际{{ t.isCompleted ? "完成任务" : "没有完成任务" }} </span>
-            </template>
-            <template
-              v-slot:dropDownBox
-            >
-              <span v-if="t.isCompleted"> 耗时: {{ t.log[t.log.length - 1].timeStamp - t.log[0].timeStamp }} ms</span>
-              <ul>
-                <li
-                  v-for="(point, index) in t.difficulty"
-                  :key="index"
-                >
-                  {{ point }}
-                </li>
-              </ul>
-            </template>
-          </ln-folder> -->
         </li>
       </ul>
     </section>
@@ -77,14 +66,56 @@ export default {
   data () {
     return {
       task: this.Store.state.task,
-      // 每像素等价多少秒
-      pxPreMS: 0.1
+      // 每毫秒多少像素, 与最大测试耗时一起决定标尺渲染长度
+      pxPreMS: 0.1,
+      // 标尺精度,每小格多少毫秒, 应该自动缩放
+      dx: 100,
+      // 标尺刻度间隔(毫秒),间隔多少毫秒标注长线和数字
+      unit: 1000
     }
   },
   computed: {
     testings: function () { return this.task.testings },
     finished: function () {
       return this.task.testings.filter(item => item.isCompleted)
+    },
+    // 最长测试耗时(毫秒)
+    maxDur: function () {
+      let maxDur = 0
+      for (let index = 0; index < this.task.testings.length; index++) {
+        const element = this.task.testings[index].log
+        const dur = element[element.length - 1].timeStamp - element[0].timeStamp
+        if (dur > maxDur) maxDur = dur
+      }
+      return maxDur + 1000
+    },
+    timeLineWidth: function () {
+      return this.maxDur * this.pxPreMS
+    },
+    path_d: function () {
+      let d = 'M 0 0'
+      let i = 0
+      const c = this.maxDur / this.dx
+      while (i <= c) {
+        // 整秒画长线, 否则画短线
+        if (this.dx * i % this.unit) {
+          d += 'v 10 m 10 -10'
+        } else {
+          d += 'v 20 m 10 -20'
+        }
+        i++
+      }
+      return d
+    },
+    axisLabel: function () {
+      const l = []
+      const c = this.maxDur / this.unit
+      let i = 0
+      while (i <= c) {
+        l.push(i)
+        i++
+      }
+      return l
     }
   },
   created () {
@@ -99,6 +130,9 @@ export default {
 }
 .timeline ul{
   border-top: 1px #ccc solid;
+}
+.axis{
+  line-height: 0;
 }
 .row{
   position: relative;
