@@ -54,6 +54,8 @@ function msgFromOutside (e){
         e.stopPropagation()
       },true)
       break
+    case 'mark':
+      
     case 'ready': 
     case 'init': 
       break

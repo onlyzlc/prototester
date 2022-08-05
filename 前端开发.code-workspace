@@ -10,5 +10,7 @@
 			"path": "../test"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"svg.preview.background": "editor"
+	}
 }
